@@ -2,6 +2,8 @@ package com.snail.sentinel.backend.service.dto;
 
 import jakarta.validation.constraints.NotNull;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Objects;
 
 public class RepositoryDTO {

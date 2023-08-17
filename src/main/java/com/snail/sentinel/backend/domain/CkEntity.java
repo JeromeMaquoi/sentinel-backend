@@ -18,7 +18,6 @@ import org.springframework.data.mongodb.core.mapping.Field;
 @Document(collection = "ck_entity")
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class CkEntity implements Serializable {
-
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -39,11 +38,11 @@ public class CkEntity implements Serializable {
 
     @NotNull
     @Field("commit")
-    private CommitDTO commit;
+    private transient CommitDTO commit;
 
     @NotNull
     @Field("measurable_element")
-    private MeasurableElementDTO measurableElement;
+    private transient MeasurableElementDTO measurableElement;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -90,8 +89,8 @@ public class CkEntity implements Serializable {
         return this.toolVersion;
     }
 
-    public CkEntity toolVersion(String tool_version) {
-        this.setToolVersion(tool_version);
+    public CkEntity toolVersion(String toolVersion) {
+        this.setToolVersion(toolVersion);
         return this;
     }
 
