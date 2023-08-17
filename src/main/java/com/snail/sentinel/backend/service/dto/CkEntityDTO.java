@@ -1,0 +1,103 @@
+package com.snail.sentinel.backend.service.dto;
+
+import com.snail.sentinel.backend.service.dto.measurableelement.MeasurableElementDTO;
+import jakarta.validation.constraints.*;
+import java.io.Serializable;
+import java.util.Objects;
+
+/**
+ * A DTO for the {@link com.snail.sentinel.backend.domain.CkEntity} entity.
+ */
+@SuppressWarnings("common-java:DuplicatedBlocks")
+public class CkEntityDTO implements Serializable {
+
+    private String id;
+
+    @NotNull
+    private String name;
+
+    @NotNull
+    private Integer value;
+
+    @NotNull
+    private String toolVersion;
+
+    @NotNull
+    private CommitDTO commit;
+
+    @NotNull
+    private MeasurableElementDTO measurableElementDTO;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Integer getValue() {
+        return value;
+    }
+
+    public void setValue(Integer value) {
+        this.value = value;
+    }
+
+    public String getToolVersion() {
+        return toolVersion;
+    }
+
+    public void setToolVersion(String toolVersion) {
+        this.toolVersion = toolVersion;
+    }
+
+    public CommitDTO getCommit() {
+        return commit;
+    }
+
+    public void setCommit(CommitDTO commit) {
+        this.commit = commit;
+    }
+
+    public MeasurableElementDTO getMeasurableElementDTO() {
+        return measurableElementDTO;
+    }
+
+    public void setMeasurableElementDTO(MeasurableElementDTO measurableElementDTO) {
+        this.measurableElementDTO = measurableElementDTO;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CkEntityDTO that = (CkEntityDTO) o;
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(value, that.value) && Objects.equals(toolVersion, that.toolVersion) && Objects.equals(commit, that.commit) && Objects.equals(measurableElementDTO, that.measurableElementDTO);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, value, toolVersion, commit, measurableElementDTO);
+    }
+
+    @Override
+    public String toString() {
+        return "CkEntityDTO{" +
+            "id='" + id + '\'' +
+            ", name='" + name + '\'' +
+            ", value=" + value +
+            ", toolVersion='" + toolVersion + '\'' +
+            ", commit=" + commit +
+            ", measurableElementDTO=" + measurableElementDTO +
+            '}';
+    }
+}
