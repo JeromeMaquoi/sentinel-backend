@@ -6,17 +6,19 @@ import com.snail.sentinel.backend.repository.CommitEntityRepository;
 import com.snail.sentinel.backend.service.CkEntityService;
 import com.snail.sentinel.backend.service.CommitService;
 import com.snail.sentinel.backend.service.dto.CommitEntityDTO;
-import com.snail.sentinel.backend.service.dto.RepositoryDTO;
+import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+@Service
 public class CkResource {
 
     private String toolVersion = "ck-0.7.0-jar-with-dependencies";
     private List<String> astElem = Arrays.asList("method", "class", "variable");
-    private List<HashMap<String, String>> repoData;
+    private final List<HashMap<String, String>> repoData;
 
     private final CkEntityService ckEntityService;
 
@@ -31,6 +33,13 @@ public class CkResource {
         this.commitService = commitService;
         this.ckEntityRepository = ckEntityRepository;
         this.commitEntityRepository = commitEntityRepository;
+        this.repoData = new ArrayList<>();
+    }
+
+    public void insertCkData() {
+        setRepoData();
+        insertCommits();
+
     }
 
     public void setRepoData() {
@@ -48,15 +57,21 @@ public class CkResource {
         this.repoData.add(commonsConfiguration);
     }
 
-    public CommitEntity createCommit(String owner, String repoName, String sha) {
-        RepositoryDTO repository = new RepositoryDTO();
-        repository.setName(repoName);
-        repository.setOwner(owner);
+    public void insertCommits(){
+        commitService.deleteAll();
+        List<CommitEntity> listCommits = commitService.bulkAdd(createCommitList());
+    }
 
-        CommitEntityDTO commit = new CommitEntityDTO();
-        commit.setSha(sha);
-        commit.setRepositoryDTO(repository);
+    public List<CommitEntityDTO> createCommitList() {
+        List<CommitEntityDTO> newList = new ArrayList<>();
+        for (HashMap<String, String> item : repoData) {
+            CommitEntityDTO commitEntityDTO = new CommitEntityDTO();
+            commitEntityDTO.setOwner(item.get("owner"));
+            commitEntityDTO.setRepoName(item.get("repo"));
+            commitEntityDTO.setSha(item.get("sha"));
 
-        return commitService.add(commit);
+            newList.add(commitEntityDTO);
+        }
+        return newList;
     }
 }

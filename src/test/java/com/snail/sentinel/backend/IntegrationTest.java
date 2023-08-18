@@ -1,6 +1,5 @@
 package com.snail.sentinel.backend;
 
-import com.snail.sentinel.backend.SentinelBackendApp;
 import com.snail.sentinel.backend.config.AsyncSyncConfiguration;
 import com.snail.sentinel.backend.config.EmbeddedMongo;
 import java.lang.annotation.ElementType;

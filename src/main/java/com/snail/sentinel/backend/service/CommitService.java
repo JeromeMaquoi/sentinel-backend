@@ -3,9 +3,13 @@ package com.snail.sentinel.backend.service;
 import com.snail.sentinel.backend.domain.CommitEntity;
 import com.snail.sentinel.backend.repository.CommitEntityRepository;
 import com.snail.sentinel.backend.service.dto.CommitEntityDTO;
+import com.snail.sentinel.backend.service.dto.RepositoryDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CommitService {
@@ -18,10 +22,32 @@ public class CommitService {
     }
 
     public CommitEntity add(CommitEntityDTO commitEntityDTO) {
-        CommitEntity commitEntity = new CommitEntity();
-        commitEntity.setSha(commitEntityDTO.getSha());
-        commitEntity.setRepository(commitEntityDTO.getRepositoryDTO());
+        CommitEntity commitEntity = buildNewCommitItem(commitEntityDTO);
         log.debug("Created Information for Commit: {}", commitEntity);
         return commitEntityRepository.save(commitEntity);
+    }
+
+    public Optional<CommitEntity> findOneBySha(String sha) {
+        return commitEntityRepository.findOneBySha(sha);
+    }
+
+    public List<CommitEntity> bulkAdd(List<CommitEntityDTO> listCommitDTO) {
+        return commitEntityRepository.insert(listCommitDTO.stream().map(this::buildNewCommitItem).toList());
+    }
+
+    public void deleteAll() {
+        commitEntityRepository.deleteAll();
+    }
+
+    private CommitEntity buildNewCommitItem(CommitEntityDTO commitEntityDTO) {
+        RepositoryDTO repository = new RepositoryDTO();
+        repository.setName(commitEntityDTO.getRepoName());
+        repository.setOwner(commitEntityDTO.getOwner());
+
+        CommitEntity commit = new CommitEntity();
+        commit.setSha(commitEntityDTO.getSha());
+        commit.setRepository(repository);
+
+        return commit;
     }
 }

@@ -2,14 +2,16 @@ package com.snail.sentinel.backend.service.dto;
 
 import jakarta.validation.constraints.NotNull;
 
-import java.util.Objects;
 
 public class CommitEntityDTO {
     @NotNull
     private String sha;
 
     @NotNull
-    private RepositoryDTO repositoryDTO;
+    private String repoName;
+
+    @NotNull
+    private String owner;
 
     public String getSha() {
         return sha;
@@ -19,32 +21,19 @@ public class CommitEntityDTO {
         this.sha = sha;
     }
 
-    public RepositoryDTO getRepositoryDTO() {
-        return repositoryDTO;
+    public String getRepoName() {
+        return repoName;
     }
 
-    public void setRepositoryDTO(RepositoryDTO repositoryDTO) {
-        this.repositoryDTO = repositoryDTO;
+    public void setRepoName(String repoName) {
+        this.repoName = repoName;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CommitEntityDTO commitEntityDTO = (CommitEntityDTO) o;
-        return Objects.equals(sha, commitEntityDTO.sha) && Objects.equals(repositoryDTO, commitEntityDTO.repositoryDTO);
+    public String getOwner() {
+        return owner;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(sha, repositoryDTO);
-    }
-
-    @Override
-    public String toString() {
-        return "commitDTO{" +
-            "sha='" + sha + '\'' +
-            ", repository=" + repositoryDTO +
-            '}';
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 }
