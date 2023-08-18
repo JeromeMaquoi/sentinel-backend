@@ -3,8 +3,10 @@ package com.snail.sentinel.backend.service;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.snail.sentinel.backend.IntegrationTest;
+import com.snail.sentinel.backend.config.Constants;
 import com.snail.sentinel.backend.domain.User;
 import com.snail.sentinel.backend.repository.UserRepository;
+import com.snail.sentinel.backend.service.dto.AdminUserDTO;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -13,6 +15,8 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import tech.jhipster.security.RandomUtil;
 
 /**

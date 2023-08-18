@@ -23,10 +23,10 @@ public class CkEntityDTO implements Serializable {
     private String toolVersion;
 
     @NotNull
-    private CommitDTO commit;
+    private transient CommitEntityDTO commit;
 
     @NotNull
-    private MeasurableElementDTO measurableElementDTO;
+    private transient MeasurableElementDTO measurableElementDTO;
 
     public String getId() {
         return id;
@@ -60,11 +60,11 @@ public class CkEntityDTO implements Serializable {
         this.toolVersion = toolVersion;
     }
 
-    public CommitDTO getCommit() {
+    public CommitEntityDTO getCommit() {
         return commit;
     }
 
-    public void setCommit(CommitDTO commit) {
+    public void setCommit(CommitEntityDTO commit) {
         this.commit = commit;
     }
 

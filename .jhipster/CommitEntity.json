@@ -1,0 +1,17 @@
+{
+  "changelogDate": "20230818130620",
+  "entityTableName": "commit_entity",
+  "fields": [
+    {
+      "fieldName": "sha",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "name": "CommitEntity",
+  "pagination": "no",
+  "readOnly": false,
+  "relationships": [],
+  "searchEngine": "no",
+  "service": "no"
+}

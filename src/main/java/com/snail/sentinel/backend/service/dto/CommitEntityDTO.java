@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.Objects;
 
-public class CommitDTO {
+public class CommitEntityDTO {
     @NotNull
     private String sha;
 
@@ -31,8 +31,8 @@ public class CommitDTO {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CommitDTO commitDTO = (CommitDTO) o;
-        return Objects.equals(sha, commitDTO.sha) && Objects.equals(repositoryDTO, commitDTO.repositoryDTO);
+        CommitEntityDTO commitEntityDTO = (CommitEntityDTO) o;
+        return Objects.equals(sha, commitEntityDTO.sha) && Objects.equals(repositoryDTO, commitEntityDTO.repositoryDTO);
     }
 
     @Override

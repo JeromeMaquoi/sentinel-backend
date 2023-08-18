@@ -5,9 +5,9 @@ import { RouterModule } from '@angular/router';
   imports: [
     RouterModule.forChild([
       {
-        path: 'ck-entity',
-        data: { pageTitle: 'CkEntities' },
-        loadChildren: () => import('./ck-entity/ck-entity.routes'),
+        path: 'commit-entity',
+        data: { pageTitle: 'CommitEntities' },
+        loadChildren: () => import('./commit-entity/commit-entity.routes'),
       },
       /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
     ]),

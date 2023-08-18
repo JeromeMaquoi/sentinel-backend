@@ -14,6 +14,7 @@ import com.snail.sentinel.backend.security.AuthoritiesConstants;
 import com.snail.sentinel.backend.service.UserService;
 import com.snail.sentinel.backend.service.dto.AdminUserDTO;
 import com.snail.sentinel.backend.service.dto.PasswordChangeDTO;
+import com.snail.sentinel.backend.service.dto.UserDTO;
 import com.snail.sentinel.backend.web.rest.vm.KeyAndPasswordVM;
 import com.snail.sentinel.backend.web.rest.vm.ManagedUserVM;
 import java.time.Instant;
