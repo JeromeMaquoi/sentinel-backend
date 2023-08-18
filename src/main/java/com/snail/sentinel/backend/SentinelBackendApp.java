@@ -78,7 +78,7 @@ public class SentinelBackendApp implements CommandLineRunner {
     @Override
     public void run(String ...args){
         log.debug("EXECUTING : command line runner");
-        ckResource.insertCkData();
+        ckResource.insertAllData();
     }
 
     private static void logApplicationStartup(Environment env) {

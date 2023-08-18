@@ -1,9 +1,8 @@
 package com.snail.sentinel.backend;
 
-import com.snail.sentinel.backend.domain.CommitEntity;
 import com.snail.sentinel.backend.repository.CkEntityRepository;
 import com.snail.sentinel.backend.repository.CommitEntityRepository;
-import com.snail.sentinel.backend.service.CkEntityService;
+import com.snail.sentinel.backend.service.CkService;
 import com.snail.sentinel.backend.service.CommitService;
 import com.snail.sentinel.backend.service.dto.CommitEntityDTO;
 import org.springframework.stereotype.Service;
@@ -20,7 +19,7 @@ public class CkResource {
     private List<String> astElem = Arrays.asList("method", "class", "variable");
     private final List<HashMap<String, String>> repoData;
 
-    private final CkEntityService ckEntityService;
+    private final CkService ckService;
 
     private final CommitService commitService;
 
@@ -28,18 +27,18 @@ public class CkResource {
 
     private final CommitEntityRepository commitEntityRepository;
 
-    public CkResource(CkEntityService ckEntityService, CommitService commitService, CkEntityRepository ckEntityRepository, CommitEntityRepository commitEntityRepository) {
-        this.ckEntityService = ckEntityService;
+    public CkResource(CkService ckService, CommitService commitService, CkEntityRepository ckEntityRepository, CommitEntityRepository commitEntityRepository) {
+        this.ckService = ckService;
         this.commitService = commitService;
         this.ckEntityRepository = ckEntityRepository;
         this.commitEntityRepository = commitEntityRepository;
         this.repoData = new ArrayList<>();
     }
 
-    public void insertCkData() {
+    public void insertAllData() {
         setRepoData();
         insertCommits();
-
+        insertCkData();
     }
 
     public void setRepoData() {
@@ -57,9 +56,14 @@ public class CkResource {
         this.repoData.add(commonsConfiguration);
     }
 
+    public void insertCkData() {
+        ckService.deleteAll();
+
+    }
+
     public void insertCommits(){
         commitService.deleteAll();
-        List<CommitEntity> listCommits = commitService.bulkAdd(createCommitList());
+        commitService.bulkAdd(createCommitList());
     }
 
     public List<CommitEntityDTO> createCommitList() {
@@ -69,7 +73,6 @@ public class CkResource {
             commitEntityDTO.setOwner(item.get("owner"));
             commitEntityDTO.setRepoName(item.get("repo"));
             commitEntityDTO.setSha(item.get("sha"));
-
             newList.add(commitEntityDTO);
         }
         return newList;
