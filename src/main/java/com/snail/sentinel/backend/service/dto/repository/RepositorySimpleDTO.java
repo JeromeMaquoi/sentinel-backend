@@ -1,10 +1,10 @@
-package com.snail.sentinel.backend.service.dto;
+package com.snail.sentinel.backend.service.dto.repository;
 
 import jakarta.validation.constraints.NotNull;
 
 import java.util.Objects;
 
-public class RepositoryDTO {
+public class RepositorySimpleDTO {
     @NotNull
     private String name;
 
@@ -32,7 +32,7 @@ public class RepositoryDTO {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        RepositoryDTO that = (RepositoryDTO) o;
+        RepositorySimpleDTO that = (RepositorySimpleDTO) o;
         return Objects.equals(name, that.name) && Objects.equals(owner, that.owner);
     }
 

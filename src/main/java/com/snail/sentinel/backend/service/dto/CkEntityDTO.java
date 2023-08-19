@@ -1,5 +1,6 @@
 package com.snail.sentinel.backend.service.dto;
 
+import com.snail.sentinel.backend.service.dto.commit.CommitEntityDTO;
 import com.snail.sentinel.backend.service.dto.measurableelement.MeasurableElementDTO;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;

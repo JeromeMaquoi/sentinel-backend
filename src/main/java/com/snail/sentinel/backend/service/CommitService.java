@@ -2,8 +2,8 @@ package com.snail.sentinel.backend.service;
 
 import com.snail.sentinel.backend.domain.CommitEntity;
 import com.snail.sentinel.backend.repository.CommitEntityRepository;
-import com.snail.sentinel.backend.service.dto.CommitEntityDTO;
-import com.snail.sentinel.backend.service.dto.RepositoryDTO;
+import com.snail.sentinel.backend.service.dto.commit.CommitEntityDTO;
+import com.snail.sentinel.backend.service.dto.repository.RepositoryCompleteDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -40,9 +40,9 @@ public class CommitService {
     }
 
     private CommitEntity buildNewCommitItem(CommitEntityDTO commitEntityDTO) {
-        RepositoryDTO repository = new RepositoryDTO();
-        repository.setName(commitEntityDTO.getRepoName());
-        repository.setOwner(commitEntityDTO.getOwner());
+        RepositoryCompleteDTO repository = new RepositoryCompleteDTO();
+        repository.setName(commitEntityDTO.getRepositoryCompleteDTO().getName());
+        repository.setOwner(commitEntityDTO.getRepositoryCompleteDTO().getOwner());
 
         CommitEntity commit = new CommitEntity();
         commit.setSha(commitEntityDTO.getSha());

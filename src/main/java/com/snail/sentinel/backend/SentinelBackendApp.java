@@ -3,6 +3,8 @@ package com.snail.sentinel.backend;
 import com.snail.sentinel.backend.config.ApplicationProperties;
 import com.snail.sentinel.backend.config.CRLFLogConverter;
 import jakarta.annotation.PostConstruct;
+
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
@@ -76,7 +78,7 @@ public class SentinelBackendApp implements CommandLineRunner {
     }
 
     @Override
-    public void run(String ...args){
+    public void run(String ...args) throws IOException, InterruptedException {
         log.debug("EXECUTING : command line runner");
         ckResource.insertAllData();
     }

@@ -1,6 +1,6 @@
 package com.snail.sentinel.backend.domain;
 
-import com.snail.sentinel.backend.service.dto.CommitEntityDTO;
+import com.snail.sentinel.backend.service.dto.commit.CommitEntityDTO;
 import com.snail.sentinel.backend.service.dto.measurableelement.MeasurableElementDTO;
 import jakarta.validation.constraints.*;
 
