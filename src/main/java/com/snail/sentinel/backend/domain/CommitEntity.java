@@ -48,7 +48,7 @@ public class CommitEntity implements Serializable {
 
     @NotNull
     @Field("stats")
-    private StatsDTO stats;
+    private transient StatsDTO stats;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 

@@ -72,4 +72,16 @@ public class CommitEntityDTO {
     public void setStatsDTO(StatsDTO statsDTO) {
         this.statsDTO = statsDTO;
     }
+
+    @Override
+    public String toString() {
+        return "CommitEntityDTO{" +
+            "sha='" + sha + '\'' +
+            ", date='" + date + '\'' +
+            ", message='" + message + '\'' +
+            ", parentsSha=" + parentsSha +
+            ", repositoryCompleteDTO=" + repositoryCompleteDTO +
+            ", statsDTO=" + statsDTO +
+            '}';
+    }
 }

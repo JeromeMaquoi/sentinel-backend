@@ -24,4 +24,12 @@ public class StatsDTO {
     public void setDeletions(Integer deletions) {
         this.deletions = deletions;
     }
+
+    @Override
+    public String toString() {
+        return "StatsDTO{" +
+            "additions=" + additions +
+            ", deletions=" + deletions +
+            '}';
+    }
 }
