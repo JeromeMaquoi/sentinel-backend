@@ -1,8 +1,9 @@
 package com.snail.sentinel.backend.service;
 
+import com.snail.sentinel.backend.commons.Util;
 import com.snail.sentinel.backend.domain.CommitEntity;
 import com.snail.sentinel.backend.repository.CommitEntityRepository;
-import com.snail.sentinel.backend.service.dto.commit.CommitEntityDTO;
+import com.snail.sentinel.backend.service.dto.commit.CommitCompleteDTO;
 import com.snail.sentinel.backend.service.dto.commit.StatsDTO;
 import com.snail.sentinel.backend.service.dto.repository.RepositoryCompleteDTO;
 import org.json.JSONArray;
@@ -31,8 +32,8 @@ public class CommitService {
         this.commitEntityRepository = commitEntityRepository;
     }
 
-    public CommitEntity add(CommitEntityDTO commitEntityDTO) {
-        CommitEntity commitEntity = buildNewCommitItem(commitEntityDTO);
+    public CommitEntity add(CommitCompleteDTO commitCompleteDTO) {
+        CommitEntity commitEntity = buildNewCommitItem(commitCompleteDTO);
         log.debug("Created Information for Commit: {}", commitEntity);
         return commitEntityRepository.save(commitEntity);
     }
@@ -41,7 +42,7 @@ public class CommitService {
         return commitEntityRepository.findOneBySha(sha);
     }
 
-    public List<CommitEntity> bulkAdd(List<CommitEntityDTO> listCommitDTO) {
+    public List<CommitEntity> bulkAdd(List<CommitCompleteDTO> listCommitDTO) {
         return commitEntityRepository.insert(listCommitDTO.stream().map(this::buildNewCommitItem).toList());
     }
 
@@ -49,40 +50,40 @@ public class CommitService {
         commitEntityRepository.deleteAll();
     }
 
-    private CommitEntity buildNewCommitItem(CommitEntityDTO commitEntityDTO) {
+    private CommitEntity buildNewCommitItem(CommitCompleteDTO commitCompleteDTO) {
         CommitEntity commit = new CommitEntity();
-        commit.setSha(commitEntityDTO.getSha());
-        commit.setDate(commitEntityDTO.getDate());
-        commit.setMessage(commitEntityDTO.getMessage());
-        commit.setParentsSha(commitEntityDTO.getParentsSha());
-        commit.setRepository(commitEntityDTO.getRepositoryCompleteDTO());
-        commit.setStats(commitEntityDTO.getStatsDTO());
+        commit.setSha(commitCompleteDTO.getSha());
+        commit.setDate(commitCompleteDTO.getDate());
+        commit.setMessage(commitCompleteDTO.getMessage());
+        commit.setParentsSha(commitCompleteDTO.getParentsSha());
+        commit.setRepository(commitCompleteDTO.getRepositoryCompleteDTO());
+        commit.setStats(commitCompleteDTO.getStatsDTO());
         return commit;
     }
 
-    public CommitEntityDTO createDTO(Map<String, String> item, JSONObject jsonData) {
+    public CommitCompleteDTO createCommitEntityDTO(Map<String, String> item, JSONObject commitData) {
         RepositoryCompleteDTO repositoryCompleteDTO = new RepositoryCompleteDTO();
-        repositoryCompleteDTO.setName(item.get("name"));
-        repositoryCompleteDTO.setOwner(item.get("owner"));
-        repositoryCompleteDTO.setUrl(jsonData.getString("html_url").split("/commit")[0]);
+        repositoryCompleteDTO.setName(item.get(Util.NAME));
+        repositoryCompleteDTO.setOwner(item.get(Util.OWNER));
+        repositoryCompleteDTO.setUrl(commitData.getString("html_url").split("/commit")[0]);
 
         StatsDTO statsDTO = new StatsDTO();
-        statsDTO.setAdditions(parseInt(jsonData.getJSONObject("stats").get("additions").toString()));
-        statsDTO.setDeletions(parseInt(jsonData.getJSONObject("stats").get("deletions").toString()));
+        statsDTO.setAdditions(parseInt(commitData.getJSONObject("stats").get("additions").toString()));
+        statsDTO.setDeletions(parseInt(commitData.getJSONObject("stats").get("deletions").toString()));
 
-        CommitEntityDTO commitEntityDTO = new CommitEntityDTO();
-        commitEntityDTO.setSha(item.get("sha"));
-        commitEntityDTO.setDate(jsonData.getJSONObject("commit").getJSONObject("committer").getString("date"));
-        commitEntityDTO.setMessage(jsonData.getJSONObject("commit").getString("message"));
-        commitEntityDTO.setParentsSha(createParentsList(jsonData.getJSONArray("parents")));
-        commitEntityDTO.setRepositoryCompleteDTO(repositoryCompleteDTO);
-        commitEntityDTO.setStatsDTO(statsDTO);
-        return commitEntityDTO;
+        CommitCompleteDTO commitCompleteDTO = new CommitCompleteDTO();
+        commitCompleteDTO.setSha(item.get(Util.SHA));
+        commitCompleteDTO.setDate(commitData.getJSONObject("commit").getJSONObject("committer").getString("date"));
+        commitCompleteDTO.setMessage(commitData.getJSONObject("commit").getString("message"));
+        commitCompleteDTO.setParentsSha(createParentsList(commitData.getJSONArray("parents")));
+        commitCompleteDTO.setRepositoryCompleteDTO(repositoryCompleteDTO);
+        commitCompleteDTO.setStatsDTO(statsDTO);
+        return commitCompleteDTO;
     }
 
     private List<String> createParentsList(JSONArray parents) {
         return IntStream.range(0, parents.length())
-            .mapToObj(index -> ((JSONObject)parents.get(index)).optString("sha"))
+            .mapToObj(index -> ((JSONObject)parents.get(index)).optString(Util.SHA))
             .collect(Collectors.toList());
     }
 

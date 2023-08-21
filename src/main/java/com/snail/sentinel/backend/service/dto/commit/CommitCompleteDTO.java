@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 
-public class CommitEntityDTO {
+public class CommitCompleteDTO {
     @NotNull
     private String sha;
 

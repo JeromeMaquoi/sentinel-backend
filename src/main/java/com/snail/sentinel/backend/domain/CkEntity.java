@@ -1,6 +1,6 @@
 package com.snail.sentinel.backend.domain;
 
-import com.snail.sentinel.backend.service.dto.commit.CommitEntityDTO;
+import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
 import com.snail.sentinel.backend.service.dto.measurableelement.MeasurableElementDTO;
 import jakarta.validation.constraints.*;
 
@@ -38,7 +38,7 @@ public class CkEntity implements Serializable {
 
     @NotNull
     @Field("commit")
-    private transient CommitEntityDTO commit;
+    private transient CommitSimpleDTO commit;
 
     @NotNull
     @Field("measurable_element")
@@ -98,11 +98,11 @@ public class CkEntity implements Serializable {
         this.toolVersion = toolVersion;
     }
 
-    public CommitEntityDTO getCommit() {
+    public CommitSimpleDTO getCommit() {
         return commit;
     }
 
-    public void setCommit(CommitEntityDTO commit) {
+    public void setCommit(CommitSimpleDTO commit) {
         this.commit = commit;
     }
 

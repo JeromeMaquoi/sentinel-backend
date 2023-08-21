@@ -1,5 +1,6 @@
 package com.snail.sentinel.backend;
 
+import com.snail.sentinel.backend.commons.Util;
 import com.snail.sentinel.backend.domain.CkEntity;
 import com.snail.sentinel.backend.domain.CommitEntity;
 import com.snail.sentinel.backend.repository.CkEntityRepository;
@@ -7,7 +8,7 @@ import com.snail.sentinel.backend.repository.CommitEntityRepository;
 import com.snail.sentinel.backend.service.CkService;
 import com.snail.sentinel.backend.service.CommitService;
 import com.snail.sentinel.backend.service.dto.CkEntityDTO;
-import com.snail.sentinel.backend.service.dto.commit.CommitEntityDTO;
+import com.snail.sentinel.backend.service.dto.commit.CommitCompleteDTO;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,16 +45,20 @@ public class CkResource {
 
     public void insertAllData() throws Exception {
         setRepoData();
-        List<CommitEntityDTO> listCommits = new ArrayList<>();
+        List<CommitCompleteDTO> listCommits = new ArrayList<>();
         List<CkEntityDTO> listCks = new ArrayList<>();
         // For each repository
         for (HashMap<String, String> repoItem : repoData) {
-            JSONObject jsonData = commitService.getCommitData(repoItem.get("owner"), repoItem.get("name"), repoItem.get("sha"));
-            // Commit creation and adding to the list to be inserted into the DB
-            CommitEntityDTO commitEntityDTO = commitService.createDTO(repoItem, jsonData);
-            listCommits.add(commitEntityDTO);
+            JSONObject commitData = commitService.getCommitData(repoItem.get(Util.OWNER), repoItem.get(Util.NAME), repoItem.get(Util.SHA));
+
+            // Preparation of the Commit data to be inserted
+            CommitCompleteDTO commitCompleteDTO = commitService.createCommitEntityDTO(repoItem, commitData);
+            listCommits.add(commitCompleteDTO);
 
             // Preparation of the CK data to be inserted
+            CkEntityDTO ckEntityDTO = ckService.createCkEntityDTO(repoItem, commitCompleteDTO);
+            //log.debug("ckEntityDTO = " + ckEntityDTO.toString());
+            listCks.add(ckEntityDTO);
 
             // Preparation of the Joular data to be inserted
         }
@@ -62,20 +67,20 @@ public class CkResource {
 
     public void setRepoData() {
         HashMap<String, String> commonsLang = new HashMap<>();
-        commonsLang.put("owner", "apache");
-        commonsLang.put("name", "commons-lang");
-        commonsLang.put("sha", "9d85b0a11e5dbadd5da20865c3dd3f8ef4668c7d");
+        commonsLang.put(Util.OWNER, "apache");
+        commonsLang.put(Util.NAME, "commons-lang");
+        commonsLang.put(Util.SHA, "9d85b0a11e5dbadd5da20865c3dd3f8ef4668c7d");
 
         HashMap<String, String> commonsConfiguration = new HashMap<>();
-        commonsConfiguration.put("owner", "apache");
-        commonsConfiguration.put("name", "commons-configuration");
-        commonsConfiguration.put("sha", "c13339a580ba8d4d4c1a6eba743cba6b02a0abdf");
+        commonsConfiguration.put(Util.OWNER, "apache");
+        commonsConfiguration.put(Util.NAME, "commons-configuration");
+        commonsConfiguration.put(Util.SHA, "c13339a580ba8d4d4c1a6eba743cba6b02a0abdf");
 
         this.repoData.add(commonsLang);
         this.repoData.add(commonsConfiguration);
     }
 
-    public void insertCommits(List<CommitEntityDTO> listCommits) {
+    public void insertCommits(List<CommitCompleteDTO> listCommits) {
         commitService.deleteAll();
         List<CommitEntity> listCommitEntities = commitService.bulkAdd(listCommits);
         log.info("List commit entities = " + listCommitEntities.toString());
