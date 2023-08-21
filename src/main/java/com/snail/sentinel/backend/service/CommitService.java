@@ -100,7 +100,7 @@ public class CommitService {
     }
 
     private JSONObject getCommitData(String owner, String repoName, String sha) throws Exception {
-        String bearer = "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";
+        String bearer = System.getenv("GITHUB_TOKEN");
         String strUrl = "https://api.github.com/repos/" + owner + "/" + repoName + "/commits/" + sha;
         String response = getBufferedReader(strUrl, bearer);
         return new JSONObject(response);
