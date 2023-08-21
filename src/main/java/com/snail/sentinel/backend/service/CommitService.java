@@ -15,10 +15,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -63,17 +60,7 @@ public class CommitService {
         return commit;
     }
 
-    public List<CommitEntityDTO> createCommitList(List<HashMap<String, String>> repoData) throws Exception {
-        List<CommitEntityDTO> newList = new ArrayList<>();
-        for (HashMap<String, String> item : repoData) {
-            JSONObject jsonData = getCommitData(item.get("owner"), item.get("name"), item.get("sha"));
-            CommitEntityDTO commitEntityDTO = createCommitEntityDTO(item, jsonData);
-            newList.add(commitEntityDTO);
-        }
-        return newList;
-    }
-
-    private CommitEntityDTO createCommitEntityDTO(HashMap<String, String> item, JSONObject jsonData) {
+    public CommitEntityDTO createDTO(Map<String, String> item, JSONObject jsonData) {
         RepositoryCompleteDTO repositoryCompleteDTO = new RepositoryCompleteDTO();
         repositoryCompleteDTO.setName(item.get("name"));
         repositoryCompleteDTO.setOwner(item.get("owner"));
@@ -99,7 +86,7 @@ public class CommitService {
             .collect(Collectors.toList());
     }
 
-    private JSONObject getCommitData(String owner, String repoName, String sha) throws Exception {
+    public JSONObject getCommitData(String owner, String repoName, String sha) throws Exception {
         String bearer = System.getenv("GITHUB_TOKEN");
         String strUrl = "https://api.github.com/repos/" + owner + "/" + repoName + "/commits/" + sha;
         String response = getBufferedReader(strUrl, bearer);
