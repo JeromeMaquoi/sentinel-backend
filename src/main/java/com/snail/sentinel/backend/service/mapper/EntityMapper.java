@@ -1,19 +1,15 @@
 package com.snail.sentinel.backend.service.mapper;
 
-import java.util.List;
+import com.snail.sentinel.backend.domain.JoularEntity;
+import com.snail.sentinel.backend.service.dto.joular.JoularEntityDTO;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
-/**
- * Contract for a generic dto to entity mapper.
- *
- * @param <D> - DTO type parameter.
- * @param <E> - Entity type parameter.
- */
+import java.util.List;
 
-public interface EntityMapper<D, E> {
+public interface EntityMapper <D, E> {
     E toEntity(D dto);
 
     D toDto(E entity);
@@ -25,4 +21,6 @@ public interface EntityMapper<D, E> {
     @Named("partialUpdate")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void partialUpdate(@MappingTarget E entity, D dto);
+
+    JoularEntity toEntity(JoularEntityDTO joularEntityDTO);
 }

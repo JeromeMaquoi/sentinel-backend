@@ -2,6 +2,7 @@ package com.snail.sentinel.backend.service.dto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.snail.sentinel.backend.service.dto.ck.CkEntityDTO;
 import com.snail.sentinel.backend.web.rest.TestUtil;
 import org.junit.jupiter.api.Test;
 

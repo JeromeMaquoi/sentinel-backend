@@ -30,10 +30,10 @@ public class CkEntity implements Serializable {
 
     @NotNull
     @Field("value")
-    private Integer value;
+    private transient Object value;
 
     @NotNull
-    @Field("tool_version")
+    @Field("toolVersion")
     private String toolVersion;
 
     @NotNull
@@ -41,7 +41,7 @@ public class CkEntity implements Serializable {
     private transient CommitSimpleDTO commit;
 
     @NotNull
-    @Field("measurable_element")
+    @Field("measurableElement")
     private transient MeasurableElementDTO measurableElement;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
@@ -72,16 +72,16 @@ public class CkEntity implements Serializable {
         this.name = name;
     }
 
-    public Integer getValue() {
+    public Object getValue() {
         return this.value;
     }
 
-    public CkEntity value(Integer value) {
+    public CkEntity value( Double value) {
         this.setValue(value);
         return this;
     }
 
-    public void setValue(Integer value) {
+    public void setValue(Object value) {
         this.value = value;
     }
 

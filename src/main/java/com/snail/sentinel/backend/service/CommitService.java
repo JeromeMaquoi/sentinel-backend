@@ -56,7 +56,7 @@ public class CommitService {
         commit.setDate(commitCompleteDTO.getDate());
         commit.setMessage(commitCompleteDTO.getMessage());
         commit.setParentsSha(commitCompleteDTO.getParentsSha());
-        commit.setRepository(commitCompleteDTO.getRepositoryCompleteDTO());
+        commit.setRepository(commitCompleteDTO.getRepository());
         commit.setStats(commitCompleteDTO.getStatsDTO());
         return commit;
     }
@@ -76,7 +76,7 @@ public class CommitService {
         commitCompleteDTO.setDate(commitData.getJSONObject("commit").getJSONObject("committer").getString("date"));
         commitCompleteDTO.setMessage(commitData.getJSONObject("commit").getString("message"));
         commitCompleteDTO.setParentsSha(createParentsList(commitData.getJSONArray("parents")));
-        commitCompleteDTO.setRepositoryCompleteDTO(repositoryCompleteDTO);
+        commitCompleteDTO.setRepository(repositoryCompleteDTO);
         commitCompleteDTO.setStatsDTO(statsDTO);
         return commitCompleteDTO;
     }

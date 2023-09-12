@@ -1,38 +1,16 @@
 package com.snail.sentinel.backend.service.dto.measurableelement;
 
-import jakarta.validation.constraints.NotNull;
+public interface MeasurableElementDTO {
 
-public class MeasurableElementDTO {
-    @NotNull
-    private String astElem;
+    public abstract String getAstElem();
 
-    @NotNull
-    private String filePath;
+    public abstract void setAstElem(String astElem);
 
-    @NotNull
-    private String className;
+    public abstract String getFilePath();
 
-    public String getAstElem() {
-        return astElem;
-    }
+    public abstract void setFilePath(String filePath);
 
-    public void setAstElem(String astElem) {
-        this.astElem = astElem;
-    }
+    public abstract String getClassName();
 
-    public String getFilePath() {
-        return filePath;
-    }
-
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
-    }
-
-    public String getClassName() {
-        return className;
-    }
-
-    public void setClassName(String className) {
-        this.className = className;
-    }
+    public abstract void setClassName(String className);
 }

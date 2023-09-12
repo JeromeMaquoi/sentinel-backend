@@ -1,4 +1,4 @@
-package com.snail.sentinel.backend.service.dto;
+package com.snail.sentinel.backend.service.dto.ck;
 
 import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
 import com.snail.sentinel.backend.service.dto.measurableelement.MeasurableElementDTO;
@@ -18,7 +18,7 @@ public class CkEntityDTO implements Serializable {
     private String name;
 
     @NotNull
-    private Integer value;
+    private  transient Object value;
 
     @NotNull
     private String toolVersion;
@@ -45,11 +45,11 @@ public class CkEntityDTO implements Serializable {
         this.name = name;
     }
 
-    public Integer getValue() {
+    public Object getValue() {
         return value;
     }
 
-    public void setValue(Integer value) {
+    public void setValue(Object value) {
         this.value = value;
     }
 

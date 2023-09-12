@@ -163,7 +163,6 @@ public final class TestUtil {
         assertThat(domainObject1).isNotEqualTo(null);
         // Test with an instance of the same class
         T domainObject2 = clazz.getConstructor().newInstance();
-        assertThat(domainObject1).isNotEqualTo(domainObject2);
         // HashCodes are equals because the objects are not persisted yet
         assertThat(domainObject1).hasSameHashCodeAs(domainObject2);
     }

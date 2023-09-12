@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.Objects;
 
-public class MethodElementDTO implements MeasurableElementDTO {
+public class ClassElementDTO implements MeasurableElementDTO {
     @NotNull
     private String astElem;
 
@@ -15,7 +15,7 @@ public class MethodElementDTO implements MeasurableElementDTO {
     private String className;
 
     @NotNull
-    private String methodSignature;
+    private String classType;
 
     @Override
     public String getAstElem() {
@@ -47,34 +47,34 @@ public class MethodElementDTO implements MeasurableElementDTO {
         this.className = className;
     }
 
-    public String getMethodSignature() {
-        return methodSignature;
+    public String getClassType() {
+        return classType;
     }
 
-    public void setMethodSignature(String methodSignature) {
-        this.methodSignature = methodSignature;
+    public void setClassType(String classType) {
+        this.classType = classType;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        MethodElementDTO that = (MethodElementDTO) o;
-        return Objects.equals(astElem, that.astElem) && Objects.equals(filePath, that.filePath) && Objects.equals(className, that.className) && Objects.equals(methodSignature, that.methodSignature);
+        ClassElementDTO that = (ClassElementDTO) o;
+        return Objects.equals(astElem, that.astElem) && Objects.equals(filePath, that.filePath) && Objects.equals(className, that.className) && Objects.equals(classType, that.classType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(astElem, filePath, className, methodSignature);
+        return Objects.hash(astElem, filePath, className, classType);
     }
 
     @Override
     public String toString() {
-        return "MethodElementDTO{" +
+        return "ClassElementDTO{" +
             "astElem='" + astElem + '\'' +
             ", filePath='" + filePath + '\'' +
             ", className='" + className + '\'' +
-            ", methodSignature='" + methodSignature + '\'' +
+            ", classType='" + classType + '\'' +
             '}';
     }
 }

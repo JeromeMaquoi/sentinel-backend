@@ -10,7 +10,7 @@ public class CommitSimpleDTO {
     private String sha;
 
     @NotNull
-    private RepositorySimpleDTO repositorySimpleDTO;
+    private RepositorySimpleDTO repository;
 
     public String getSha() {
         return sha;
@@ -20,12 +20,12 @@ public class CommitSimpleDTO {
         this.sha = sha;
     }
 
-    public RepositorySimpleDTO getRepositorySimpleDTO() {
-        return repositorySimpleDTO;
+    public RepositorySimpleDTO getRepository() {
+        return repository;
     }
 
-    public void setRepositorySimpleDTO(RepositorySimpleDTO repositorySimpleDTO) {
-        this.repositorySimpleDTO = repositorySimpleDTO;
+    public void setRepository(RepositorySimpleDTO repository) {
+        this.repository = repository;
     }
 
     @Override
@@ -33,19 +33,19 @@ public class CommitSimpleDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CommitSimpleDTO that = (CommitSimpleDTO) o;
-        return Objects.equals(sha, that.sha) && Objects.equals(repositorySimpleDTO, that.repositorySimpleDTO);
+        return Objects.equals(sha, that.sha) && Objects.equals(repository, that.repository);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(sha, repositorySimpleDTO);
+        return Objects.hash(sha, repository);
     }
 
     @Override
     public String toString() {
         return "CommitSimpleDTO{" +
             "sha='" + sha + '\'' +
-            ", repositorySimpleDTO=" + repositorySimpleDTO +
+            ", repositorySimpleDTO=" + repository +
             '}';
     }
 }

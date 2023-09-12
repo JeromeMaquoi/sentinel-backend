@@ -39,7 +39,7 @@ public class CommitEntity implements Serializable {
     private String message;
 
     @NotNull
-    @Field("parents_sha")
+    @Field("parentsSha")
     private List<String> parentsSha;
 
     @NotNull

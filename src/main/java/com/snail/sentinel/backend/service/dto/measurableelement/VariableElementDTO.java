@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.Objects;
 
-public class MethodElementDTO implements MeasurableElementDTO {
+public class VariableElementDTO implements MeasurableElementDTO {
     @NotNull
     private String astElem;
 
@@ -16,6 +16,9 @@ public class MethodElementDTO implements MeasurableElementDTO {
 
     @NotNull
     private String methodSignature;
+
+    @NotNull
+    private String variableName;
 
     @Override
     public String getAstElem() {
@@ -55,26 +58,35 @@ public class MethodElementDTO implements MeasurableElementDTO {
         this.methodSignature = methodSignature;
     }
 
+    public String getVariableName() {
+        return variableName;
+    }
+
+    public void setVariableName(String variableName) {
+        this.variableName = variableName;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        MethodElementDTO that = (MethodElementDTO) o;
-        return Objects.equals(astElem, that.astElem) && Objects.equals(filePath, that.filePath) && Objects.equals(className, that.className) && Objects.equals(methodSignature, that.methodSignature);
+        VariableElementDTO that = (VariableElementDTO) o;
+        return Objects.equals(astElem, that.astElem) && Objects.equals(filePath, that.filePath) && Objects.equals(className, that.className) && Objects.equals(methodSignature, that.methodSignature) && Objects.equals(variableName, that.variableName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(astElem, filePath, className, methodSignature);
+        return Objects.hash(astElem, filePath, className, methodSignature, variableName);
     }
 
     @Override
     public String toString() {
-        return "MethodElementDTO{" +
+        return "VariableElementDTO{" +
             "astElem='" + astElem + '\'' +
             ", filePath='" + filePath + '\'' +
             ", className='" + className + '\'' +
             ", methodSignature='" + methodSignature + '\'' +
+            ", variableName='" + variableName + '\'' +
             '}';
     }
 }

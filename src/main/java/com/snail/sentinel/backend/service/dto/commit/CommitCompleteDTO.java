@@ -20,7 +20,7 @@ public class CommitCompleteDTO {
     private List<String> parentsSha;
 
     @NotNull
-    private RepositoryCompleteDTO repositoryCompleteDTO;
+    private RepositoryCompleteDTO repository;
 
     @NotNull
     private StatsDTO statsDTO;
@@ -57,12 +57,12 @@ public class CommitCompleteDTO {
         this.parentsSha = parentsSha;
     }
 
-    public RepositoryCompleteDTO getRepositoryCompleteDTO() {
-        return repositoryCompleteDTO;
+    public RepositoryCompleteDTO getRepository() {
+        return repository;
     }
 
-    public void setRepositoryCompleteDTO(RepositoryCompleteDTO repositoryCompleteDTO) {
-        this.repositoryCompleteDTO = repositoryCompleteDTO;
+    public void setRepository(RepositoryCompleteDTO repository) {
+        this.repository = repository;
     }
 
     public StatsDTO getStatsDTO() {
@@ -80,7 +80,7 @@ public class CommitCompleteDTO {
             ", date='" + date + '\'' +
             ", message='" + message + '\'' +
             ", parentsSha=" + parentsSha +
-            ", repositoryCompleteDTO=" + repositoryCompleteDTO +
+            ", repositoryCompleteDTO=" + repository +
             ", statsDTO=" + statsDTO +
             '}';
     }
