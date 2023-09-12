@@ -56,7 +56,8 @@ public class CkResource {
 
             // Preparation of the Joular data to be inserted
             CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO = ckService.aggregate(repoItem.get(Util.NAME));
-            JoularEntityListDTO joularEntityDTOList = joularServiceImpl.createJoularEntityDTOList(repoItem, ckAggregateLineHashMapDTO, commitCompleteDTO);
+            String iterationPath = System.getenv("REPO_PATH") + repoItem.get(Util.NAME) + "/joularjx-result";
+            JoularEntityListDTO joularEntityDTOList = joularServiceImpl.createJoularEntityDTOList(ckAggregateLineHashMapDTO, commitCompleteDTO, iterationPath);
             insertJoularData(joularEntityDTOList);
 
             log.info("Ending for the repository: {}", repoItem);
