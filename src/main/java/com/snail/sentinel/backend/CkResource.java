@@ -37,7 +37,7 @@ public class CkResource {
     }
 
     public void insertAllData() throws Exception {
-        //ckService.deleteAll();
+        ckService.deleteAll();
         joularServiceImpl.deleteAll();
         setRepoData();
         List<CommitCompleteDTO> listCommits = new ArrayList<>();
@@ -47,11 +47,12 @@ public class CkResource {
 
             // Preparation of the Commit data to be inserted
             CommitCompleteDTO commitCompleteDTO = commitService.createCommitEntityDTO(repoItem, commitData);
-            //listCommits.add(commitCompleteDTO);
+            listCommits.add(commitCompleteDTO);
 
             // Preparation and insertion of CK data
-            //List<CkEntityDTO> ckEntityDTOList = ckService.createCkEntityDTOList(repoItem, commitCompleteDTO);
-            //insertCkData(ckEntityDTOList);
+            String csvPath = System.getenv("REPO_PATH") + repoItem.get(Util.NAME) + "/output-ck/";
+            List<CkEntityDTO> ckEntityDTOList = ckService.createCkEntityDTOList(commitCompleteDTO, csvPath);
+            insertCkData(ckEntityDTOList);
 
             // Preparation of the Joular data to be inserted
             CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO = ckService.aggregate(repoItem.get(Util.NAME));
@@ -60,7 +61,7 @@ public class CkResource {
 
             log.info("Ending for the repository: {}", repoItem);
         }
-        //insertCommits(listCommits);
+        insertCommits(listCommits);
 
     }
 

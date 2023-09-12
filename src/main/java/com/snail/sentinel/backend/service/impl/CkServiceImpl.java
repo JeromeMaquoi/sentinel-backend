@@ -19,7 +19,6 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.snail.sentinel.backend.commons.Util.getMeasurableElement;
@@ -65,20 +64,8 @@ public class CkServiceImpl implements CkEntityService {
         return ckEntityRepositoryAggregationImpl.aggregate(repoName);
     }
 
-    public CkEntity buildNewCkEntity(CkEntityDTO ckEntityDTO) {
-        CkEntity newCk = new CkEntity();
-        newCk.setName(ckEntityDTO.getName());
-        newCk.setValue(ckEntityDTO.getValue());
-        newCk.setToolVersion(ckEntityDTO.getToolVersion());
-        newCk.setCommit(ckEntityDTO.getCommit());
-        newCk.setMeasurableElement(ckEntityDTO.getMeasurableElementDTO());
-        log.debug("Created Information for Ck: {}", newCk);
-        return newCk;
-    }
-
-    public List<CkEntityDTO> createCkEntityDTOList(Map<String, String> repoItem, CommitCompleteDTO commitCompleteDTO) throws IOException {
+    public List<CkEntityDTO> createCkEntityDTOList(CommitCompleteDTO commitCompleteDTO, String csvPath) throws IOException {
         List<CkEntityDTO> listCkEntityDTO = new ArrayList<>();
-        String csvPath = System.getenv("REPO_PATH") + repoItem.get(Util.NAME) + "/output-ck/";
         for (String astElem: Arrays.asList(Util.AST_ELEM_CLASS, Util.AST_ELEM_METHOD, Util.AST_ELEM_VARIABLE)) {
             String csvCkPath = csvPath + astElem + ".csv";
             List<JSONObject> allLines = Util.readCsvToJson(csvCkPath);
