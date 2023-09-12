@@ -65,10 +65,9 @@ public class JoularServiceImpl implements JoularEntityService {
         joularEntityRepository.deleteAll();
     }
 
-    public JoularEntityListDTO createJoularEntityDTOList(Map<String, String> repoItem, CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO, CommitCompleteDTO commitCompleteDTO) {
+    public JoularEntityListDTO createJoularEntityDTOList(CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO, CommitCompleteDTO commitCompleteDTO, String iterationPath) {
         log.info("Request to create JoularEntityDTO list");
         JoularEntityListDTO joularEntityDTOList = new JoularEntityListDTO();
-        String iterationPath = System.getenv("REPO_PATH") + repoItem.get(Util.NAME) + "/joularjx-result";
         Set<Path> fileList = Util.getFileList(iterationPath);
         for (Path filePath: fileList) {
             JoularEntityListDTO iterationJoularDTOList = createJoularEntityDTOListForOneIteration(filePath, ckAggregateLineHashMapDTO, commitCompleteDTO);
