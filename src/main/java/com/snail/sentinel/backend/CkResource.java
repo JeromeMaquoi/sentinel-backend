@@ -60,7 +60,7 @@ public class CkResource {
             JoularEntityListDTO joularEntityDTOList = joularServiceImpl.createJoularEntityDTOList(ckAggregateLineHashMapDTO, commitCompleteDTO, iterationPath);
             insertJoularData(joularEntityDTOList);
 
-            log.info("Ending for the repository: {}", repoItem);
+            log.info("Ending for the repository: {}", repoItem.get(Util.NAME));
         }
         insertCommits(listCommits);
 

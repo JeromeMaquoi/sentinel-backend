@@ -77,7 +77,7 @@ public class JoularServiceImpl implements JoularEntityService {
     }
 
     private JoularEntityListDTO createJoularEntityDTOListForOneIteration(Path iterationDirPath, CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO, CommitCompleteDTO commitCompleteDTO) {
-        System.out.println(iterationDirPath);
+        log.info(String.valueOf(iterationDirPath));
         JoularEntityListDTO joularEntityDTOList = new JoularEntityListDTO();
         MethodElementSetDTO methodElementSetDTO = new MethodElementSetDTO();
 

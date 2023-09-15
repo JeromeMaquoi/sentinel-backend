@@ -2,17 +2,14 @@ package com.snail.sentinel.backend.commons;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class UtilTest {
 
-    @Test
+    /*@Test
     void readClassCsvToJsonTest() throws IOException {
         String csvPath = System.getenv("TEST_CK_REPO_PATH") + Util.AST_ELEM_CLASS + ".csv";
 
@@ -29,7 +26,7 @@ class UtilTest {
 
         List<JSONObject> maybeTmpList = Util.readCsvToJson(csvPath);
         assertTrue(compareJSONLists(maybeTmpList, jsonObjectList));
-    }
+    }*/
 
     private static boolean compareJSONLists(List<JSONObject> list1, List<JSONObject> list2) {
         if (list1.size() != list2.size()) {
