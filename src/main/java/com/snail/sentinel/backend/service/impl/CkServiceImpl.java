@@ -48,9 +48,9 @@ public class CkServiceImpl implements CkEntityService {
 
     @Override
     public List<CkEntityDTO> bulkAdd(List<CkEntityDTO> listCk) {
-        log.info("Request to save a list of CkEntity");
         List<CkEntity> listEntity = ckEntityMapper.toEntity(listCk);
         listEntity = ckEntityRepository.insert(listEntity);
+        log.info("{} size batch inserted to the DB", listCk.size());
         return ckEntityMapper.toDto(listEntity);
     }
 
@@ -64,8 +64,8 @@ public class CkServiceImpl implements CkEntityService {
         return ckEntityRepositoryAggregationImpl.aggregate(repoName);
     }
 
-    public List<CkEntityDTO> createCkEntityDTOList(CommitCompleteDTO commitCompleteDTO, String csvPath) throws IOException {
-        List<CkEntityDTO> listCkEntityDTO = new ArrayList<>();
+    public void insertBatchCkEntityDTO(CommitCompleteDTO commitCompleteDTO, String csvPath, int batchSize) throws IOException {
+        List<CkEntityDTO> batch = new ArrayList<>();
         for (String astElem: Arrays.asList(Util.AST_ELEM_CLASS, Util.AST_ELEM_METHOD, Util.AST_ELEM_VARIABLE)) {
             String csvCkPath = csvPath + astElem + ".csv";
             List<JSONObject> allLines = Util.readCsvToJson(csvCkPath);
@@ -73,13 +73,19 @@ public class CkServiceImpl implements CkEntityService {
                 for (String metric: line.keySet()) {
                     if (!Arrays.asList(Util.FILE, Util.AST_ELEM_CLASS, Util.AST_ELEM_METHOD, "type", Util.AST_ELEM_VARIABLE).contains(metric)) {
                         CkEntityDTO ckEntityDTO = createCkEntityDTOForList(astElem, line, commitCompleteDTO, metric);
-                        listCkEntityDTO.add(ckEntityDTO);
+                        batch.add(ckEntityDTO);
+
+                        if (batch.size() >= batchSize) {
+                            this.bulkAdd(batch);
+                            batch.clear();
+                        }
                     }
                 }
             }
         }
-        log.info("List of CkEntityDTO created");
-        return listCkEntityDTO;
+        if (!batch.isEmpty()) {
+            this.bulkAdd(batch);
+        }
     }
 
     public CkEntityDTO createCkEntityDTOForList(String astElem, JSONObject line, CommitCompleteDTO commitCompleteDTO, String metric) {

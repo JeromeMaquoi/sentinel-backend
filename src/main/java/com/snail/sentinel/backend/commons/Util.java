@@ -37,6 +37,7 @@ public class Util {
     public static final String OWNER = "owner";
     public static final String NAME = "name";
     public static final String SHA = "sha";
+    public static final String COMPLEXITY = "complexity";
 
     public static final String AST_ELEM_METHOD = "method";
     public static final String AST_ELEM_CLASS = "class";

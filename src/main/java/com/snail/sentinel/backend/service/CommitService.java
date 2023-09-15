@@ -62,10 +62,10 @@ public class CommitService {
         return commit;
     }
 
-    public CommitCompleteDTO createCommitEntityDTO(Map<String, String> item, JSONObject commitData) {
+    public CommitCompleteDTO createCommitEntityDTO(Map<String, String> repoItem, JSONObject commitData) {
         RepositoryCompleteDTO repositoryCompleteDTO = new RepositoryCompleteDTO();
-        repositoryCompleteDTO.setName(item.get(Util.NAME));
-        repositoryCompleteDTO.setOwner(item.get(Util.OWNER));
+        repositoryCompleteDTO.setName(repoItem.get(Util.NAME));
+        repositoryCompleteDTO.setOwner(repoItem.get(Util.OWNER));
         repositoryCompleteDTO.setUrl(commitData.getString("html_url").split("/commit")[0]);
 
         StatsDTO statsDTO = new StatsDTO();
@@ -73,7 +73,7 @@ public class CommitService {
         statsDTO.setDeletions(parseInt(commitData.getJSONObject("stats").get("deletions").toString()));
 
         CommitCompleteDTO commitCompleteDTO = new CommitCompleteDTO();
-        commitCompleteDTO.setSha(item.get(Util.SHA));
+        commitCompleteDTO.setSha(repoItem.get(Util.SHA));
         commitCompleteDTO.setDate(commitData.getJSONObject("commit").getJSONObject("committer").getString("date"));
         commitCompleteDTO.setMessage(commitData.getJSONObject("commit").getString("message"));
         commitCompleteDTO.setParentsSha(createParentsList(commitData.getJSONArray("parents")));
