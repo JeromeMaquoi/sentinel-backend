@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -169,5 +170,21 @@ public class Util {
         repositorySimpleDTO.setOwner(commitCompleteDTO.getRepository().getOwner());
         commitSimpleDTO.setRepository(repositorySimpleDTO);
         return commitSimpleDTO;
+    }
+
+    public static List<File> searchDirectories(String name, File root) {
+        List<File> result = new ArrayList<>();
+
+        for (File file : Objects.requireNonNull(root.listFiles())) {
+            if (file.isDirectory()) {
+                if (file.getName().equals(name)) {
+                    result.add(file);
+                }
+
+                result.addAll(searchDirectories(name, file));
+            }
+        }
+
+        return result;
     }
 }

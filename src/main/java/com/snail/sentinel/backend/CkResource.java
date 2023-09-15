@@ -1,6 +1,7 @@
 package com.snail.sentinel.backend;
 
 import com.snail.sentinel.backend.commons.Util;
+import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineHashMapDTO;
 import com.snail.sentinel.backend.service.dto.joular.JoularEntityListDTO;
 import com.snail.sentinel.backend.service.impl.CkServiceImpl;
 import com.snail.sentinel.backend.service.CommitService;
@@ -12,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,15 +50,20 @@ public class CkResource {
             CommitCompleteDTO commitCompleteDTO = commitService.createCommitEntityDTO(repoItem, commitData);
             listCommits.add(commitCompleteDTO);
 
-            // Preparation and insertion of CK data
-            String csvPath = System.getenv("REPO_PATH") + repoItem.get(Util.NAME) + "/output-ck/";
-            ckService.insertBatchCkEntityDTO(commitCompleteDTO, csvPath, Integer.parseInt(System.getenv("BATCH_SIZE")));
+            // Insertion of CK data
+            /*String csvPath = System.getenv("REPO_PATH") + repoItem.get(Util.NAME) + "/output-ck/";
+            ckService.insertBatchCkEntityDTO(commitCompleteDTO, csvPath, Integer.parseInt(System.getenv("BATCH_SIZE")));*/
 
-            // Preparation of the Joular data to be inserted
-            /*CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO = ckService.aggregate(repoItem.get(Util.NAME));
-            String iterationPath = System.getenv("REPO_PATH") + repoItem.get(Util.NAME) + "/joularjx-result";
-            JoularEntityListDTO joularEntityDTOList = joularServiceImpl.createJoularEntityDTOList(ckAggregateLineHashMapDTO, commitCompleteDTO, iterationPath);
-            insertJoularData(joularEntityDTOList);*/
+            // Insertion of Joular data
+            CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO = ckService.aggregate(repoItem.get(Util.NAME));
+            List<File> iterationPaths = Util.searchDirectories("joularjx-result", new File(System.getenv("REPO_PATH") + repoItem.get(Util.NAME)));
+
+            for (File iterationFilePath : iterationPaths) {
+                String iterationPath = iterationFilePath.getAbsolutePath();
+                log.info(iterationPath);
+                JoularEntityListDTO joularEntityDTOList = joularServiceImpl.createJoularEntityDTOList(ckAggregateLineHashMapDTO, commitCompleteDTO, iterationPath);
+                insertJoularData(joularEntityDTOList);
+            }
 
             log.info("Ending for the repository: {}", repoItem.get(Util.NAME));
         }
