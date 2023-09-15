@@ -1,7 +1,6 @@
 package com.snail.sentinel.backend;
 
 import com.snail.sentinel.backend.commons.Util;
-import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineHashMapDTO;
 import com.snail.sentinel.backend.service.dto.joular.JoularEntityListDTO;
 import com.snail.sentinel.backend.service.impl.CkServiceImpl;
 import com.snail.sentinel.backend.service.CommitService;
@@ -38,7 +37,7 @@ public class CkResource {
 
     public void insertAllData() throws Exception {
         ckService.deleteAll();
-        joularServiceImpl.deleteAll();
+        //joularServiceImpl.deleteAll();
         setRepoData();
         List<CommitCompleteDTO> listCommits = new ArrayList<>();
         // For each repository
@@ -51,14 +50,13 @@ public class CkResource {
 
             // Preparation and insertion of CK data
             String csvPath = System.getenv("REPO_PATH") + repoItem.get(Util.NAME) + "/output-ck/";
-            List<CkEntityDTO> ckEntityDTOList = ckService.createCkEntityDTOList(commitCompleteDTO, csvPath);
-            insertCkData(ckEntityDTOList);
+            ckService.insertBatchCkEntityDTO(commitCompleteDTO, csvPath, Integer.parseInt(System.getenv("BATCH_SIZE")));
 
             // Preparation of the Joular data to be inserted
-            CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO = ckService.aggregate(repoItem.get(Util.NAME));
+            /*CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO = ckService.aggregate(repoItem.get(Util.NAME));
             String iterationPath = System.getenv("REPO_PATH") + repoItem.get(Util.NAME) + "/joularjx-result";
             JoularEntityListDTO joularEntityDTOList = joularServiceImpl.createJoularEntityDTOList(ckAggregateLineHashMapDTO, commitCompleteDTO, iterationPath);
-            insertJoularData(joularEntityDTOList);
+            insertJoularData(joularEntityDTOList);*/
 
             log.info("Ending for the repository: {}", repoItem.get(Util.NAME));
         }
@@ -71,14 +69,23 @@ public class CkResource {
         commonsLang.put(Util.OWNER, "apache");
         commonsLang.put(Util.NAME, "commons-lang");
         commonsLang.put(Util.SHA, "9d85b0a11e5dbadd5da20865c3dd3f8ef4668c7d");
+        commonsLang.put(Util.COMPLEXITY, "simple");
 
         HashMap<String, String> commonsConfiguration = new HashMap<>();
         commonsConfiguration.put(Util.OWNER, "apache");
         commonsConfiguration.put(Util.NAME, "commons-configuration");
         commonsConfiguration.put(Util.SHA, "c13339a580ba8d4d4c1a6eba743cba6b02a0abdf");
+        commonsConfiguration.put(Util.COMPLEXITY, "simple");
+
+        HashMap<String, String> springBoot = new HashMap<>();
+        springBoot.put(Util.OWNER, "spring-projects");
+        springBoot.put(Util.NAME, "spring-boot");
+        springBoot.put(Util.SHA, "9edc7723129ae3c56db332691c0d1d49db7d32d0");
+        springBoot.put(Util.COMPLEXITY, "complex");
 
         this.repoData.add(commonsLang);
         this.repoData.add(commonsConfiguration);
+        this.repoData.add(springBoot);
     }
 
     public void insertCommits(List<CommitCompleteDTO> listCommits) {
