@@ -1,10 +1,14 @@
 # This configuration is intended for development purpose, it's **your** responsibility to harden it for production
-name: sentinelbackend
 services:
   app:
     image: sentinelbackend
+    volumes:
+      - /$REPO_PATH:/$REPO_PATH
     environment:
-      - _JAVA_OPTIONS=-Xmx512m -Xms256m
+      - GITHUB_TOKEN=$GITHUB_TOKEN
+      - TEST_CK_REPO_PATH=$TEST_CK_REPO_PATH
+      - REPO_PATH=$REPO_PATH
+      - _JAVA_OPTIONS=-Xmx1024m -Xms1024m
       - SPRING_PROFILES_ACTIVE=prod,api-docs
       - MANAGEMENT_PROMETHEUS_METRICS_EXPORT_ENABLED=true
       - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/sentinelBackend
