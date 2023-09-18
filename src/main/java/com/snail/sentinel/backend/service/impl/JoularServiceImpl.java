@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.regex.Pattern;
 
 import static com.snail.sentinel.backend.commons.Util.getMeasurableElement;
 import static java.lang.Integer.parseInt;
@@ -54,9 +55,9 @@ public class JoularServiceImpl implements JoularEntityService {
 
     @Override
     public List<JoularEntityDTO> bulkAdd(List<JoularEntityDTO> listJoular) {
-        log.info("Request to save a list of JoularEntity");
         List<JoularEntity> listEntity = joularEntityMapper.toEntity(listJoular);
         listEntity = joularEntityRepository.insert(listEntity);
+        log.info("{} size JoularEntity list inserted to the DB", listEntity.size());
         return joularEntityMapper.toDto(listEntity);
     }
 
@@ -77,10 +78,8 @@ public class JoularServiceImpl implements JoularEntityService {
     }
 
     private JoularEntityListDTO createJoularEntityDTOListForOneIteration(Path iterationDirPath, CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO, CommitCompleteDTO commitCompleteDTO) {
-        log.info(String.valueOf(iterationDirPath));
         JoularEntityListDTO joularEntityDTOList = new JoularEntityListDTO();
         MethodElementSetDTO methodElementSetDTO = new MethodElementSetDTO();
-
 
         String csvPathFileName = iterationDirPath.getFileName().toString();
         IterationDTO iterationDTO = createIterationDTOFromCsvFileName(csvPathFileName);
@@ -89,25 +88,28 @@ public class JoularServiceImpl implements JoularEntityService {
             List<JSONObject> allLines = Util.readCsvWithoutHeaderToJson(csvPath.toString());
             for (JSONObject line: allLines) {
                 String metric = line.keySet().iterator().next();
-                Float value = line.getFloat(metric);
-                JSONObject classMethodLine = getClassMethodLine(metric);
-                CkAggregateLineDTO matchedCkJoular = getMatchCkJoular(classMethodLine, ckAggregateLineHashMapDTO);
-                if (matchedCkJoular != null) {
-                    CommitSimpleDTO commitSimpleDTO = Util.createCommitSimpleFromCommitCompleteDTO(commitCompleteDTO);
-                    JoularEntityDTO joularEntityDTO = new JoularEntityDTO();
-                    MethodElementDTO methodElementDTO = (MethodElementDTO) getMeasurableElement("method", matchedCkJoular);
+                String regex = "^([+-]?\\d*\\.?\\d*)$";
+                if (Pattern.matches(regex, line.getString(metric))) {
+                    Float value = line.getFloat(metric);
+                    JSONObject classMethodLine = getClassMethodLine(metric);
+                    CkAggregateLineDTO matchedCkJoular = getMatchCkJoular(classMethodLine, ckAggregateLineHashMapDTO);
+                    if (matchedCkJoular != null) {
+                        CommitSimpleDTO commitSimpleDTO = Util.createCommitSimpleFromCommitCompleteDTO(commitCompleteDTO);
+                        JoularEntityDTO joularEntityDTO = new JoularEntityDTO();
+                        MethodElementDTO methodElementDTO = (MethodElementDTO) getMeasurableElement("method", matchedCkJoular);
 
-                    if (methodElementSetDTO.has(methodElementDTO)){
-                        joularEntityDTOList.update(methodElementDTO, value);
-                    } else {
-                        methodElementSetDTO.add(methodElementDTO);
-                        joularEntityDTO.setIterationDTO(iterationDTO);
-                        joularEntityDTO.setCommitSimpleDTO(commitSimpleDTO);
-                        joularEntityDTO.setScope("app");
-                        joularEntityDTO.setMonitoringType("total");
-                        joularEntityDTO.setValue(value);
-                        joularEntityDTO.setMethodElementDTO(methodElementDTO);
-                        joularEntityDTOList.add(joularEntityDTO);
+                        if (methodElementSetDTO.has(methodElementDTO)){
+                            joularEntityDTOList.update(methodElementDTO, value);
+                        } else {
+                            methodElementSetDTO.add(methodElementDTO);
+                            joularEntityDTO.setIterationDTO(iterationDTO);
+                            joularEntityDTO.setCommitSimpleDTO(commitSimpleDTO);
+                            joularEntityDTO.setScope("app");
+                            joularEntityDTO.setMonitoringType("total");
+                            joularEntityDTO.setValue(value);
+                            joularEntityDTO.setMethodElementDTO(methodElementDTO);
+                            joularEntityDTOList.add(joularEntityDTO);
+                        }
                     }
                 }
             }
@@ -131,7 +133,7 @@ public class JoularServiceImpl implements JoularEntityService {
                     }
                 }
             } else if (!methodName.contains("access$")) {
-                log.warn("No occurrence for {} {} at line {}", className, methodName, numberLine);
+                log.debug("No occurrence for {} {} at line {}", className, methodName, numberLine);
             }
         } /*else {
             log.warn("The number of line is negative for \"{}.{}\"", className, methodName);
