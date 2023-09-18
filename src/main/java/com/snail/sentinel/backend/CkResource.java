@@ -39,7 +39,7 @@ public class CkResource {
 
     public void insertAllData() throws Exception {
         ckService.deleteAll();
-        //joularServiceImpl.deleteAll();
+        joularServiceImpl.deleteAll();
         setRepoData();
         List<CommitCompleteDTO> listCommits = new ArrayList<>();
         // For each repository
@@ -51,8 +51,8 @@ public class CkResource {
             listCommits.add(commitCompleteDTO);
 
             // Insertion of CK data
-            /*String csvPath = System.getenv("REPO_PATH") + repoItem.get(Util.NAME) + "/output-ck/";
-            ckService.insertBatchCkEntityDTO(commitCompleteDTO, csvPath, Integer.parseInt(System.getenv("BATCH_SIZE")));*/
+            String csvPath = System.getenv("REPO_PATH") + repoItem.get(Util.NAME) + "/output-ck/";
+            ckService.insertBatchCkEntityDTO(commitCompleteDTO, csvPath, Integer.parseInt(System.getenv("BATCH_SIZE")));
 
             // Insertion of Joular data
             CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO = ckService.aggregate(repoItem.get(Util.NAME));
