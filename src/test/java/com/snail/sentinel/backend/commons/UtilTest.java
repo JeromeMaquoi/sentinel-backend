@@ -33,7 +33,7 @@ class UtilTest {
 
     @Test
     void readCsvWithoutHeaderToJsonTest() throws IOException {
-        String csvPath = "src/test/resources/joular-csv-test/joular-test.csv";
+        String csvPath = "src/test/resources/joular-csv-test/app/total/methods/joularJX-424172-filtered-methods-energy.csv";
 
         JSONObject line1 = new JSONObject();
         line1.put("org.springframework.boot.context.properties.bind.JavaBeanBinder$BeanProperties$$Lambda$4902/0x0000000802bbbc10.<init> -1", "0.0457");
