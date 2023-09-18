@@ -1,0 +1,2 @@
+file,class,method,constructor,line,cbo,cboModified,fanin,fanout,hasJavaDoc
+/home/jerome/Documents/Assistant/Recherche/open-source-repositories/commons-lang/src/test/java/org/apache/commons/lang3/concurrent/TimedSemaphoreTest.java,org.apache.commons.lang3.concurrent.TimedSemaphoreTest$SemaphoreThread,"SemaphoreThread/4[org.apache.commons.lang3.concurrent.TimedSemaphore,java.util.concurrent.CountDownLatch,int,int]",true,495,1,4,4,0,false
