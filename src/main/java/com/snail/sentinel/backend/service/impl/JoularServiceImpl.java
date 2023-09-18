@@ -119,7 +119,7 @@ public class JoularServiceImpl implements JoularEntityService {
         return joularEntityDTOList;
     }
 
-    private CkAggregateLineDTO getMatchCkJoular(JSONObject classMethodLine, CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO) {
+    public CkAggregateLineDTO getMatchCkJoular(JSONObject classMethodLine, CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO) {
         String className = Util.classNameParser(classMethodLine.getString(CLASS_NAME));
         String methodName = Util.methodNameParser(className, classMethodLine.getString(METHOD_NAME));
         int numberLine = classMethodLine.getInt(LINE_NUMBER);
@@ -141,7 +141,7 @@ public class JoularServiceImpl implements JoularEntityService {
         return null;
     }
 
-    private IterationDTO createIterationDTOFromCsvFileName(String fileName) {
+    public IterationDTO createIterationDTOFromCsvFileName(String fileName) {
         Integer pid = parseInt(fileName.split("-")[0]);
         long startTimestamp = parseLong(fileName.split("-")[1]);
         return new IterationDTO(pid, startTimestamp);
