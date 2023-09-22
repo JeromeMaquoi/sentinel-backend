@@ -33,12 +33,12 @@ class UtilTest {
 
     @Test
     void readCsvWithoutHeaderToJsonTest() throws IOException {
-        String csvPath = "src/test/resources/joular-csv-test/app/total/methods/joularJX-424172-filtered-methods-energy.csv";
+        String csvPath = "src/test/resources/joular-csv-test/424172-1694770609086/app/total/methods/joularJX-424172-filtered-methods-energy.csv";
 
         JSONObject line1 = new JSONObject();
-        line1.put("org.springframework.boot.context.properties.bind.JavaBeanBinder$BeanProperties$$Lambda$4902/0x0000000802bbbc10.<init> -1", "0.0457");
+        line1.put("org.springframework.boot.context.config.ConfigDataLocationRuntimeHints.getFileNames 64", "1.032");
         JSONObject line2 = new JSONObject();
-        line2.put("org.springframework.boot.web.embedded.jetty.ForwardHeadersCustomizer.customize 34", "0.2357");
+        line2.put("org.springframework.boot.web.servlet.server.StaticResourceJars.isResourcesJar 127", "0.9245");
         List<JSONObject> jsonObjectList = new ArrayList<>();
         jsonObjectList.add(line1);
         jsonObjectList.add(line2);
