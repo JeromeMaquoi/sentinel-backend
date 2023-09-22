@@ -1,8 +1,7 @@
 package com.snail.sentinel.backend.service;
 
 import com.snail.sentinel.backend.commons.Util;
-import com.snail.sentinel.backend.repository.CkEntityRepository;
-import com.snail.sentinel.backend.repository.CkEntityRepositoryAggregationImpl;
+import com.snail.sentinel.backend.repository.*;
 import com.snail.sentinel.backend.service.dto.IterationDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineHashMapDTO;
@@ -14,23 +13,31 @@ import com.snail.sentinel.backend.service.dto.measurableelement.MethodElementDTO
 import com.snail.sentinel.backend.service.impl.CkServiceImpl;
 import com.snail.sentinel.backend.service.impl.JoularServiceImpl;
 import com.snail.sentinel.backend.service.mapper.CkEntityMapper;
+import com.snail.sentinel.backend.service.mapper.JoularEntityMapper;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import static java.lang.Long.parseLong;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 class JoularServiceImplTest {
+
+    private final Logger log = LoggerFactory.getLogger(JoularServiceImplTest.class);
+
     @Mock
     private CkEntityRepository ckEntityRepository;
+
     @Mock
     private CkEntityRepositoryAggregationImpl ckEntityRepositoryAggregationImpl;
 
@@ -40,16 +47,51 @@ class JoularServiceImplTest {
     @InjectMocks
     private CkServiceImpl ckService;
 
+    @Mock
+    private CommitEntityRepository commitEntityRepository;
+
     @InjectMocks
     private CommitService commitService;
+
+    @Mock
+    private JoularEntityRepository joularEntityRepository;
+
+    @Mock
+    private JoularEntityMapper joularEntityMapper;
 
     @InjectMocks
     private JoularServiceImpl joularService;
 
     @BeforeEach
     public void init() {
+        CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO = new CkAggregateLineHashMapDTO();
+        CkAggregateLineDTO ckAggregateLineDTO1 = new CkAggregateLineDTO();
+        ckAggregateLineDTO1.setClassName("org.springframework.boot.context.config.ConfigDataLocationRuntimeHints");
+        ckAggregateLineDTO1.setFilePath("filePath");
+        ckAggregateLineDTO1.setMethodSignature("getFileNames(arg1, arg2)");
+        ckAggregateLineDTO1.setLine(new ArrayList<>(){{add(63);}});
+        ckAggregateLineDTO1.setLoc(new ArrayList<>(){{add(5);}});
+
+        CkAggregateLineDTO ckAggregateLineDTO2 = new CkAggregateLineDTO();
+        ckAggregateLineDTO2.setClassName("org.springframework.boot.web.servlet.server.StaticResourceJars");
+        ckAggregateLineDTO2.setFilePath("filePath2");
+        ckAggregateLineDTO2.setMethodSignature("isResourcesJar(arg1)");
+        ckAggregateLineDTO2.setLine(new ArrayList<>(){{add(120);}});
+        ckAggregateLineDTO2.setLoc(new ArrayList<>(){{add(10);}});
+
+        ckAggregateLineHashMapDTO.insertOne(ckAggregateLineDTO1);
+        ckAggregateLineHashMapDTO.insertOne(ckAggregateLineDTO2);
+
         ckEntityRepository = Mockito.mock(CkEntityRepository.class);
+        ckEntityRepositoryAggregationImpl = Mockito.mock(CkEntityRepositoryAggregationImpl.class);
+        when(ckEntityRepositoryAggregationImpl.aggregate(Mockito.anyString())).thenReturn(ckAggregateLineHashMapDTO);
         ckService = new CkServiceImpl(ckEntityRepository, ckEntityMapper, ckEntityRepositoryAggregationImpl);
+
+        joularEntityRepository = Mockito.mock(JoularEntityRepository.class);
+        joularService = new JoularServiceImpl(joularEntityRepository, joularEntityMapper);
+
+        commitEntityRepository = Mockito.mock(CommitEntityRepository.class);
+        commitService = new CommitService(commitEntityRepository);
     }
 
     @Test
@@ -61,11 +103,12 @@ class JoularServiceImplTest {
         repoItem.put(Util.COMPLEXITY, "complex");
 
         CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO = ckService.aggregate("spring-boot");
+        log.info("ckAggregateLineHashMapDTO = {}", ckAggregateLineHashMapDTO);
 
         JSONObject commitData = commitService.getCommitData(repoItem.get(Util.OWNER), repoItem.get(Util.NAME), repoItem.get(Util.SHA));
         CommitCompleteDTO commitCompleteDTO = commitService.createCommitEntityDTO(repoItem, commitData);
 
-        String iterationPath = "src/test/resources/joular-csv-test/app/total/methods/";
+        String iterationPath = "src/test/resources/joular-csv-test/";
 
         JoularEntityListDTO maybeJoularEntityListDTO = joularService.createJoularEntityDTOList(ckAggregateLineHashMapDTO, commitCompleteDTO, iterationPath);
 
@@ -77,7 +120,10 @@ class JoularServiceImplTest {
         CommitSimpleDTO commitSimpleDTO = Util.createCommitSimpleFromCommitCompleteDTO(commitCompleteDTO);
 
         JSONObject classMethodLineOne = new JSONObject();
-        classMethodLineOne.put("org.springframework.boot.context.config.ConfigDataLocationRuntimeHints.getFileNames 64", "0.3167");
+        classMethodLineOne.put("methodName","getFileNames");
+        classMethodLineOne.put("className", "org.springframework.boot.context.config.ConfigDataLocationRuntimeHints");
+        classMethodLineOne.put("lineNumber", 64);
+
 
         CkAggregateLineDTO matchedCkJoularOne = joularService.getMatchCkJoular(classMethodLineOne, ckAggregateLineHashMapDTO);
         MethodElementDTO methodElementDTOOne = (MethodElementDTO) Util.getMeasurableElement("method", matchedCkJoularOne);
@@ -94,7 +140,9 @@ class JoularServiceImplTest {
         IterationDTO iterationDTOTwo = new IterationDTO(424172, parseLong("1694770609086"));
 
         JSONObject classMethodLineTwo = new JSONObject();
-        classMethodLineTwo.put("org.springframework.boot.context.config.ConfigDataLocationRuntimeHints.getFileNames 64", "1.032");
+        classMethodLineTwo.put("methodName","isResourcesJar");
+        classMethodLineTwo.put("className", "org.springframework.boot.web.servlet.server.StaticResourceJars");
+        classMethodLineTwo.put("lineNumber", 127);
 
         CkAggregateLineDTO matchedCkJoularTwo = joularService.getMatchCkJoular(classMethodLineTwo, ckAggregateLineHashMapDTO);
         MethodElementDTO methodElementDTOTwo = (MethodElementDTO) Util.getMeasurableElement("method", matchedCkJoularTwo);
@@ -103,12 +151,15 @@ class JoularServiceImplTest {
         expectedEntityDTOTwo.setCommitSimpleDTO(commitSimpleDTO);
         expectedEntityDTOTwo.setScope("app");
         expectedEntityDTOTwo.setMonitoringType("total");
-        expectedEntityDTOTwo.setValue(1.032F);
+        expectedEntityDTOTwo.setValue(0.9245F);
         expectedEntityDTOTwo.setMethodElementDTO(methodElementDTOTwo);
 
         expectedJoularEntityListDTO.add(expectedEntityDTOOne);
         expectedJoularEntityListDTO.add(expectedEntityDTOTwo);
 
-        assertThat(maybeJoularEntityListDTO).isEqualTo(expectedJoularEntityListDTO);
+        log.info("maybe = {}", maybeJoularEntityListDTO);
+        log.info("expected = {}", expectedJoularEntityListDTO);
+
+        assertEquals(maybeJoularEntityListDTO, expectedJoularEntityListDTO);
     }
 }
