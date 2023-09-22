@@ -73,11 +73,11 @@ class JoularServiceImplTest {
         ckAggregateLineDTO1.setLoc(new ArrayList<>(){{add(5);}});
 
         CkAggregateLineDTO ckAggregateLineDTO2 = new CkAggregateLineDTO();
-        ckAggregateLineDTO2.setClassName("org.springframework.boot.web.servlet.server.StaticResourceJars");
+        ckAggregateLineDTO2.setClassName("org.springframework.boot.testsupport.classpath.ModifiedClassPathClassLoader");
         ckAggregateLineDTO2.setFilePath("filePath2");
-        ckAggregateLineDTO2.setMethodSignature("isResourcesJar(arg1)");
-        ckAggregateLineDTO2.setLine(new ArrayList<>(){{add(120);}});
-        ckAggregateLineDTO2.setLoc(new ArrayList<>(){{add(10);}});
+        ckAggregateLineDTO2.setMethodSignature("loadClass(arg1)");
+        ckAggregateLineDTO2.setLine(new ArrayList<>(){{add(90);}});
+        ckAggregateLineDTO2.setLoc(new ArrayList<>(){{add(15);}});
 
         ckAggregateLineHashMapDTO.insertOne(ckAggregateLineDTO1);
         ckAggregateLineHashMapDTO.insertOne(ckAggregateLineDTO2);
@@ -140,9 +140,9 @@ class JoularServiceImplTest {
         IterationDTO iterationDTOTwo = new IterationDTO(424172, parseLong("1694770609086"));
 
         JSONObject classMethodLineTwo = new JSONObject();
-        classMethodLineTwo.put("methodName","isResourcesJar");
-        classMethodLineTwo.put("className", "org.springframework.boot.web.servlet.server.StaticResourceJars");
-        classMethodLineTwo.put("lineNumber", 127);
+        classMethodLineTwo.put("methodName","loadClass");
+        classMethodLineTwo.put("className", "org.springframework.boot.testsupport.classpath.ModifiedClassPathClassLoader");
+        classMethodLineTwo.put("lineNumber", 98);
 
         CkAggregateLineDTO matchedCkJoularTwo = joularService.getMatchCkJoular(classMethodLineTwo, ckAggregateLineHashMapDTO);
         MethodElementDTO methodElementDTOTwo = (MethodElementDTO) Util.getMeasurableElement("method", matchedCkJoularTwo);
@@ -151,14 +151,11 @@ class JoularServiceImplTest {
         expectedEntityDTOTwo.setCommitSimpleDTO(commitSimpleDTO);
         expectedEntityDTOTwo.setScope("app");
         expectedEntityDTOTwo.setMonitoringType("total");
-        expectedEntityDTOTwo.setValue(0.9245F);
+        expectedEntityDTOTwo.setValue(26.8692F);
         expectedEntityDTOTwo.setMethodElementDTO(methodElementDTOTwo);
 
         expectedJoularEntityListDTO.add(expectedEntityDTOOne);
         expectedJoularEntityListDTO.add(expectedEntityDTOTwo);
-
-        log.info("maybe = {}", maybeJoularEntityListDTO);
-        log.info("expected = {}", expectedJoularEntityListDTO);
 
         assertEquals(maybeJoularEntityListDTO, expectedJoularEntityListDTO);
     }

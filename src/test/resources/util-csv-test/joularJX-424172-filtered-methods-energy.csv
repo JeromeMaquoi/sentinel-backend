@@ -1,1 +1,2 @@
 org.springframework.boot.testsupport.classpath.ModifiedClassPathClassLoader.loadClass 98,26.8692
+org.springframework.boot.web.servlet.server.StaticResourceJars.isResourcesJar 127,0.9245
