@@ -105,13 +105,13 @@ public class JoularEntityDTO implements Serializable {
     @Override
     public String toString() {
         return "JoularEntityDTO{" +
-            "id='" + id + '\'' +
-            ", value=" + value +
-            ", scope='" + scope + '\'' +
-            ", monitoringType='" + monitoringType + '\'' +
-            ", methodElementDTO=" + methodElementDTO +
-            ", iterationDTO=" + iterationDTO +
-            ", commitSimpleDTO=" + commitSimpleDTO +
+            "\n    id='" + id + '\'' +
+            ", \n    value=" + value +
+            ", \n    scope='" + scope + '\'' +
+            ", \n    monitoringType='" + monitoringType + '\'' +
+            ", \n    methodElementDTO=" + methodElementDTO +
+            ", \n    iterationDTO=" + iterationDTO +
+            ", \n    commitSimpleDTO=" + commitSimpleDTO +
             '}';
     }
 }

@@ -38,7 +38,7 @@ public class CkAggregateLineHashMapDTO {
         return this.ckAggregateLineHashMapDTO.get(label);
     }
 
-    private void insertOne(CkAggregateLineDTO ckAggregateLineDTO) {
+    public void insertOne(CkAggregateLineDTO ckAggregateLineDTO) {
         String label = ckAggregateLineDTO.getLabel();
         this.ckAggregateLineHashMapDTO.put(label, ckAggregateLineDTO);
     }

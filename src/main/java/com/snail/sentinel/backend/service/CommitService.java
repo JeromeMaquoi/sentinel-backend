@@ -25,7 +25,7 @@ import static java.lang.Integer.parseInt;
 
 @Service
 public class CommitService {
-    private final Logger log = LoggerFactory.getLogger(CommitService.class);
+    private static final Logger log = LoggerFactory.getLogger(CommitService.class);
 
     private final CommitEntityRepository commitEntityRepository;
 
@@ -105,7 +105,7 @@ public class CommitService {
             .GET()
             .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        if (response.statusCode() != 200) {
+        if (response.statusCode() == 401) {
             throw new BadCredentialsException("Bad credentials for GitHub !");
         }
         return response.body();
