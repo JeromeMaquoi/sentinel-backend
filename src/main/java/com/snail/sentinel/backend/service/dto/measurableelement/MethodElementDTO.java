@@ -71,10 +71,10 @@ public class MethodElementDTO implements MeasurableElementDTO {
     @Override
     public String toString() {
         return "MethodElementDTO{" +
-            "astElem='" + astElem + '\'' +
-            ", filePath='" + filePath + '\'' +
-            ", className='" + className + '\'' +
-            ", methodSignature='" + methodSignature + '\'' +
-            '}';
+            "\n        astElem='" + astElem + '\'' +
+            ",\n        filePath='" + filePath + '\'' +
+            ",\n        className='" + className + '\'' +
+            ",\n        methodSignature='" + methodSignature + '\'' +
+            "\n    }\n";
     }
 }

@@ -112,6 +112,6 @@ public class JoularEntityDTO implements Serializable {
             ", \n    methodElementDTO=" + methodElementDTO +
             ", \n    iterationDTO=" + iterationDTO +
             ", \n    commitSimpleDTO=" + commitSimpleDTO +
-            '}';
+            "\n}\n\n";
     }
 }
