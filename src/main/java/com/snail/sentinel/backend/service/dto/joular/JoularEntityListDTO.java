@@ -49,8 +49,8 @@ public class JoularEntityListDTO {
     @Override
     public String toString() {
         return "JoularEntityListDTO{" +
-            "joularEntityDTOList=" + joularEntityDTOList +
-            '}';
+            "joularEntityDTOList=\n" + joularEntityDTOList +
+            "\n}";
     }
 
     @Override
