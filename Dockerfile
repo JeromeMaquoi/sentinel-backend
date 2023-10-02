@@ -22,21 +22,13 @@ RUN mkdir "plugins"
 RUN mkdir $REPO_DIR
 
 # Copy the scripts into the container
-COPY scripts/clone-repos.sh ./scripts
-COPY scripts/run-ck.sh ./scripts
-COPY scripts/run-joular.sh ./scripts
-COPY scripts/docker-sentinel.sh ./scripts
-COPY scripts/all-workflow.sh ./scripts
+COPY scripts/ ./scripts/
 
 # Copy CK and JoularJX plugins into the container
-COPY plugins/ck-0.7.1-SNAPSHOT-jar-with-dependencies.jar ./plugins
-COPY plugins/joularjx-2.0-modified.jar ./plugins
+COPY plugins/ ./plugins
 
 # Make the scripts executable
 WORKDIR ./scripts
 RUN chmod +x clone-repos.sh run-ck.sh run-joular.sh docker-sentinel.sh all-workflow.sh
 
 RUN ./all-workflow.sh
-
-# Start the entire workflow
-#CMD ["./all-workflow.sh"]
