@@ -8,34 +8,35 @@ RUN apt-get update && apt-get install -y \
     maven \
     gradle
 
-ARG REPO_PATH_ARG
-ENV REPO_PATH $REPO_PATH_ARG
+ENV JAVA_HOME=/usr/lib/jvm/java-19-openjdk-amd64
+ENV PATH=$JAVA_HOME/bin:$PATH
 
-RUN echo $REPO_PATH
+ARG REPO_DIR_ARG
+ENV REPO_DIR $REPO_DIR_ARG
 
 # Set the working directory
 WORKDIR ./
 
-RUN echo "Copy of the sh scripts started..."
-
 RUN mkdir "scripts"
+RUN mkdir "plugins"
+RUN mkdir $REPO_DIR
 
 # Copy the scripts into the container
 COPY scripts/clone-repos.sh ./scripts
 COPY scripts/run-ck.sh ./scripts
 COPY scripts/run-joular.sh ./scripts
 COPY scripts/docker-sentinel.sh ./scripts
+COPY scripts/all-workflow.sh ./scripts
 
-RUN echo "All sh scripts copied!"
+# Copy CK and JoularJX plugins into the container
+COPY plugins/ck-0.7.1-SNAPSHOT-jar-with-dependencies.jar ./plugins
+COPY plugins/joularjx-2.0-modified.jar ./plugins
 
 # Make the scripts executable
 WORKDIR ./scripts
-RUN chmod +x clone-repos.sh run-ck.sh run-joular.sh docker-sentinel.sh
+RUN chmod +x clone-repos.sh run-ck.sh run-joular.sh docker-sentinel.sh all-workflow.sh
 
-# Run the clone and analysis scripts
-#RUN ./clone-repos.sh
-#RUN ./run-ck-joularjx.sh
+RUN ./all-workflow.sh
 
 # Start the entire workflow
-CMD ["./clone-repos.sh"]
-#CMD ["./docker-sentinel.sh"]
+#CMD ["./all-workflow.sh"]
