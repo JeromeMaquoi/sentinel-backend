@@ -1,6 +1,6 @@
 #!/bin/bash
 
-config_file="/plugins/config.properties"
+config_file="$PLUGINS_DIRECTORY/config.properties"
 build_file_gradle="/plugins/build.gradle"
 
 # -----------
@@ -31,12 +31,12 @@ build_file_gradle="/plugins/build.gradle"
 #    echo -e "Test for iteration $i done!\n"
 #done
 
-
+cd "$REPO_DIRECTORY/commons-lang" || exit
 build_maven_commons_lang="$PLUGINS_DIRECTORY/commons-lang/pom.xml"
 package_commons_lang="filter-method-names=org.apache.commons.lang3"
 sed -i "17s/.*/${package_commons_lang}/" "$config_file"
-cp "$build_maven_commons_lang" .
-cp "$config_file" .
+cp "$build_maven_commons_lang" "$REPO_DIRECTORY/commons-lang"
+cp "$config_file" "$REPO_DIRECTORY/"commons-lang
 
 for i in {1..1}
 do
