@@ -33,11 +33,10 @@ build_file_gradle="/plugins/build.gradle"
 
 
 build_maven_commons_lang="/plugins/commons-lang/pom.xml"
-cd ~/Documents/Recherche/open-source-repositories/commons-lang || exit
 package_commons_lang="filter-method-names=org.apache.commons.lang3"
 sed -i "17s/.*/${package_commons_lang}/" "$config_file"
-cp "$build_maven_commons_lang" ~/Documents/Recherche/open-source-repositories/commons-lang
-cp "$config_file" ~/Documents/Recherche/open-source-repositories/commons-lang
+cp "$build_maven_commons_lang" .
+cp "$config_file" .
 
 for i in {1..1}
 do
