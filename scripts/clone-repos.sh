@@ -6,6 +6,8 @@
 #cd spring-boot || exit
 #git reset --hard 3ed1f1a064a10e53adc2ad8c0b46a4b2c148ee21 # release v3.1.4
 
+cd $REPO_DIRECTORY || exit
+echo "$PWD"
 git clone https://github.com/apache/commons-lang ./commons-lang
 echo "Repository commons-lang cloned successfully!"
 cd commons-lang || exit
