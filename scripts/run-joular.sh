@@ -32,7 +32,7 @@ build_file_gradle="/plugins/build.gradle"
 #done
 
 
-build_maven_commons_lang="/plugins/commons-lang/pom.xml"
+build_maven_commons_lang="$PLUGINS_DIRECTORY/commons-lang/pom.xml"
 package_commons_lang="filter-method-names=org.apache.commons.lang3"
 sed -i "17s/.*/${package_commons_lang}/" "$config_file"
 cp "$build_maven_commons_lang" .
