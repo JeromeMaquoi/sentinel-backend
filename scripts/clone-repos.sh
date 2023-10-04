@@ -6,8 +6,7 @@
 #cd spring-boot || exit
 #git reset --hard 3ed1f1a064a10e53adc2ad8c0b46a4b2c148ee21 # release v3.1.4
 
-cd ~/Documents/Recherche/open-source-repositories || exit
-git clone https://github.com/apache/commons-lang ~/Documents/Recherche/open-source-repositories/commons-lang
+git clone https://github.com/apache/commons-lang ./commons-lang
 echo "Repository commons-lang cloned successfully!"
 cd commons-lang || exit
 git reset --hard bcc10b359318397a4d12dbaef22b101725bc6323 # release v3.13.0
