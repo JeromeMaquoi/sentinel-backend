@@ -2,8 +2,8 @@
 
 sudo apt-get update && apt-get install -y openjdk-19-jdk maven gradle
 
+export REPO_DIRECTORY="/home/student/j/m/jmaquoi/Documents/Recherche/open-source-repositories"
 # Clone all the open source repositories
-cd ~/Documents/Recherche/open-source-repositories || exit
 echo "before clone-repos : $PWD"
 sudo bash ./clone-repos.sh
 
