@@ -7,8 +7,12 @@
 #git reset --hard 3ed1f1a064a10e53adc2ad8c0b46a4b2c148ee21 # release v3.1.4
 
 cd "$REPO_DIRECTORY" || exit
-git clone https://github.com/apache/commons-lang "$REPO_DIRECTORY/commons-lang"
-echo "Repository commons-lang cloned successfully!"
+if [ ! -d "commons-lang" ]; then
+    git clone https://github.com/apache/commons-lang "$REPO_DIRECTORY/commons-lang"
+    echo "Repository commons-lang cloned successfully!"
+else
+    echo "Repository already there!"
+fi
 cd commons-lang || exit
 git reset --hard bcc10b359318397a4d12dbaef22b101725bc6323 # release v3.13.0
 
