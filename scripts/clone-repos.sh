@@ -1,17 +1,16 @@
 #!/bin/bash
 
 # Clone repositories
-#cd /$REPO_DIR || exit
-#git clone https://github.com/spring-projects/spring-boot /$REPO_DIR/spring-boot
+#cd /open-source-repositories || exit
+#git clone https://github.com/spring-projects/spring-boot /open-source-repositories/spring-boot
 #cd spring-boot || exit
 #git reset --hard 3ed1f1a064a10e53adc2ad8c0b46a4b2c148ee21 # release v3.1.4
 
-echo "REPO_DIR = $REPO_DIR"
-#cd /$REPO_DIR || exit
-#git clone https://github.com/apache/commons-lang /$REPO_DIR/commons-lang
-#echo "Repository commons-lang cloned successfully!"
-#cd commons-lang || exit
-#git reset --hard bcc10b359318397a4d12dbaef22b101725bc6323 # release v3.13.0
+cd ~/Documents/Recherche/open-source-repositories || exit
+git clone https://github.com/apache/commons-lang ~/Documents/Recherche/open-source-repositories/commons-lang
+echo "Repository commons-lang cloned successfully!"
+cd commons-lang || exit
+git reset --hard bcc10b359318397a4d12dbaef22b101725bc6323 # release v3.13.0
 
 #cd .. || exit
 #if [ ! -d "jabref" ]; then
