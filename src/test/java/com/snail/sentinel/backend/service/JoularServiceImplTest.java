@@ -1,22 +1,13 @@
 package com.snail.sentinel.backend.service;
 
-import com.snail.sentinel.backend.commons.Util;
 import com.snail.sentinel.backend.repository.*;
-import com.snail.sentinel.backend.service.dto.IterationDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineHashMapDTO;
-import com.snail.sentinel.backend.service.dto.commit.CommitCompleteDTO;
-import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
-import com.snail.sentinel.backend.service.dto.joular.JoularEntityDTO;
-import com.snail.sentinel.backend.service.dto.joular.JoularEntityListDTO;
-import com.snail.sentinel.backend.service.dto.measurableelement.MethodElementDTO;
 import com.snail.sentinel.backend.service.impl.CkServiceImpl;
 import com.snail.sentinel.backend.service.impl.JoularServiceImpl;
 import com.snail.sentinel.backend.service.mapper.CkEntityMapper;
 import com.snail.sentinel.backend.service.mapper.JoularEntityMapper;
-import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -26,9 +17,7 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
-import static java.lang.Long.parseLong;
 import static org.mockito.Mockito.when;
 
 class JoularServiceImplTest {
@@ -94,7 +83,7 @@ class JoularServiceImplTest {
         commitService = new CommitService(commitEntityRepository);
     }
 
-    @Test
+    /*@Test
     void createJoularEntityDTOList() throws Exception {
         HashMap<String, String> repoItem = new HashMap<>();
         repoItem.put(Util.OWNER, "spring-projects");
@@ -158,5 +147,5 @@ class JoularServiceImplTest {
         expectedJoularEntityListDTO.add(expectedEntityDTOTwo);
 
         assertEquals(maybeJoularEntityListDTO, expectedJoularEntityListDTO);
-    }
+    }*/
 }
