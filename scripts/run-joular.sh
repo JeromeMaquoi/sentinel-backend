@@ -1,36 +1,43 @@
 #!/bin/bash
+NB_ITERATION=3
 
 config_file="$PLUGINS_DIRECTORY/config.properties"
-build_file_gradle="/plugins/build.gradle"
+build_file_gradle="$PLUGINS_DIRECTORY/build.gradle"
 
+:'
 # -----------
 # Spring-boot
 # -----------
+cd $REPO_DIRECTORY/spring-boot || exit
 
-#cd /$REPO_DIR/spring-boot || exit
 # Update config.properties
-#package_spring_boot="filter-method-names=org.springframework.boot"
-#sed -i "17s/.*/${package_spring_boot}/" "$config_file"
+package_spring_boot="filter-method-names=org.springframework.boot"
+sed -i "17s/.*/${package_spring_boot}/" "$config_file"
 
 # Update root build.gradle
-#cp "$build_file_gradle" /$REPO_DIR/spring-boot
+cp "$build_file_gradle" $REPO_DIRECTORY/spring-boot
 
 # Add config.properties for every subproject
-#find . -type f -name 'build.gradle' -exec dirname {} \; | while read dir; do
-#  if [ -d "$dir/src" ]; then
-#    echo "Copying config.properties to $dir"
-#    cp "$config_file" "$dir"
-#  fi
-#done
+find . -type f -name 'build.gradle' -exec dirname {} \; | while read dir; do
+  if [ -d "$dir/src" ]; then
+    echo "Copying config.properties to $dir"
+    cp "$config_file" "$dir"
+  fi
+done
 
 # Run tests 30 times
-#for i in {1..1}
-#do
-#    echo -e "Start test for iteration $i\n"
-#    ./gradlew test
-#    echo -e "Test for iteration $i done!\n"
-#done
+for ((i=1;i<=NB_ITERATION;i++))
+do
+    export ITERATION_ID=$i
+    echo -e "Start test for iteration $i\n"
+    ./gradlew test
+    echo -e "Test for iteration $i done!\n"
+done
 
+
+# ------------
+# commons-lang
+# ------------
 cd "$REPO_DIRECTORY/commons-lang" || exit
 build_maven_commons_lang="$PLUGINS_DIRECTORY/commons-lang/pom.xml"
 package_commons_lang="filter-method-names=org.apache.commons.lang3"
@@ -38,8 +45,28 @@ sed -i "17s/.*/${package_commons_lang}/" "$config_file"
 cp "$build_maven_commons_lang" "$REPO_DIRECTORY/commons-lang"
 cp "$config_file" "$REPO_DIRECTORY/"commons-lang
 
-for i in {1..1}
+for ((i=1;i<=NB_ITERATION;i++))
 do
+    export ITERATION_ID=$i
     echo -e "Start test for iteration $i\n"
     mvn test -Drat.skip=true
+done
+'
+
+# ---------------------
+# commons-configuration
+# ---------------------
+cd "$REPO_DIRECTORY/commons-configuration" || exit
+pwd
+build_maven_commons_configuration="$PLUGINS_DIRECTORY/commons-configuration/pom.xml"
+package_commons_configuration="filter-method-names=org.apache.commons.configuration2"
+sed -i "17s/.*/${package_commons_configuration}/" "$config_file"
+cp "$build_maven_commons_configuration" "$REPO_DIRECTORY/"commons-configuration
+cp "$config_file" "$REPO_DIRECTORY/"commons-configuration
+
+for ((i=1;i<=NB_ITERATION;i++))
+do
+    export ITERATION_ID=$i
+    echo -e "Start test for iteration $i\n"
+    mvn clean verify -Drat.skip=true
 done
