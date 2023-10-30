@@ -142,9 +142,10 @@ public class JoularServiceImpl implements JoularEntityService {
     }
 
     public IterationDTO createIterationDTOFromCsvFileName(String fileName) {
-        Integer pid = parseInt(fileName.split("-")[0]);
-        long startTimestamp = parseLong(fileName.split("-")[1]);
-        return new IterationDTO(pid, startTimestamp);
+        Integer iterationId = parseInt(fileName.split("-")[0]);
+        Integer pid = parseInt(fileName.split("-")[1]);
+        long startTimestamp = parseLong(fileName.split("-")[2]);
+        return new IterationDTO(iterationId, pid, startTimestamp);
     }
 
     private JSONObject getClassMethodLine(String metric) {

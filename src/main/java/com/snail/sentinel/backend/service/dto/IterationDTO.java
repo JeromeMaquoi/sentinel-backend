@@ -6,6 +6,9 @@ import java.util.Objects;
 
 public class IterationDTO {
     @NotNull
+    private Integer iterationId;
+
+    @NotNull
     private Integer pid;
 
     @NotNull
@@ -13,7 +16,8 @@ public class IterationDTO {
 
     public IterationDTO() {}
 
-    public IterationDTO(Integer pid, long startTimestamp) {
+    public IterationDTO(Integer iterationId, Integer pid, long startTimestamp) {
+        this.iterationId = iterationId;
         this.pid = pid;
         this.startTimestamp = startTimestamp;
     }
@@ -39,18 +43,19 @@ public class IterationDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         IterationDTO that = (IterationDTO) o;
-        return Objects.equals(pid, that.pid) && Objects.equals(startTimestamp, that.startTimestamp);
+        return startTimestamp == that.startTimestamp && Objects.equals(iterationId, that.iterationId) && Objects.equals(pid, that.pid);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(pid, startTimestamp);
+        return Objects.hash(iterationId, pid, startTimestamp);
     }
 
     @Override
     public String toString() {
         return "IterationDTO{" +
-            "pid=" + pid +
+            "iterationId=" + iterationId +
+            ", pid=" + pid +
             ", startTimestamp=" + startTimestamp +
             '}';
     }
