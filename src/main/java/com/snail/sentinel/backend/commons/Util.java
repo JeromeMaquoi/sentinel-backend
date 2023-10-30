@@ -171,17 +171,17 @@ public class Util {
 
     public static List<File> searchDirectories(String name, File root) {
         List<File> result = new ArrayList<>();
+        if (root.listFiles() != null) {
+            for (File file : root.listFiles()) {
+                if (file != null && file.isDirectory()) {
+                    if (file.getName().equals(name)) {
+                        result.add(file);
+                    }
 
-        for (File file : Objects.requireNonNull(root.listFiles())) {
-            if (file.isDirectory()) {
-                if (file.getName().equals(name)) {
-                    result.add(file);
+                    result.addAll(searchDirectories(name, file));
                 }
-
-                result.addAll(searchDirectories(name, file));
             }
         }
-
         return result;
     }
 }

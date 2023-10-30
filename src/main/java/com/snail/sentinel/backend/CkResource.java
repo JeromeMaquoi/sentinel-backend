@@ -44,6 +44,8 @@ public class CkResource {
         List<CommitCompleteDTO> listCommits = new ArrayList<>();
         // For each repository
         for (HashMap<String, String> repoItem : repoData) {
+            log.info("Beginning for repository : {}", repoItem.get(Util.NAME));
+
             JSONObject commitData = commitService.getCommitData(repoItem.get(Util.OWNER), repoItem.get(Util.NAME), repoItem.get(Util.SHA));
 
             // Preparation of the Commit data to be inserted
@@ -81,7 +83,7 @@ public class CkResource {
         HashMap<String, String> commonsConfiguration = new HashMap<>();
         commonsConfiguration.put(Util.OWNER, "apache");
         commonsConfiguration.put(Util.NAME, "commons-configuration");
-        commonsConfiguration.put(Util.SHA, "c13339a580ba8d4d4c1a6eba743cba6b02a0abdf");
+        commonsConfiguration.put(Util.SHA, "59e5152722198526c6ffe5361de7d1a6a87275c7");
         commonsConfiguration.put(Util.COMPLEXITY, "simple");
 
         HashMap<String, String> springBoot = new HashMap<>();
