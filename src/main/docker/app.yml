@@ -6,7 +6,6 @@ services:
       - /$REPO_PATH:/$REPO_PATH
     environment:
       - GITHUB_TOKEN=$GITHUB_TOKEN
-      - TEST_CK_REPO_PATH=$TEST_CK_REPO_PATH
       - REPO_PATH=$REPO_PATH
       - BATCH_SIZE=$BATCH_SIZE
       - _JAVA_OPTIONS=-Xmx1024m -Xms1024m
