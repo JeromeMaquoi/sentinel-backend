@@ -67,7 +67,7 @@ public class JoularServiceImpl implements JoularEntityService {
     }
 
     public JoularEntityListDTO createJoularEntityDTOList(CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO, CommitCompleteDTO commitCompleteDTO, String iterationPath) {
-        log.info("Request to create JoularEntityDTO list");
+        log.info("Request to create JoularEntityDTO list for {}", iterationPath);
         JoularEntityListDTO joularEntityDTOList = new JoularEntityListDTO();
         Set<Path> fileList = Util.getFileList(iterationPath);
         for (Path filePath: fileList) {
@@ -92,23 +92,25 @@ public class JoularServiceImpl implements JoularEntityService {
                 if (Pattern.matches(regex, line.getString(metric))) {
                     Float value = line.getFloat(metric);
                     JSONObject classMethodLine = getClassMethodLine(metric);
-                    CkAggregateLineDTO matchedCkJoular = getMatchCkJoular(classMethodLine, ckAggregateLineHashMapDTO);
-                    if (matchedCkJoular != null) {
-                        CommitSimpleDTO commitSimpleDTO = Util.createCommitSimpleFromCommitCompleteDTO(commitCompleteDTO);
-                        JoularEntityDTO joularEntityDTO = new JoularEntityDTO();
-                        MethodElementDTO methodElementDTO = (MethodElementDTO) getMeasurableElement("method", matchedCkJoular);
+                    if (classMethodLine != null) {
+                        CkAggregateLineDTO matchedCkJoular = getMatchCkJoular(classMethodLine, ckAggregateLineHashMapDTO);
+                        if (matchedCkJoular != null) {
+                            CommitSimpleDTO commitSimpleDTO = Util.createCommitSimpleFromCommitCompleteDTO(commitCompleteDTO);
+                            JoularEntityDTO joularEntityDTO = new JoularEntityDTO();
+                            MethodElementDTO methodElementDTO = (MethodElementDTO) getMeasurableElement("method", matchedCkJoular);
 
-                        if (methodElementSetDTO.has(methodElementDTO)){
-                            joularEntityDTOList.update(methodElementDTO, value);
-                        } else {
-                            methodElementSetDTO.add(methodElementDTO);
-                            joularEntityDTO.setIterationDTO(iterationDTO);
-                            joularEntityDTO.setCommitSimpleDTO(commitSimpleDTO);
-                            joularEntityDTO.setScope("app");
-                            joularEntityDTO.setMonitoringType("total");
-                            joularEntityDTO.setValue(value);
-                            joularEntityDTO.setMethodElementDTO(methodElementDTO);
-                            joularEntityDTOList.add(joularEntityDTO);
+                            if (methodElementSetDTO.has(methodElementDTO)){
+                                joularEntityDTOList.update(methodElementDTO, value);
+                            } else {
+                                methodElementSetDTO.add(methodElementDTO);
+                                joularEntityDTO.setIterationDTO(iterationDTO);
+                                joularEntityDTO.setCommitSimpleDTO(commitSimpleDTO);
+                                joularEntityDTO.setScope("app");
+                                joularEntityDTO.setMonitoringType("total");
+                                joularEntityDTO.setValue(value);
+                                joularEntityDTO.setMethodElementDTO(methodElementDTO);
+                                joularEntityDTOList.add(joularEntityDTO);
+                            }
                         }
                     }
                 }
@@ -151,12 +153,15 @@ public class JoularServiceImpl implements JoularEntityService {
     private JSONObject getClassMethodLine(String metric) {
         String className = metric.substring(0, metric.lastIndexOf('.'));
         String[] spaceSplit = metric.substring(metric.lastIndexOf('.') + 1).split(" ");
-        String methodName = spaceSplit[0];
-        int numberLine = parseInt(spaceSplit[1]);
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put(CLASS_NAME, className);
-        jsonObject.put(METHOD_NAME, methodName);
-        jsonObject.put(LINE_NUMBER, numberLine);
-        return jsonObject;
+        if (spaceSplit.length < 3) {
+            String methodName = spaceSplit[0];
+            int numberLine = parseInt(spaceSplit[1]);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put(CLASS_NAME, className);
+            jsonObject.put(METHOD_NAME, methodName);
+            jsonObject.put(LINE_NUMBER, numberLine);
+            return jsonObject;
+        }
+        return null;
     }
 }

@@ -62,7 +62,6 @@ public class CkResource {
 
             for (File iterationFilePath : iterationPaths) {
                 String iterationPath = iterationFilePath.getAbsolutePath();
-                log.info(iterationPath);
                 JoularEntityListDTO joularEntityDTOList = joularServiceImpl.createJoularEntityDTOList(ckAggregateLineHashMapDTO, commitCompleteDTO, iterationPath);
                 insertJoularData(joularEntityDTOList);
             }
