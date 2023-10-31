@@ -7,6 +7,7 @@ build_file_gradle="$PLUGINS_DIRECTORY/build.gradle"
 # -----------
 # Spring-boot
 # -----------
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 cd $REPO_DIRECTORY/spring-boot || exit
 
 # Update config.properties
@@ -29,7 +30,7 @@ for ((i=1;i<=NB_ITERATION;i++))
 do
     export ITERATION_ID=$i
     echo -e "Start test for iteration $i\n"
-    ./gradlew test
+    ./gradlew clean test
     echo -e "Test for iteration $i done!\n"
 done
 
@@ -37,6 +38,7 @@ done
 # ------------
 # commons-lang
 # ------------
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 cd "$REPO_DIRECTORY/commons-lang" || exit
 build_maven_commons_lang="$PLUGINS_DIRECTORY/commons-lang/pom.xml"
 package_commons_lang="filter-method-names=org.apache.commons.lang3"
@@ -48,13 +50,14 @@ for ((i=1;i<=NB_ITERATION;i++))
 do
     export ITERATION_ID=$i
     echo -e "Start test for iteration $i\n"
-    mvn test -Drat.skip=true
+    mvn clean test -Drat.skip=true
 done
 '
 
 # ---------------------
 # commons-configuration
 # ---------------------
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 cd "$REPO_DIRECTORY/commons-configuration" || exit
 build_maven_commons_configuration="$PLUGINS_DIRECTORY/commons-configuration/pom.xml"
 package_commons_configuration="filter-method-names=org.apache.commons.configuration2"
@@ -66,5 +69,6 @@ for ((i=1;i<=NB_ITERATION;i++))
 do
     export ITERATION_ID=$i
     echo -e "Start test for iteration $i\n"
-    mvn clean verify -Drat.skip=true
+    mvn test -Drat.skip=true
+    echo -e "\n\n\n"
 done

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#sudo apt-get update && apt-get install -y openjdk-19-jdk maven gradle
+sudo apt-get update && apt-get install -y openjdk-19-jdk openjdk-17-jdk openjdk-8-jdk maven gradle
 
 # Clone all the open source repositories
 sudo REPO_DIRECTORY="$REPO_DIRECTORY" bash ./clone-repos.sh
