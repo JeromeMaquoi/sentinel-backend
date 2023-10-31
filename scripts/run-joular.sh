@@ -1,5 +1,4 @@
 #!/bin/bash
-NB_ITERATION=3
 
 config_file="$PLUGINS_DIRECTORY/config.properties"
 build_file_gradle="$PLUGINS_DIRECTORY/build.gradle"
@@ -57,7 +56,6 @@ done
 # commons-configuration
 # ---------------------
 cd "$REPO_DIRECTORY/commons-configuration" || exit
-pwd
 build_maven_commons_configuration="$PLUGINS_DIRECTORY/commons-configuration/pom.xml"
 package_commons_configuration="filter-method-names=org.apache.commons.configuration2"
 sed -i "17s/.*/${package_commons_configuration}/" "$config_file"
