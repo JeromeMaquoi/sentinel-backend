@@ -1,8 +1,7 @@
 #!/bin/bash
 
 config_file="$PLUGINS_DIRECTORY/config.properties"
-build_file_gradle="$PLUGINS_DIRECTORY/build.gradle"
-:'
+
 # -----------
 # Spring-boot
 # -----------
@@ -13,8 +12,11 @@ cd "$REPO_DIRECTORY/spring-boot" || exit
 package_spring_boot="filter-method-names=org.springframework.boot"
 sed -i "17s/.*/${package_spring_boot}/" "$config_file"
 
-# Update root build.gradle
-cp "$build_file_gradle" "$REPO_DIRECTORY/spring-boot"
+# Update root build.gradle with joularjx plugin path
+build_gradle="$PLUGINS_DIRECTORY/build.gradle"
+line_number=$(grep -n -- "-javaagent" "$build_gradle" | cut -d: -f1)
+sed -i "${line_number}s|-javaagent.*|-javaagent:${PLUGINS_DIRECTORY}/joularjx-2.0-modified.jar\"|" "$build_gradle"
+cp "$build_gradle" "$REPO_DIRECTORY/spring-boot"
 
 # Add config.properties for every subproject
 find . -type f -name 'build.gradle' -exec dirname {} \; | while read dir; do
@@ -24,7 +26,7 @@ find . -type f -name 'build.gradle' -exec dirname {} \; | while read dir; do
   fi
 done
 
-# Run tests 30 times
+# Run tests with joular
 for ((i=1;i<=NB_ITERATION;i++))
 do
     export ITERATION_ID=$i
@@ -33,7 +35,7 @@ do
     echo -e "Test for iteration $i done!\n\n"
 done
 echo -e "\n\n\n\n"
-'
+
 
 # ------------
 # commons-lang
@@ -51,7 +53,7 @@ line_number=$(xmlstarlet sel -t -v "count(//profile[activation/jdk='[16,)'])" "$
 sed -i "${line_number}s|-javaagent.*|-javaagent:${PLUGINS_DIRECTORY}/joularjx-2.0-modified.jar|" "$build_maven_commons_lang"
 cp "$build_maven_commons_lang" "$REPO_DIRECTORY/commons-lang"
 
-# Run joular
+# Run tests with joular
 for ((i=1;i<=NB_ITERATION;i++))
 do
     export ITERATION_ID=$i
@@ -78,7 +80,7 @@ line_number=$(xmlstarlet sel -t -v "count(//profile[activation/jdk='[16,)'])" "$
 sed -i "${line_number}s|-javaagent.*|-javaagent:${PLUGINS_DIRECTORY}/joularjx-2.0-modified.jar|" "$build_maven_commons_configuration"
 cp "$build_maven_commons_configuration" "$REPO_DIRECTORY/"commons-configuration
 
-# Run joular
+# Run tests with joular
 for ((i=1;i<=NB_ITERATION;i++))
 do
     export ITERATION_ID=$i
