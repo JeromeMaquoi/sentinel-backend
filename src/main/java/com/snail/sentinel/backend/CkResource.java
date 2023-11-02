@@ -53,12 +53,12 @@ public class CkResource {
             listCommits.add(commitCompleteDTO);
 
             // Insertion of CK data
-            String csvPath = System.getenv("REPO_PATH") + repoItem.get(Util.NAME) + "/output-ck/";
+            String csvPath = System.getenv("REPO_DIRECTORY") + repoItem.get(Util.NAME) + "/output-ck/";
             ckService.insertBatchCkEntityDTO(commitCompleteDTO, csvPath, Integer.parseInt(System.getenv("BATCH_SIZE")));
 
             // Insertion of Joular data
             CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO = ckService.aggregate(repoItem.get(Util.NAME));
-            List<File> iterationPaths = Util.searchDirectories("joularjx-result", new File(System.getenv("REPO_PATH") + repoItem.get(Util.NAME)));
+            List<File> iterationPaths = Util.searchDirectories("joularjx-result", new File(System.getenv("REPO_DIRECTORY") + repoItem.get(Util.NAME)));
 
             for (File iterationFilePath : iterationPaths) {
                 String iterationPath = iterationFilePath.getAbsolutePath();

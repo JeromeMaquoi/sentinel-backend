@@ -4,9 +4,6 @@ cd ..
 export COMPOSE_PROJECT_NAME=sentinelbackend
 
 sudo ./mvnw clean
-#TODO supprimer token et le mettre en variable d'environnement
-export GITHUB_TOKEN=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
-export REPO_PATH=/home/jerome/Documents/Assistant/Recherche/open-source-repositories/
-export BATCH_SIZE=20000
+export $(grep -v '^#' .env | xargs)
 ./mvnw package -Pprod jib:dockerBuild
 docker-compose -f src/main/docker/app.yml up --build

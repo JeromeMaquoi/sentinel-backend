@@ -3,10 +3,10 @@ services:
   app:
     image: sentinelbackend
     volumes:
-      - /$REPO_PATH:/$REPO_PATH
+      - /$REPO_DIRECTORY:/$REPO_DIRECTORY
     environment:
       - GITHUB_TOKEN=$GITHUB_TOKEN
-      - REPO_PATH=$REPO_PATH
+      - REPO_DIRECTORY=$REPO_DIRECTORY
       - BATCH_SIZE=$BATCH_SIZE
       - _JAVA_OPTIONS=-Xmx1024m -Xms1024m
       - SPRING_PROFILES_ACTIVE=prod,api-docs
