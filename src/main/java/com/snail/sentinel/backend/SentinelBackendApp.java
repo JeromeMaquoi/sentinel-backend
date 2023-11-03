@@ -12,8 +12,6 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -23,14 +21,11 @@ import tech.jhipster.config.JHipsterConstants;
 
 @SpringBootApplication
 @EnableConfigurationProperties({ ApplicationProperties.class })
-public class SentinelBackendApp implements CommandLineRunner {
+public class SentinelBackendApp {
 
     private static final Logger log = LoggerFactory.getLogger(SentinelBackendApp.class);
 
     private final Environment env;
-
-    @Autowired
-    private CkResource ckResource;
 
     public SentinelBackendApp(Environment env) {
         this.env = env;
@@ -76,11 +71,11 @@ public class SentinelBackendApp implements CommandLineRunner {
         logApplicationStartup(env);
     }
 
-    @Override
+    /*@Override
     public void run(String ...args) throws Exception {
         log.info("UPDATE 3");
         ckResource.insertAllData();
-    }
+    }*/
 
     private static void logApplicationStartup(Environment env) {
         String protocol = Optional.ofNullable(env.getProperty("server.ssl.key-store")).map(key -> "https").orElse("http");
