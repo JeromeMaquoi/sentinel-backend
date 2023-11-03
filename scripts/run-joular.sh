@@ -2,6 +2,7 @@
 
 config_file="$PLUGINS_DIRECTORY/config.properties"
 
+:'
 # -----------
 # Spring-boot
 # -----------
@@ -62,6 +63,7 @@ do
     echo -e "\n\n"
 done
 echo -e "\n\n\n\n"
+'
 
 # ---------------------
 # commons-configuration

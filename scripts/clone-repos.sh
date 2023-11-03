@@ -6,6 +6,7 @@ cd "$REPO_DIRECTORY" || exit
 # spring-boot
 # -----------
 
+:'
 if [ ! -d "spring-boot" ]; then
     git clone https://github.com/spring-projects/spring-boot "$REPO_DIRECTORY/spring-boot"
     echo "Repository spring-boot cloned successfully!"
@@ -28,7 +29,7 @@ fi
 cd "$REPO_DIRECTORY/commons-lang" || exit
 git reset --hard bcc10b359318397a4d12dbaef22b101725bc6323 # release v3.13.0
 echo -e "\n\n"
-
+'
 
 # ---------------------
 # commons-configuration
