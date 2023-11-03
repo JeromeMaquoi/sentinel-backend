@@ -91,9 +91,9 @@ public class CkResource {
         springBoot.put(Util.SHA, "9edc7723129ae3c56db332691c0d1d49db7d32d0");
         springBoot.put(Util.COMPLEXITY, "complex");
 
-        this.repoData.add(commonsLang);
+        //this.repoData.add(commonsLang);
         this.repoData.add(commonsConfiguration);
-        this.repoData.add(springBoot);
+        //this.repoData.add(springBoot);
     }
 
     public void insertCommits(List<CommitCompleteDTO> listCommits) {
