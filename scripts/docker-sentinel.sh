@@ -4,6 +4,5 @@ cd ..
 export COMPOSE_PROJECT_NAME=sentinelbackend
 
 sudo ./mvnw clean
-export $(grep -v '^#' .env | xargs)
 ./mvnw package -Pprod jib:dockerBuild
 docker-compose -f src/main/docker/app.yml up --build
