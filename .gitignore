@@ -152,3 +152,4 @@ Desktop.ini
 /.nyc_output/
 .env
 plugins/totalTime.txt
+src/main/docker/.env.prod
