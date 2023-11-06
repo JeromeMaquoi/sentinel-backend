@@ -4,9 +4,11 @@ services:
     image: sentinelbackend
     volumes:
       - /$REPO_DIRECTORY:/$REPO_DIRECTORY
+      - /$PLUGINS_DIRECTORY:/$PLUGINS_DIRECTORY
     environment:
       - GITHUB_TOKEN=$GITHUB_TOKEN
       - REPO_DIRECTORY=$REPO_DIRECTORY
+      - PLUGINS_DIRECTORY=$PLUGINS_DIRECTORY
       - BATCH_SIZE=$BATCH_SIZE
       - _JAVA_OPTIONS=-Xmx1024m -Xms1024m
       - SPRING_PROFILES_ACTIVE=prod,api-docs

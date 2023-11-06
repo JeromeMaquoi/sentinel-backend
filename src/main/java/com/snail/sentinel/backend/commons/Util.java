@@ -177,11 +177,21 @@ public class Util {
                     if (file.getName().equals(name)) {
                         result.add(file);
                     }
-
                     result.addAll(searchDirectories(name, file));
                 }
             }
         }
         return result;
+    }
+
+    public static void writeTimeToFile(String lineToAdd) {
+        String filePath = System.getenv("PLUGINS_DIRECTORY") + "/totalTime.txt";
+        log.info("filePath = {}", filePath);
+        try (FileWriter fileWriter = new FileWriter(filePath, StandardCharsets.UTF_8, true)) {
+            fileWriter.write(lineToAdd);
+            log.info("Line added to totalTime.txt");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
