@@ -75,7 +75,7 @@ public class CkResource {
         insertCommits(listCommits);
 
         long totalTime = System.currentTimeMillis() - startTime;
-        String lineToAdd = "Insertion of all the data into the database: " + totalTime/1000 + " seconds";
+        String lineToAdd = "Insertion of all the data into the database: " + totalTime/1000 + " seconds\n";
         Util.writeTimeToFile(lineToAdd);
     }
 
