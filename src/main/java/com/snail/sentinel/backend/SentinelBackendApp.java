@@ -1,5 +1,6 @@
 package com.snail.sentinel.backend;
 
+import com.snail.sentinel.backend.commons.Util;
 import com.snail.sentinel.backend.config.ApplicationProperties;
 import com.snail.sentinel.backend.config.CRLFLogConverter;
 import jakarta.annotation.PostConstruct;
@@ -26,6 +27,8 @@ public class SentinelBackendApp {
     private static final Logger log = LoggerFactory.getLogger(SentinelBackendApp.class);
 
     private final Environment env;
+
+    private static long startTime;
 
     public SentinelBackendApp(Environment env) {
         this.env = env;
@@ -65,17 +68,16 @@ public class SentinelBackendApp {
      * @param args the command line arguments.
      */
     public static void main(String[] args) {
+        startTime = System.currentTimeMillis();
         SpringApplication app = new SpringApplication(SentinelBackendApp.class);
         DefaultProfileUtil.addDefaultProfile(app);
         Environment env = app.run(args).getEnvironment();
         logApplicationStartup(env);
-    }
 
-    /*@Override
-    public void run(String ...args) throws Exception {
-        log.info("UPDATE 3");
-        ckResource.insertAllData();
-    }*/
+        long totalTime = System.currentTimeMillis() - startTime;
+        String lineToAdd = "Starting the app inside the docker: " + totalTime/1000 + " seconds\n";
+        Util.writeTimeToFile(lineToAdd);
+    }
 
     private static void logApplicationStartup(Environment env) {
         String protocol = Optional.ofNullable(env.getProperty("server.ssl.key-store")).map(key -> "https").orElse("http");

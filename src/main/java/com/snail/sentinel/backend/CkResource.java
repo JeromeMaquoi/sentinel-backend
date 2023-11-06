@@ -30,6 +30,8 @@ public class CkResource {
 
     private final JoularServiceImpl joularServiceImpl;
 
+    private long startTime;
+
     public CkResource(CkServiceImpl ckService, CommitService commitService, JoularServiceImpl joularServiceImpl) {
         this.ckService = ckService;
         this.commitService = commitService;
@@ -38,6 +40,8 @@ public class CkResource {
     }
 
     public void insertAllData() throws Exception {
+        startTime = System.currentTimeMillis();
+
         ckService.deleteAll();
         joularServiceImpl.deleteAll();
         setRepoData();
@@ -70,6 +74,9 @@ public class CkResource {
         }
         insertCommits(listCommits);
 
+        long totalTime = System.currentTimeMillis() - startTime;
+        String lineToAdd = "Insertion of all the data into the database: " + totalTime/1000 + " seconds\n";
+        Util.writeTimeToFile(lineToAdd);
     }
 
     public void setRepoData() {
@@ -91,9 +98,9 @@ public class CkResource {
         springBoot.put(Util.SHA, "9edc7723129ae3c56db332691c0d1d49db7d32d0");
         springBoot.put(Util.COMPLEXITY, "complex");
 
-        this.repoData.add(commonsLang);
+        //this.repoData.add(commonsLang);
         this.repoData.add(commonsConfiguration);
-        this.repoData.add(springBoot);
+        //this.repoData.add(springBoot);
     }
 
     public void insertCommits(List<CommitCompleteDTO> listCommits) {

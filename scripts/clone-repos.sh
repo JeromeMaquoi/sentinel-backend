@@ -2,10 +2,10 @@
 
 # Clone repositories
 cd "$REPO_DIRECTORY" || exit
+
 # -----------
 # spring-boot
 # -----------
-
 if [ ! -d "spring-boot" ]; then
     git clone https://github.com/spring-projects/spring-boot "$REPO_DIRECTORY/spring-boot"
     echo "Repository spring-boot cloned successfully!"
