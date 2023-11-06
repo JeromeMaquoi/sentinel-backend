@@ -5,9 +5,6 @@ exec &> >(tee -a "$LOG_FILE")
 
 start=$(date +%s)
 
-sudo apt-get update && apt-get install -y openjdk-19-jdk openjdk-17-jdk maven gradle docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-sudo apt install docker-compose xmlstarlet
-
 # Clone all the open source repositories
 sudo REPO_DIRECTORY="$REPO_DIRECTORY" bash ./clone-repos.sh
 
