@@ -75,7 +75,7 @@ public class SentinelBackendApp {
         logApplicationStartup(env);
 
         long totalTime = System.currentTimeMillis() - startTime;
-        String lineToAdd = "Total time to start the app inside the docker: " + totalTime/1000 + " seconds\n";
+        String lineToAdd = "Starting the app inside the docker: " + totalTime/1000 + " seconds\n";
         Util.writeTimeToFile(lineToAdd);
     }
 

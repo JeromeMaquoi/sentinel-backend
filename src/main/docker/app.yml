@@ -6,14 +6,12 @@ services:
       - /$REPO_DIRECTORY:/$REPO_DIRECTORY
       - /$PLUGINS_DIRECTORY:/$PLUGINS_DIRECTORY
     environment:
-      - GITHUB_TOKEN=$GITHUB_TOKEN
-      - REPO_DIRECTORY=$REPO_DIRECTORY
-      - PLUGINS_DIRECTORY=$PLUGINS_DIRECTORY
-      - BATCH_SIZE=$BATCH_SIZE
       - _JAVA_OPTIONS=-Xmx1024m -Xms1024m
       - SPRING_PROFILES_ACTIVE=prod,api-docs
       - MANAGEMENT_PROMETHEUS_METRICS_EXPORT_ENABLED=true
       - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/sentinelBackend
+    env_file:
+      - .env
     ports:
       - 127.0.0.1:8080:8080
     healthcheck:

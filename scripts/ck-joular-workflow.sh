@@ -17,7 +17,4 @@ sudo REPO_DIRECTORY="$REPO_DIRECTORY" PLUGINS_DIRECTORY="$PLUGINS_DIRECTORY" NB_
 echo "All CK and joular data generated for all the projects !"
 end=$(date +%s)
 diff=$((end-start))
-echo "Execution time for cloning, running CK and running Joular: $diff seconds." > ../plugins/totalTime.txt
-
-# Execution of sentinel
-sudo REPO_DIRECTORY="$REPO_DIRECTORY" PLUGINS_DIRECTORY="$PLUGINS_DIRECTORY" BATCH_SIZE="$BATCH_SIZE" GITHUB_TOKEN="$GITHUB_TOKEN" bash docker-sentinel.sh
+echo "Execution time for cloning, running CK and running Joular: $diff seconds." >> ../plugins/totalTime.txt
