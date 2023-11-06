@@ -1,5 +1,8 @@
 #!/bin/bash
 
+LOG_FILE="docker-sentinel.log"
+exec &> >(tee -a "$LOG_FILE")
+
 start=$(date +%s)
 
 cd ..
@@ -15,3 +18,5 @@ chmod 777 ./plugins/totalTime.txt
 echo "Clean and package: $diff seconds." >> ./plugins/totalTime.txt
 
 docker-compose -f src/main/docker/app.yml up --build
+
+exec &> /dev/tty
