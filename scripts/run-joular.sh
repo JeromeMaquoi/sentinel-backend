@@ -94,11 +94,12 @@ find . -type f -name 'build.gradle' -exec dirname {} \; | while read dir; do
 done
 
 # Run tests with joular
+sudo ./gradlew clean
 for ((i=1;i<=NB_ITERATION;i++))
 do
     export ITERATION_ID=$i
     echo -e "Start test for iteration $i\n"
-    gradle clean test
+    ./gradlew test
     echo -e "Test for iteration $i done!\n\n"
 done
 echo -e "\n\n\n\n"
