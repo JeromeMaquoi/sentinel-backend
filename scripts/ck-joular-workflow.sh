@@ -1,9 +1,12 @@
 #!/bin/bash
 
-LOG_FILE="ck-joular.log"
-exec &> >(tee -a "$LOG_FILE")
+#LOG_FILE="ck-joular.log"
+#exec &> >(tee -a "$LOG_FILE")
 
 start=$(date +%s)
+
+# Remove all directories if any
+#sudo rm -rf "$REPO_DIRECTORY/commons-configuration/" "$REPO_DIRECTORY/commons-lang/" "$REPO_DIRECTORY/spring-boot/"
 
 # Clone all the open source repositories
 sudo REPO_DIRECTORY="$REPO_DIRECTORY" bash ./clone-repos.sh
@@ -19,5 +22,5 @@ end=$(date +%s)
 diff=$((end-start))
 echo "Execution time for cloning, running CK and running Joular: $diff seconds." >> ../plugins/totalTime.txt
 
-exec &> /dev/tty
-chmod 777 $LOG_FILE
+#exec &> /dev/tty
+#chmod 777 $LOG_FILE
