@@ -6,7 +6,7 @@
 start=$(date +%s)
 
 # Remove all directories if any
-#sudo rm -rf "$REPO_DIRECTORY/commons-configuration/" "$REPO_DIRECTORY/commons-lang/" "$REPO_DIRECTORY/spring-boot/"
+sudo rm -rf "$REPO_DIRECTORY/commons-configuration/" "$REPO_DIRECTORY/commons-lang/" "$REPO_DIRECTORY/spring-boot/"
 
 # Clone all the open source repositories
 sudo REPO_DIRECTORY="$REPO_DIRECTORY" bash ./clone-repos.sh
