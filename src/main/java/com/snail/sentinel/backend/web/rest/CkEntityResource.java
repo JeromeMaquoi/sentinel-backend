@@ -4,11 +4,13 @@ import com.snail.sentinel.backend.domain.CkEntity;
 import com.snail.sentinel.backend.repository.CkEntityRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -24,8 +26,12 @@ public class CkEntityResource {
     }
 
     @GetMapping("/ck-entities")
-    public List<CkEntity> getAllCkEntities() {
+    public Page<CkEntity> getAllCkEntities(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "100") int size
+    ) {
         log.debug("REST request to get all CkEntities");
-        return ckEntityRepository.findAll();
+        PageRequest pageRequest = PageRequest.of(page, size);
+        return ckEntityRepository.findAll(pageRequest);
     }
 }

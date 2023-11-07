@@ -5,7 +5,7 @@ exec &> >(tee -a "$LOG_FILE")
 
 start=$(date +%s)
 
-sudo apt-get update && apt-get install -y openjdk-19-jdk openjdk-17-jdk maven gradle docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo apt-get update && apt-get install -y openjdk-19-jdk openjdk-17-jdk maven docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 sudo apt install docker-compose xmlstarlet
 
 cd ..
@@ -24,3 +24,4 @@ echo "Clean and package: $diff seconds." >> ./plugins/totalTime.txt
 docker-compose -f src/main/docker/app.yml up --build
 
 exec &> /dev/tty
+chmod 777 $LOG_FILE

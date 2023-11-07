@@ -20,3 +20,4 @@ diff=$((end-start))
 echo "Execution time for cloning, running CK and running Joular: $diff seconds." >> ../plugins/totalTime.txt
 
 exec &> /dev/tty
+chmod 777 $LOG_FILE
