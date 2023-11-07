@@ -9,6 +9,7 @@ echo -e "---------------------"
 echo -e "COMMONS-CONFIGURATION"
 echo -e "---------------------"
 export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+mvn -v
 cd "$REPO_DIRECTORY/commons-configuration" || exit
 
 # Update config.properties
@@ -19,9 +20,7 @@ cp "$config_file" "$REPO_DIRECTORY/"commons-configuration
 # Update pom.xml with joularjx plugin path
 build_maven_commons_configuration="$PLUGINS_DIRECTORY/commons-configuration/pom.xml"
 line_number=$(awk '/-javaagent/{print NR; exit}' "$build_maven_commons_configuration")
-echo "line_number configuration : $line_number"
 sed -i "${line_number}s|-javaagent.*|-javaagent:${PLUGINS_DIRECTORY}/joularjx-2.0-modified.jar|" "$build_maven_commons_configuration"
-
 cp "$build_maven_commons_configuration" "$REPO_DIRECTORY/"commons-configuration
 
 # Run tests with joular
@@ -41,6 +40,7 @@ echo -e "\n\n\n\n"
 echo -e "------------"
 echo -e "COMMONS-LANG"
 echo -e "------------"
+mvn -v
 cd "$REPO_DIRECTORY/commons-lang" || exit
 
 # Update config.properties
@@ -51,7 +51,6 @@ cp "$config_file" "$REPO_DIRECTORY/"commons-lang
 # Update pom.xml with joularjx plugin path
 build_maven_commons_lang="$PLUGINS_DIRECTORY/commons-lang/pom.xml"
 line_number=$(awk '/-javaagent/{print NR; exit}' "$build_maven_commons_lang")
-echo "line_number : $line_number"
 sed -i "${line_number}s|-javaagent.*|-javaagent:${PLUGINS_DIRECTORY}/joularjx-2.0-modified.jar|" "$build_maven_commons_lang"
 cp "$build_maven_commons_lang" "$REPO_DIRECTORY/commons-lang"
 
@@ -72,7 +71,8 @@ echo -e "\n\n\n\n"
 echo -e "-----------"
 echo -e "SPRING-BOOT"
 echo -e "-----------"
-export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+export JAVA_HOME=/usr/lib/jvm/java-19-openjdk-amd64
+gradle -v
 cd "$REPO_DIRECTORY/spring-boot" || exit
 
 # Update config.properties
