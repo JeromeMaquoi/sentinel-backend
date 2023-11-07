@@ -98,7 +98,7 @@ for ((i=1;i<=NB_ITERATION;i++))
 do
     export ITERATION_ID=$i
     echo -e "Start test for iteration $i\n"
-    ./gradlew clean test
+    gradle clean test
     echo -e "Test for iteration $i done!\n\n"
 done
 echo -e "\n\n\n\n"
