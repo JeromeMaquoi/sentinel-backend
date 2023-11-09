@@ -72,19 +72,12 @@ echo -e "-----------"
 echo -e "SPRING-BOOT"
 echo -e "-----------"
 export JAVA_HOME=/usr/lib/jvm/java-19-openjdk-amd64
-gradle -v
+./gradlew -v
 cd "$REPO_DIRECTORY/spring-boot" || exit
 
 # Update config.properties
 package_spring_boot="filter-method-names=org.springframework.boot"
 sed -i "17s/.*/${package_spring_boot}/" "$config_file"
-
-# Update root build.gradle with joularjx plugin path
-build_gradle="$PLUGINS_DIRECTORY/build.gradle"
-line_number=$(grep -n -- "-javaagent" "$build_gradle" | cut -d: -f1)
-sed -i "${line_number}s|-javaagent.*|-javaagent:${PLUGINS_DIRECTORY}/joularjx-2.0-modified.jar\"|" "$build_gradle"
-cp "$build_gradle" "$REPO_DIRECTORY/spring-boot"
-
 # Add config.properties for every subproject
 find . -type f -name 'build.gradle' -exec dirname {} \; | while read dir; do
   if [ -d "$dir/src" ]; then
@@ -93,13 +86,20 @@ find . -type f -name 'build.gradle' -exec dirname {} \; | while read dir; do
   fi
 done
 
+# Update root build.gradle with joularjx plugin path
+build_gradle="$PLUGINS_DIRECTORY/build.gradle"
+line_number=$(grep -n -- "-javaagent" "$build_gradle" | cut -d: -f1)
+sed -i "${line_number}s|-javaagent.*|-javaagent:${PLUGINS_DIRECTORY}/joularjx-2.0-modified.jar\"|" "$build_gradle"
+cp "$build_gradle" "$REPO_DIRECTORY/spring-boot/spring-boot-project/spring-boot/"
+
+
 # Run tests with joular
 sudo ./gradlew clean
 for ((i=1;i<=NB_ITERATION;i++))
 do
     export ITERATION_ID=$i
     echo -e "Start test for iteration $i\n"
-    ./gradlew test
+    sudo ./gradlew :spring-boot-project:spring-boot:test
     echo -e "Test for iteration $i done!\n\n"
 done
 echo -e "\n\n\n\n"
