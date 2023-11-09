@@ -6,16 +6,16 @@
 start=$(date +%s)
 
 # Remove all directories if any
-sudo rm -rf "$REPO_DIRECTORY/commons-configuration/" "$REPO_DIRECTORY/commons-lang/" "$REPO_DIRECTORY/spring-boot/"
+rm -rf "$REPO_DIRECTORY/commons-configuration/" "$REPO_DIRECTORY/commons-lang/" "$REPO_DIRECTORY/spring-boot/"
 
 # Clone all the open source repositories
-sudo REPO_DIRECTORY="$REPO_DIRECTORY" bash ./clone-repos.sh
+REPO_DIRECTORY="$REPO_DIRECTORY" bash ./clone-repos.sh
 
 # Execution of CK for each repository
-sudo REPO_DIRECTORY="$REPO_DIRECTORY" PLUGINS_DIRECTORY="$PLUGINS_DIRECTORY" bash ./run-ck.sh
+REPO_DIRECTORY="$REPO_DIRECTORY" PLUGINS_DIRECTORY="$PLUGINS_DIRECTORY" bash ./run-ck.sh
 
 # Execution of JoularJX for each repository
-sudo REPO_DIRECTORY="$REPO_DIRECTORY" PLUGINS_DIRECTORY="$PLUGINS_DIRECTORY" NB_ITERATION="$NB_ITERATION" bash ./run-joular.sh
+REPO_DIRECTORY="$REPO_DIRECTORY" PLUGINS_DIRECTORY="$PLUGINS_DIRECTORY" NB_ITERATION="$NB_ITERATION" bash ./run-joular.sh
 
 echo "All CK and joular data generated for all the projects !"
 end=$(date +%s)
