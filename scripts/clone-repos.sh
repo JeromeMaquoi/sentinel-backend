@@ -26,7 +26,7 @@ if [ ! -d "commons-lang" ]; then
     git clone https://github.com/apache/commons-lang "$REPO_DIRECTORY/commons-lang"
     echo "Repository commons-lang cloned successfully!"
 else
-    echo "Repository already there!"
+    echo "Repository commons-lang already cloned !"
 fi
 chmod -R 777 "$REPO_DIRECTORY/commons-lang/"
 cd "$REPO_DIRECTORY/commons-lang" || exit
@@ -41,18 +41,24 @@ if [ ! -d "commons-configuration" ]; then
     git clone https://github.com/apache/commons-configuration "$REPO_DIRECTORY/commons-configuration"
     echo "Repository commons-configuration cloned successfully!"
 else
-    echo "Repository already cloned !"
+    echo "Repository commons-configuration already cloned !"
 fi
 chmod -R 777 "$REPO_DIRECTORY/commons-configuration/"
 cd "$REPO_DIRECTORY/commons-configuration" || exit
 git reset --hard 59e5152722198526c6ffe5361de7d1a6a87275c7
 echo -e "\n\n"
 
-#cd .. || exit
-#if [ ! -d "jabref" ]; then
-#    git clone https://github.com/JabRef/jabref ./jabref
-#    echo "Repository jabref cloned successfully!"
-#fi
-#cd jabref || exit
-#git reset --hard 779e555c10eeb0d4d682d66167e188dcb79d765a # release v5.10
 
+# ------
+# jabref
+# ------
+if [ ! -d "jabref" ]; then
+    git clone https://github.com/JabRef/jabref "$REPO_DIRECTORY/jabref"
+    echo "Repository jabref cloned successfully!"
+else
+    echo "Repository jabref already cloned !"
+fi
+chmod -R 777 "$REPO_DIRECTORY/jabref/"
+cd "$REPO_DIRECTORY/jabref" || exit
+git reset --hard affb6acc24c3dc5fce36e1323eed415a8f711a2c # release v5.11
+echo -e "\n\n\n"
