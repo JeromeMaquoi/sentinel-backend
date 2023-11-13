@@ -3,6 +3,7 @@
 # Clone repositories
 cd "$REPO_DIRECTORY" || exit
 
+:'
 # -----------
 # spring-boot
 # -----------
@@ -12,9 +13,11 @@ if [ ! -d "spring-boot" ]; then
 else
     echo "Repository spring-boot already there!"
 fi
+chmod -R 777 "$REPO_DIRECTORY/spring-boot/"
 cd "$REPO_DIRECTORY/spring-boot" || exit
 git reset --hard 3ed1f1a064a10e53adc2ad8c0b46a4b2c148ee21 # release v3.1.4
 echo -e "\n\n"
+'
 
 # ------------
 # commons-lang
@@ -25,6 +28,7 @@ if [ ! -d "commons-lang" ]; then
 else
     echo "Repository already there!"
 fi
+chmod -R 777 "$REPO_DIRECTORY/commons-lang/"
 cd "$REPO_DIRECTORY/commons-lang" || exit
 git reset --hard bcc10b359318397a4d12dbaef22b101725bc6323 # release v3.13.0
 echo -e "\n\n"
@@ -39,6 +43,7 @@ if [ ! -d "commons-configuration" ]; then
 else
     echo "Repository already cloned !"
 fi
+chmod -R 777 "$REPO_DIRECTORY/commons-configuration/"
 cd "$REPO_DIRECTORY/commons-configuration" || exit
 git reset --hard 59e5152722198526c6ffe5361de7d1a6a87275c7
 echo -e "\n\n"

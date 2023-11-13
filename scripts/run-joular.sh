@@ -2,38 +2,34 @@
 
 config_file="$PLUGINS_DIRECTORY/config.properties"
 
-
-# -----------
-# Spring-boot
-# -----------
+# ---------------------
+# commons-configuration
+# ---------------------
+echo -e "---------------------"
+echo -e "COMMONS-CONFIGURATION"
+echo -e "---------------------"
 export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
-cd "$REPO_DIRECTORY/spring-boot" || exit
+mvn -v
+cd "$REPO_DIRECTORY/commons-configuration" || exit
 
 # Update config.properties
-package_spring_boot="filter-method-names=org.springframework.boot"
-sed -i "17s/.*/${package_spring_boot}/" "$config_file"
+package_commons_configuration="filter-method-names=org.apache.commons.configuration2"
+sed -i "17s/.*/${package_commons_configuration}/" "$config_file"
+cp "$config_file" "$REPO_DIRECTORY/"commons-configuration
 
-# Update root build.gradle with joularjx plugin path
-build_gradle="$PLUGINS_DIRECTORY/build.gradle"
-line_number=$(grep -n -- "-javaagent" "$build_gradle" | cut -d: -f1)
-sed -i "${line_number}s|-javaagent.*|-javaagent:${PLUGINS_DIRECTORY}/joularjx-2.0-modified.jar\"|" "$build_gradle"
-cp "$build_gradle" "$REPO_DIRECTORY/spring-boot"
-
-# Add config.properties for every subproject
-find . -type f -name 'build.gradle' -exec dirname {} \; | while read dir; do
-  if [ -d "$dir/src" ]; then
-    echo "Copying config.properties to $dir"
-    cp "$config_file" "$dir"
-  fi
-done
+# Update pom.xml with joularjx plugin path
+build_maven_commons_configuration="$PLUGINS_DIRECTORY/commons-configuration/pom.xml"
+line_number=$(awk '/-javaagent/{print NR; exit}' "$build_maven_commons_configuration")
+sed -i "${line_number}s|-javaagent.*|-javaagent:${PLUGINS_DIRECTORY}/joularjx-2.0-modified.jar|" "$build_maven_commons_configuration"
+cp "$build_maven_commons_configuration" "$REPO_DIRECTORY/"commons-configuration
 
 # Run tests with joular
 for ((i=1;i<=NB_ITERATION;i++))
 do
     export ITERATION_ID=$i
     echo -e "Start test for iteration $i\n"
-    ./gradlew clean test
-    echo -e "Test for iteration $i done!\n\n"
+    mvn clean test -Drat.skip=true
+    echo -e "\n\n"
 done
 echo -e "\n\n\n\n"
 
@@ -41,6 +37,10 @@ echo -e "\n\n\n\n"
 # ------------
 # commons-lang
 # ------------
+echo -e "------------"
+echo -e "COMMONS-LANG"
+echo -e "------------"
+mvn -v
 cd "$REPO_DIRECTORY/commons-lang" || exit
 
 # Update config.properties
@@ -50,7 +50,7 @@ cp "$config_file" "$REPO_DIRECTORY/"commons-lang
 
 # Update pom.xml with joularjx plugin path
 build_maven_commons_lang="$PLUGINS_DIRECTORY/commons-lang/pom.xml"
-line_number=$(xmlstarlet sel -t -v "count(//profile[activation/jdk='[16,)'])" "$build_maven_commons_lang")
+line_number=$(awk '/-javaagent/{print NR; exit}' "$build_maven_commons_lang")
 sed -i "${line_number}s|-javaagent.*|-javaagent:${PLUGINS_DIRECTORY}/joularjx-2.0-modified.jar|" "$build_maven_commons_lang"
 cp "$build_maven_commons_lang" "$REPO_DIRECTORY/commons-lang"
 
@@ -65,29 +65,42 @@ done
 echo -e "\n\n\n\n"
 
 
-# ---------------------
-# commons-configuration
-# ---------------------
-export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
-cd "$REPO_DIRECTORY/commons-configuration" || exit
+# -----------
+# Spring-boot
+# -----------
+echo -e "-----------"
+echo -e "SPRING-BOOT"
+echo -e "-----------"
+export JAVA_HOME=/usr/lib/jvm/java-19-openjdk-amd64
+./gradlew -v
+cd "$REPO_DIRECTORY/spring-boot" || exit
 
 # Update config.properties
-package_commons_configuration="filter-method-names=org.apache.commons.configuration2"
-sed -i "17s/.*/${package_commons_configuration}/" "$config_file"
-cp "$config_file" "$REPO_DIRECTORY/"commons-configuration
+package_spring_boot="filter-method-names=org.springframework.boot"
+sed -i "17s/.*/${package_spring_boot}/" "$config_file"
+# Add config.properties for every subproject
+find . -type f -name 'build.gradle' -exec dirname {} \; | while read dir; do
+  if [ -d "$dir/src" ]; then
+    echo "Copying config.properties to $dir"
+    cp "$config_file" "$dir"
+  fi
+done
 
-# Update pom.xml with joularjx plugin path
-build_maven_commons_configuration="$PLUGINS_DIRECTORY/commons-configuration/pom.xml"
-line_number=$(xmlstarlet sel -t -v "count(//profile[activation/jdk='[16,)'])" "$build_maven_commons_configuration")
-sed -i "${line_number}s|-javaagent.*|-javaagent:${PLUGINS_DIRECTORY}/joularjx-2.0-modified.jar|" "$build_maven_commons_configuration"
-cp "$build_maven_commons_configuration" "$REPO_DIRECTORY/"commons-configuration
+# Update root build.gradle with joularjx plugin path
+build_gradle="$PLUGINS_DIRECTORY/build.gradle"
+line_number=$(grep -n -- "-javaagent" "$build_gradle" | cut -d: -f1)
+sed -i "${line_number}s|-javaagent.*|-javaagent:${PLUGINS_DIRECTORY}/joularjx-2.0-modified.jar\"|" "$build_gradle"
+cp "$build_gradle" "$REPO_DIRECTORY/spring-boot/spring-boot-project/spring-boot/"
 
+:'
 # Run tests with joular
+sudo ./gradlew clean
 for ((i=1;i<=NB_ITERATION;i++))
 do
     export ITERATION_ID=$i
     echo -e "Start test for iteration $i\n"
-    mvn clean test -Drat.skip=true
-    echo -e "\n\n"
+    sudo ./gradlew :spring-boot-project:spring-boot:test
+    echo -e "Test for iteration $i done!\n\n"
 done
 echo -e "\n\n\n\n"
+'
