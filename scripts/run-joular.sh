@@ -87,12 +87,11 @@ sed -i "${line_number}s|-javaagent.*|-javaagent:${PLUGINS_DIRECTORY}/joularjx-2.
 cp "$build_gradle" "$REPO_DIRECTORY/jabref"
 
 # Run tests with joular
-sudo ./gradlew clean
 for ((i=1;i<=NB_ITERATION;i++))
 do
     export ITERATION_ID=$i
     echo -e "Start test for iteration $i\n"
-    sudo ./gradlew test
+    sudo ./gradlew clean test -PITERATION_ID=$i
     echo -e "Test for iteration $i done!\n\n"
 done
 echo -e "\n\n\n\n"

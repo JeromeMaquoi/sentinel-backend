@@ -415,6 +415,9 @@ test {
         runOnClasspath = true
     }
 
+    // Set system property for ITERATION_ID
+    systemProperty "ITERATION_ID", project.findProperty("ITERATION_ID")
+
     testLogging {
         // set options for log level LIFECYCLE
         // for debugging tests: add "STANDARD_OUT", "STANDARD_ERROR"
