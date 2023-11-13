@@ -40,6 +40,7 @@ echo -e "\n\n\n\n"
 echo -e "------------"
 echo -e "COMMONS-LANG"
 echo -e "------------"
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 mvn -v
 cd "$REPO_DIRECTORY/commons-lang" || exit
 
@@ -93,6 +94,38 @@ do
     echo -e "Start test for iteration $i\n"
     sudo ./gradlew clean test -PITERATION_ID=$i
     echo -e "Test for iteration $i done!\n\n"
+done
+echo -e "\n\n\n\n"
+
+
+# -----
+# GUAVA
+# -----
+echo -e "-----"
+echo -e "GUAVA"
+echo -e "-----"
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+mvn -v
+cd "$REPO_DIRECTORY/guava" || exit
+
+# Update config.properties
+package_guava="filter-method-names=com.google"
+sed -i "17s/.*/${package_guava}/" "$config_file"
+cp "$config_file" "$REPO_DIRECTORY/guava/guava"
+
+# Update pom.xml with joularjx plugin path
+build_maven_guava="$PLUGINS_DIRECTORY/guava/pom.xml"
+line_number=$(awk '/-javaagent/{print NR; exit}' "$build_maven_guava")
+sed -i "${line_number}s|-javaagent.*|-javaagent:${PLUGINS_DIRECTORY}/joularjx-2.0-modified.jar|" "$build_maven_guava"
+cp "$build_maven_guava" "$REPO_DIRECTORY/guava"
+
+# Run tests with joular
+for ((i=1;i<=NB_ITERATION;i++))
+do
+    export ITERATION_ID=$i
+    echo -e "Start test for iteration $i\n"
+    mvn clean test -Drat.skip=true
+    echo -e "\n\n"
 done
 echo -e "\n\n\n\n"
 

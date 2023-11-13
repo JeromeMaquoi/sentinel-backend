@@ -61,4 +61,19 @@ fi
 chmod -R 777 "$REPO_DIRECTORY/jabref/"
 cd "$REPO_DIRECTORY/jabref" || exit
 git reset --hard affb6acc24c3dc5fce36e1323eed415a8f711a2c # release v5.11
-echo -e "\n\n\n"
+echo -e "\n\n"
+
+
+# -----
+# guava
+# -----
+if [ ! -d "jabref" ]; then
+    git clone https://github.com/google/guava "$REPO_DIRECTORY/guava"
+    echo "Repository guava cloned successfully !"
+else
+    echo "Repository guava already cloned !"
+fi
+chmod -R 777 "$REPO_DIRECTORY/guava"
+cd "$REPO_DIRECTORY/guava" || exit
+git reset --hard c1088508ddc78bd60d096d2cc3ceef4a82ec909d # release 32.1.3
+echo -e "\n\n"
