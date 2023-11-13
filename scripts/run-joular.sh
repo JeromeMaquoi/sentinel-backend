@@ -92,7 +92,7 @@ line_number=$(grep -n -- "-javaagent" "$build_gradle" | cut -d: -f1)
 sed -i "${line_number}s|-javaagent.*|-javaagent:${PLUGINS_DIRECTORY}/joularjx-2.0-modified.jar\"|" "$build_gradle"
 cp "$build_gradle" "$REPO_DIRECTORY/spring-boot/spring-boot-project/spring-boot/"
 
-
+:'
 # Run tests with joular
 sudo ./gradlew clean
 for ((i=1;i<=NB_ITERATION;i++))
@@ -103,3 +103,4 @@ do
     echo -e "Test for iteration $i done!\n\n"
 done
 echo -e "\n\n\n\n"
+'
