@@ -8,8 +8,10 @@ sudo apt install docker-compose xmlstarlet
 # Install jdk 21
 cd /usr/lib/jvm || exit
 if [ ! -d "jdk-21.0.1+12" ]; then
+    cd "$PLUGINS_DIRECTORY" || exit
     wget https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.1%2B12/OpenJDK21U-jdk_x64_linux_hotspot_21.0.1_12.tar.gz
     sudo tar -xzvf OpenJDK21U-jdk_x64_linux_hotspot_21.0.1_12.tar.gz -C /usr/lib/jvm
+    rm -rf "$PLUGINS_DIRECTORY/OpenJDK21U-jdk_x64_linux_hotspot_21.0.1_12.tar.gz"
     echo "Installation of OpenJDK21"
 else
     echo "OpenJDK21 already installed !"
