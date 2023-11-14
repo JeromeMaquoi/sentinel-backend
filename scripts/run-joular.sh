@@ -97,6 +97,38 @@ done
 echo -e "\n\n\n\n"
 
 
+# -------------
+# hibernate-orm
+# -------------
+echo -e "-------------"
+echo -e "HIBERNATE-ORM"
+echo -e "-------------"
+export JAVA_HOME=/usr/lib/jvm/java-19-openjdk-amd64/
+cd "$REPO_DIRECTORY/hibernate-orm" || exit
+./gradlew -version
+
+# Update config.properties
+package_jabref="filter-method-names=org.hibernate"
+sed -i "17s/.*/${package_jabref}/" "$config_file"
+cp "$config_file" "$REPO_DIRECTORY/hibernate-orm/hibernate-core"
+
+# Update build.gradle with joularjx plugin path
+build_gradle="$PLUGINS_DIRECTORY/hibernate-orm.hibernate-core/hibernate-core.gradle"
+line_number=$(grep -n -- "-javaagent" "$build_gradle" | cut -d: -f1)
+sed -i "${line_number}s|-javaagent.*|-javaagent:${PLUGINS_DIRECTORY}/joularjx-2.0-modified.jar\"] )|" "$build_gradle"
+cp "$build_gradle" "$REPO_DIRECTORY/hibernate-orm/hibernate-core"
+
+# Run tests with joular
+for ((i=1;i<=NB_ITERATION;i++))
+do
+    export ITERATION_ID=$i
+    echo -e "Start test for iteration $i\n"
+    sudo ./gradlew clean hibernate-core:test -PITERATION_ID=$i
+    echo -e "Test for iteration $i done!\n\n"
+done
+echo -e "\n\n\n\n"
+
+
 :'
 # -----------
 # Spring-boot
