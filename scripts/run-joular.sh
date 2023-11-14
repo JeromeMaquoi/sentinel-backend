@@ -74,6 +74,7 @@ echo -e "------"
 export JAVA_HOME=/usr/lib/jvm/jdk-21.0.1+12/
 cd "$REPO_DIRECTORY/jabref" || exit
 ./gradlew -version
+java -version
 
 # Update config.properties
 package_jabref="filter-method-names=org.jabref"
@@ -91,7 +92,7 @@ for ((i=1;i<=NB_ITERATION;i++))
 do
     export ITERATION_ID=$i
     echo -e "Start test for iteration $i\n"
-    sudo ./gradlew clean test -PITERATION_ID=$i
+    sudo ./gradlew clean check -PITERATION_ID=$i
     echo -e "Test for iteration $i done!\n\n"
 done
 echo -e "\n\n\n\n"
