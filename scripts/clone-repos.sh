@@ -67,7 +67,7 @@ echo -e "\n\n"
 # -----
 # guava
 # -----
-if [ ! -d "jabref" ]; then
+if [ ! -d "guava" ]; then
     git clone https://github.com/google/guava "$REPO_DIRECTORY/guava"
     echo "Repository guava cloned successfully !"
 else
