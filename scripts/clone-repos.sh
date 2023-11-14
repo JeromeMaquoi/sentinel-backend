@@ -61,4 +61,25 @@ fi
 chmod -R 777 "$REPO_DIRECTORY/jabref/"
 cd "$REPO_DIRECTORY/jabref" || exit
 git reset --hard affb6acc24c3dc5fce36e1323eed415a8f711a2c # release v5.11
+echo -e "\n\n"
+
+
+# -------------
+# hibernate-orm
+# -------------
+if [ ! -d "hibernate-orm" ]; then
+    git clone https://github.com/hibernate/hibernate-orm.git "$REPO_DIRECTORY/hibernate-orm"
+    echo "Repository hibernate-orm cloned successfully !"
+else
+    echo "Repository hibernate-orm already cloned !"
+fi
+sudo chmod -R 777 "$REPO_DIRECTORY/hibernate-orm"
+cd "$REPO_DIRECTORY/hibernate-orm" || exit
+git reset --hard 12442bd8c7cde6e7c006a6277eeb8e81ad0c2219 # release 6.2.13.FINAL
+
+
+
+
+
+
 echo -e "\n\n\n"

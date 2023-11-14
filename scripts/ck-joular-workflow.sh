@@ -5,17 +5,25 @@
 
 start=$(date +%s)
 
-# Remove all directories if any
-sudo rm -rf "$REPO_DIRECTORY/commons-configuration/" "$REPO_DIRECTORY/commons-lang/" "$REPO_DIRECTORY/spring-boot/" "$REPO_DIRECTORY/jabref"
+if [ -z "$REMOVE_REPO" ] || [ "$REMOVE_REPO" == "true" ]; then
+    # Remove all directories if any
+    sudo rm -rf "$REPO_DIRECTORY/commons-configuration/" "$REPO_DIRECTORY/commons-lang/" "$REPO_DIRECTORY/spring-boot/" "$REPO_DIRECTORY/jabref" "$REPO_DIRECTORY/hibernate-orm"
+fi
 
-# Clone all the open source repositories
-sudo REPO_DIRECTORY="$REPO_DIRECTORY" bash ./clone-repos.sh
+if [ -z "$CLONE" ] || [ "$CLONE" == "true" ]; then
+    # Clone all the open source repositories
+    sudo REPO_DIRECTORY="$REPO_DIRECTORY" bash ./clone-repos.sh
+fi
 
-# Execution of CK for each repository
-#sudo REPO_DIRECTORY="$REPO_DIRECTORY" PLUGINS_DIRECTORY="$PLUGINS_DIRECTORY" bash ./run-ck.sh
+if [ -z "$CK" ] || [ "$CK" == "true" ]; then
+    # Execution of CK for each repository
+    sudo REPO_DIRECTORY="$REPO_DIRECTORY" PLUGINS_DIRECTORY="$PLUGINS_DIRECTORY" bash ./run-ck.sh
+fi
 
-# Execution of JoularJX for each repository
-sudo REPO_DIRECTORY="$REPO_DIRECTORY" PLUGINS_DIRECTORY="$PLUGINS_DIRECTORY" NB_ITERATION="$NB_ITERATION" bash ./run-joular.sh
+if [ -z "$JOULAR" ] || [ "$JOULAR" == "true" ]; then
+    # Execution of JoularJX for each repository
+    sudo REPO_DIRECTORY="$REPO_DIRECTORY" PLUGINS_DIRECTORY="$PLUGINS_DIRECTORY" NB_ITERATION="$NB_ITERATION" bash ./run-joular.sh
+fi
 
 echo "All CK and joular data generated for all the projects !"
 end=$(date +%s)
