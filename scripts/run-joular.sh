@@ -44,6 +44,7 @@ echo -e "------------"
 export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 sudo update-alternatives --set java "/usr/lib/jvm/java-17-openjdk-amd64/bin/java"
 mvn -v
+java -version
 cd "$REPO_DIRECTORY/commons-lang" || exit
 
 # Update config.properties
