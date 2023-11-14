@@ -973,12 +973,7 @@
               <argLine>
                 --illegal-access=permit
                 --add-opens java.base/java.lang=ALL-UNNAMED
-                <!-- -agentlib:hprof=cpu=samples,lineno=y,depth=3,file=./cpu-data/hprof.samples.txt -->
-                -javaagent:/home/student/j/m/jmaquoi/Documents/Recherche/sentinel-backend/plugins/joularjx-2.0-modified.jar
-                <!---javaagent:/home/jerome/Documents/Assistant/Recherche/opentelemetry-javaagent.jar
-                -Dotel.traces.exporter=logging
-                -Dotel.metrics.exporter=logging
-                -Dotel.logs.exporter=logging-->
+                -javaagent:/joularjx-2.0-modified.jar
               </argLine>
             </configuration>
           </plugin>

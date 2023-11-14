@@ -43,7 +43,7 @@ if [ ! -d "commons-configuration" ]; then
 else
     echo "Repository commons-configuration already cloned !"
 fi
-chmod -R 777 "$REPO_DIRECTORY/commons-configuration/"
+sudo chmod -R 777 "$REPO_DIRECTORY/commons-configuration/"
 cd "$REPO_DIRECTORY/commons-configuration" || exit
 git reset --hard 59e5152722198526c6ffe5361de7d1a6a87275c7
 echo -e "\n\n"
@@ -58,7 +58,7 @@ if [ ! -d "jabref" ]; then
 else
     echo "Repository jabref already cloned !"
 fi
-chmod -R 777 "$REPO_DIRECTORY/jabref/"
+sudo chmod -R 777 "$REPO_DIRECTORY/jabref/"
 cd "$REPO_DIRECTORY/jabref" || exit
 git reset --hard affb6acc24c3dc5fce36e1323eed415a8f711a2c # release v5.11
 echo -e "\n\n"
@@ -73,7 +73,7 @@ if [ ! -d "jabref" ]; then
 else
     echo "Repository guava already cloned !"
 fi
-chmod -R 777 "$REPO_DIRECTORY/guava"
+sudo chmod -R 777 "$REPO_DIRECTORY/guava"
 cd "$REPO_DIRECTORY/guava" || exit
 git reset --hard c1088508ddc78bd60d096d2cc3ceef4a82ec909d # release 32.1.3
 echo -e "\n\n"
