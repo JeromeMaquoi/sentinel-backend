@@ -9,6 +9,7 @@ echo -e "---------------------"
 echo -e "COMMONS-CONFIGURATION"
 echo -e "---------------------"
 export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+sudo update-alternatives --set java "/usr/lib/jvm/java-17-openjdk-amd64/bin/java"
 mvn -v
 cd "$REPO_DIRECTORY/commons-configuration" || exit
 
@@ -40,6 +41,8 @@ echo -e "\n\n\n\n"
 echo -e "------------"
 echo -e "COMMONS-LANG"
 echo -e "------------"
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+sudo update-alternatives --set java "/usr/lib/jvm/java-17-openjdk-amd64/bin/java"
 mvn -v
 cd "$REPO_DIRECTORY/commons-lang" || exit
 
@@ -72,6 +75,7 @@ echo -e "------"
 echo -e "JABREF"
 echo -e "------"
 export JAVA_HOME=/usr/lib/jvm/jdk-21.0.1+12/
+sudo update-alternatives --set java "/usr/lib/jvm/jdk-21.0.1+12/bin/java"
 cd "$REPO_DIRECTORY/jabref" || exit
 ./gradlew -version
 java -version
@@ -105,6 +109,7 @@ echo -e "-------------"
 echo -e "HIBERNATE-ORM"
 echo -e "-------------"
 export JAVA_HOME=/usr/lib/jvm/java-19-openjdk-amd64/
+sudo update-alternatives --set java "/usr/lib/jvm/java-19-openjdk-amd64/bin/java"
 cd "$REPO_DIRECTORY/hibernate-orm" || exit
 ./gradlew -version
 

@@ -11,6 +11,8 @@ if [ ! -d "jdk-21.0.1+12" ]; then
     cd "$PLUGINS_DIRECTORY" || exit
     wget https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.1%2B12/OpenJDK21U-jdk_x64_linux_hotspot_21.0.1_12.tar.gz
     sudo tar -xzvf OpenJDK21U-jdk_x64_linux_hotspot_21.0.1_12.tar.gz -C /usr/lib/jvm
+    sudo update-alternatives --install "/usr/bin/java" "java" "/usr/lib/jvm/jdk-21.0.1+12//bin/java" 1
+    sudo update-alternatives --install "/usr/bin/javac" "javac" "/usr/lib/jvm/jdk-21.0.1+12/bin/javac" 1
     rm -rf "$PLUGINS_DIRECTORY/OpenJDK21U-jdk_x64_linux_hotspot_21.0.1_12.tar.gz"
     echo "Installation of OpenJDK21"
 else
