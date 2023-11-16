@@ -80,12 +80,6 @@ public class CkResource {
     }
 
     public void setRepoData() {
-        HashMap<String, String> commonsLang = new HashMap<>();
-        commonsLang.put(Util.OWNER, "apache");
-        commonsLang.put(Util.NAME, "commons-lang");
-        commonsLang.put(Util.SHA, "9d85b0a11e5dbadd5da20865c3dd3f8ef4668c7d");
-        commonsLang.put(Util.COMPLEXITY, "simple");
-
         HashMap<String, String> commonsConfiguration = new HashMap<>();
         commonsConfiguration.put(Util.OWNER, "apache");
         commonsConfiguration.put(Util.NAME, "commons-configuration");
@@ -98,7 +92,6 @@ public class CkResource {
         springBoot.put(Util.SHA, "9edc7723129ae3c56db332691c0d1d49db7d32d0");
         springBoot.put(Util.COMPLEXITY, "complex");
 
-        //this.repoData.add(commonsLang);
         this.repoData.add(commonsConfiguration);
         //this.repoData.add(springBoot);
     }

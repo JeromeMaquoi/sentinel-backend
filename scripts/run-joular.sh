@@ -35,40 +35,6 @@ done
 echo -e "\n\n\n\n"
 
 
-# ------------
-# commons-lang
-# ------------
-echo -e "------------"
-echo -e "COMMONS-LANG"
-echo -e "------------"
-export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
-sudo update-alternatives --set java "/usr/lib/jvm/java-17-openjdk-amd64/bin/java"
-mvn -v
-java -version
-cd "$REPO_DIRECTORY/commons-lang" || exit
-
-# Update config.properties
-package_commons_lang="filter-method-names=org.apache.commons.lang3"
-sed -i "17s/.*/${package_commons_lang}/" "$config_file"
-cp "$config_file" "$REPO_DIRECTORY/commons-lang"
-
-# Update pom.xml with joularjx plugin path
-build_maven_commons_lang="$PLUGINS_DIRECTORY/commons-lang/pom.xml"
-line_number=$(awk '/-javaagent/{print NR; exit}' "$build_maven_commons_lang")
-sed -i "${line_number}s|-javaagent.*|-javaagent:${PLUGINS_DIRECTORY}/joularjx-2.0-modified.jar|" "$build_maven_commons_lang"
-cp "$build_maven_commons_lang" "$REPO_DIRECTORY/commons-lang"
-
-# Run tests with joular
-for ((i=1;i<=NB_ITERATION;i++))
-do
-    export ITERATION_ID=$i
-    echo -e "Start test for iteration $i\n"
-    mvn clean test -Drat.skip=true
-    echo -e "\n\n"
-done
-echo -e "\n\n\n\n"
-
-
 # ------
 # jabref
 # ------
