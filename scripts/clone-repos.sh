@@ -3,7 +3,7 @@
 # Clone repositories
 cd "$REPO_DIRECTORY" || exit
 
-:'
+
 # -----------
 # spring-boot
 # -----------
@@ -17,7 +17,7 @@ chmod -R 777 "$REPO_DIRECTORY/spring-boot/"
 cd "$REPO_DIRECTORY/spring-boot" || exit
 git reset --hard 3ed1f1a064a10e53adc2ad8c0b46a4b2c148ee21 # release v3.1.4
 echo -e "\n\n"
-'
+
 
 
 # ---------------------

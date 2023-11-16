@@ -89,7 +89,7 @@ public class CkResource {
         HashMap<String, String> springBoot = new HashMap<>();
         springBoot.put(Util.OWNER, "spring-projects");
         springBoot.put(Util.NAME, "spring-boot");
-        springBoot.put(Util.SHA, "9edc7723129ae3c56db332691c0d1d49db7d32d0");
+        springBoot.put(Util.SHA, "3ed1f1a064a10e53adc2ad8c0b46a4b2c148ee21");
         springBoot.put(Util.COMPLEXITY, "complex");
 
         this.repoData.add(commonsConfiguration);
