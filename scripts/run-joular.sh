@@ -24,6 +24,8 @@ line_number=$(awk '/-javaagent/{print NR; exit}' "$build_maven_commons_configura
 sed -i "${line_number}s|-javaagent.*|-javaagent:${PLUGINS_DIRECTORY}/joularjx-2.0-modified.jar|" "$build_maven_commons_configuration"
 cp "$build_maven_commons_configuration" "$REPO_DIRECTORY/commons-configuration"
 
+sudo chmod 777 -R "$REPO_DIRECTORY/commons-configuration/"
+
 # Run tests with joular
 for ((i=1;i<=NB_ITERATION;i++))
 do
@@ -58,6 +60,9 @@ line_number=$(grep -n -- "-javaagent" "$build_gradle" | cut -d: -f1)
 sed -i "${line_number}s|-javaagent.*|-javaagent:${PLUGINS_DIRECTORY}/joularjx-2.0-modified.jar\"]|" "$build_gradle"
 cp "$build_gradle" "$REPO_DIRECTORY/jabref"
 
+# Making all added files non admin
+sudo chmod 777 -R "$REPO_DIRECTORY/jabref"
+
 # Run tests with joular
 for ((i=1;i<=NB_ITERATION;i++))
 do
@@ -91,6 +96,8 @@ line_number=$(grep -n -- "-javaagent" "$build_gradle" | cut -d: -f1)
 sed -i "${line_number}s|-javaagent.*|-javaagent:${PLUGINS_DIRECTORY}/joularjx-2.0-modified.jar\"] )|" "$build_gradle"
 cp "$build_gradle" "$REPO_DIRECTORY/hibernate-orm/hibernate-core"
 
+sudo chmod -R 777 "$REPO_DIRECTORY/hibernate-orm/hibernate-core"
+
 # Run tests with joular
 for ((i=1;i<=NB_ITERATION;i++))
 do
@@ -115,9 +122,10 @@ cd "$REPO_DIRECTORY/spring-boot" || exit
 # Update config.properties
 package_spring_boot="filter-method-names=org.springframework.boot"
 sed -i "17s/.*/${package_spring_boot}/" "$config_file"
+cp "$config_file" "$REPO_DIRECTORY/spring-boot/spring-boot-project/spring-boot/"
 :'
 # Add config.properties for every subproject
-find . -type f -name 'build.gradle' -exec dirname {} \; | while read dir; do
+find . -type f -name "build.gradle" -exec dirname {} \; | while read dir; do
   if [ -d "$dir/src" ]; then
     echo "Copying config.properties to $dir"
     cp "$config_file" "$dir"
@@ -130,6 +138,8 @@ build_gradle="$PLUGINS_DIRECTORY/spring-boot/build.gradle"
 line_number=$(grep -n -- "-javaagent" "$build_gradle" | cut -d: -f1)
 sed -i "${line_number}s|-javaagent.*|-javaagent:${PLUGINS_DIRECTORY}/joularjx-2.0-modified.jar\"|" "$build_gradle"
 cp "$build_gradle" "$REPO_DIRECTORY/spring-boot/spring-boot-project/spring-boot/"
+
+sudo chmod 777 -R "$REPO_DIRECTORY/spring-boot/spring-boot-project/spring-boot/"
 
 # Run tests with joular
 for ((i=1;i<=NB_ITERATION;i++))

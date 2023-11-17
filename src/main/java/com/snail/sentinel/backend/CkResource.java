@@ -84,16 +84,26 @@ public class CkResource {
         commonsConfiguration.put(Util.OWNER, "apache");
         commonsConfiguration.put(Util.NAME, "commons-configuration");
         commonsConfiguration.put(Util.SHA, "59e5152722198526c6ffe5361de7d1a6a87275c7");
-        commonsConfiguration.put(Util.COMPLEXITY, "simple");
 
         HashMap<String, String> springBoot = new HashMap<>();
         springBoot.put(Util.OWNER, "spring-projects");
         springBoot.put(Util.NAME, "spring-boot");
         springBoot.put(Util.SHA, "3ed1f1a064a10e53adc2ad8c0b46a4b2c148ee21");
-        springBoot.put(Util.COMPLEXITY, "complex");
+
+        HashMap<String, String> hibernate = new HashMap<>();
+        hibernate.put(Util.OWNER, "hibernate");
+        hibernate.put(Util.NAME, "hibernate-orm");
+        hibernate.put(Util.SHA, "12442bd8c7cde6e7c006a6277eeb8e81ad0c2219");
+
+        HashMap<String, String> jabref = new HashMap<>();
+        jabref.put(Util.OWNER, "JabRef");
+        jabref.put(Util.NAME, "jabref");
+        jabref.put(Util.SHA, "affb6acc24c3dc5fce36e1323eed415a8f711a2c");
 
         this.repoData.add(commonsConfiguration);
-        //this.repoData.add(springBoot);
+        this.repoData.add(springBoot);
+        this.repoData.add(hibernate);
+        this.repoData.add(jabref);
     }
 
     public void insertCommits(List<CommitCompleteDTO> listCommits) {
