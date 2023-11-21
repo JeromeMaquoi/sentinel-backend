@@ -46,7 +46,7 @@ else
 fi
 sudo chmod -R 777 "$REPO_DIRECTORY/jabref/"
 cd "$REPO_DIRECTORY/jabref" || exit
-git reset --hard affb6acc24c3dc5fce36e1323eed415a8f711a2c # release v5.11
+git reset --hard 5c9d8989f968d0ee3a942b411ef7fe121ed94609 # release v5.6
 echo -e "\n\n"
 
 

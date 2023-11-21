@@ -5,6 +5,7 @@ start=$(date +%s)
 sudo apt-get update && apt-get install -y openjdk-19-jdk openjdk-17-jdk maven docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 sudo apt install docker-compose xmlstarlet
 
+# TODO update to JDK 14
 # Install jdk 21
 cd /usr/lib/jvm || exit
 if [ ! -d "jdk-21.0.1+12" ]; then
