@@ -24,6 +24,8 @@ line_number=$(awk '/-javaagent/{print NR; exit}' "$build_maven_commons_configura
 sed -i "${line_number}s|-javaagent.*|-javaagent:${PLUGINS_DIRECTORY}/joularjx-2.0-modified.jar|" "$build_maven_commons_configuration"
 cp "$build_maven_commons_configuration" "$REPO_DIRECTORY/commons-configuration"
 
+sudo chmod 777 -R "$REPO_DIRECTORY/commons-configuration/"
+
 # Run tests with joular
 for ((i=1;i<=NB_ITERATION;i++))
 do
@@ -41,8 +43,8 @@ echo -e "\n\n\n\n"
 echo -e "------"
 echo -e "JABREF"
 echo -e "------"
-export JAVA_HOME=/usr/lib/jvm/jdk-21.0.1+12/
-sudo update-alternatives --set java "/usr/lib/jvm/jdk-21.0.1+12/bin/java"
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64/
+sudo update-alternatives --set java "/usr/lib/jvm/java-17-openjdk-amd64/bin/java"
 cd "$REPO_DIRECTORY/jabref" || exit
 ./gradlew -version
 java -version
@@ -53,17 +55,20 @@ sed -i "17s/.*/${package_jabref}/" "$config_file"
 cp "$config_file" "$REPO_DIRECTORY/jabref"
 
 # Update build.gradle with joularjx plugin path
-build_gradle="$PLUGINS_DIRECTORY/build.gradle"
+build_gradle="$PLUGINS_DIRECTORY/jabref/build.gradle"
 line_number=$(grep -n -- "-javaagent" "$build_gradle" | cut -d: -f1)
 sed -i "${line_number}s|-javaagent.*|-javaagent:${PLUGINS_DIRECTORY}/joularjx-2.0-modified.jar\"]|" "$build_gradle"
 cp "$build_gradle" "$REPO_DIRECTORY/jabref"
+
+# Making all added files non admin
+sudo chmod 777 -R "$REPO_DIRECTORY/jabref"
 
 # Run tests with joular
 for ((i=1;i<=NB_ITERATION;i++))
 do
     export ITERATION_ID=$i
     echo -e "Start test for iteration $i\n"
-    sudo ./gradlew clean check -PITERATION_ID=$i
+    sudo ./gradlew clean test -PITERATION_ID=$i
     echo -e "Test for iteration $i done!\n\n"
 done
 echo -e "\n\n\n\n"
@@ -91,6 +96,8 @@ line_number=$(grep -n -- "-javaagent" "$build_gradle" | cut -d: -f1)
 sed -i "${line_number}s|-javaagent.*|-javaagent:${PLUGINS_DIRECTORY}/joularjx-2.0-modified.jar\"] )|" "$build_gradle"
 cp "$build_gradle" "$REPO_DIRECTORY/hibernate-orm/hibernate-core"
 
+sudo chmod -R 777 "$REPO_DIRECTORY/hibernate-orm/hibernate-core"
+
 # Run tests with joular
 for ((i=1;i<=NB_ITERATION;i++))
 do
@@ -115,9 +122,10 @@ cd "$REPO_DIRECTORY/spring-boot" || exit
 # Update config.properties
 package_spring_boot="filter-method-names=org.springframework.boot"
 sed -i "17s/.*/${package_spring_boot}/" "$config_file"
+cp "$config_file" "$REPO_DIRECTORY/spring-boot/spring-boot-project/spring-boot/"
 :'
 # Add config.properties for every subproject
-find . -type f -name 'build.gradle' -exec dirname {} \; | while read dir; do
+find . -type f -name "build.gradle" -exec dirname {} \; | while read dir; do
   if [ -d "$dir/src" ]; then
     echo "Copying config.properties to $dir"
     cp "$config_file" "$dir"
@@ -131,12 +139,14 @@ line_number=$(grep -n -- "-javaagent" "$build_gradle" | cut -d: -f1)
 sed -i "${line_number}s|-javaagent.*|-javaagent:${PLUGINS_DIRECTORY}/joularjx-2.0-modified.jar\"|" "$build_gradle"
 cp "$build_gradle" "$REPO_DIRECTORY/spring-boot/spring-boot-project/spring-boot/"
 
+sudo chmod 777 -R "$REPO_DIRECTORY/spring-boot/spring-boot-project/spring-boot/"
+
 # Run tests with joular
 for ((i=1;i<=NB_ITERATION;i++))
 do
     export ITERATION_ID=$i
     echo -e "Start test for iteration $i\n"
-    sudo ./gradlew clean :spring-boot-project:spring-boot:test -PITERATION_ID=$i --rerun
+    sudo ./gradlew clean spring-boot-project:spring-boot:test -PITERATION_ID=$i --rerun
     echo -e "Test for iteration $i done!\n\n"
 done
 echo -e "\n\n\n\n"
