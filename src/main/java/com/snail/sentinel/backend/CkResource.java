@@ -98,7 +98,7 @@ public class CkResource {
         HashMap<String, String> jabref = new HashMap<>();
         jabref.put(Util.OWNER, "JabRef");
         jabref.put(Util.NAME, "jabref");
-        jabref.put(Util.SHA, "affb6acc24c3dc5fce36e1323eed415a8f711a2c");
+        jabref.put(Util.SHA, "5c9d8989f968d0ee3a942b411ef7fe121ed94609");
 
         this.repoData.add(commonsConfiguration);
         this.repoData.add(springBoot);
