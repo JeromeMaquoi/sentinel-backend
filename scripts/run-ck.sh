@@ -6,7 +6,7 @@ find "$PWD" -mindepth 1 -maxdepth 1 -type d | while read -r dir; do
     if [ ! -d "output-ck" ] || [ "$(ls -1A "$dir/output-ck/" | wc -l)" -eq 0 ]; then
         echo -e "Running CK for $dir"
         # Change the CK version in function of the analyzed project
-        if [[ "$dir" == *"jabref" ]]; then
+        if [[ "$dir" == *"jabref" ]] || [[ "$dir" == *"spoon" ]]; then
             echo -e "Using CK with JDK 17"
             ck_jar="ck-0.7.1-SNAPSHOT-jar-with-dependencies-jdk17.jar"
         else

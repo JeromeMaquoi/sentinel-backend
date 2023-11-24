@@ -62,8 +62,22 @@ fi
 sudo chmod -R 777 "$REPO_DIRECTORY/hibernate-orm"
 cd "$REPO_DIRECTORY/hibernate-orm" || exit
 git reset --hard 12442bd8c7cde6e7c006a6277eeb8e81ad0c2219 # release 6.2.13.FINAL
+echo -e "\n\n"
 
 
+# -----
+# spoon
+# -----
+if [ ! -d "spoon" ]; then
+    git clone https://github.com/INRIA/spoon.git "$REPO_DIRECTORY/spoon"
+    echo "Repository spoon cloned successfully !"
+else
+    echo "Repository spoon already cloned !"
+fi
+
+sudo chmod -R 777 "$REPO_DIRECTORY/spoon"
+cd "$REPO_DIRECTORY/spoon" || exit
+git reset --hard 066f4cf207359e06d30911a553dedd054aef595c # release v 10.4.2
 
 
 
