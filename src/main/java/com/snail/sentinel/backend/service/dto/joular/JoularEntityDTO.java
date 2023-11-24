@@ -5,10 +5,9 @@ import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
 import com.snail.sentinel.backend.service.dto.measurableelement.MethodElementDTO;
 import jakarta.validation.constraints.NotNull;
 
-import java.io.Serializable;
 import java.util.Objects;
 
-public class JoularEntityDTO implements Serializable {
+public class JoularEntityDTO {
     private String id;
 
     @NotNull
@@ -21,13 +20,13 @@ public class JoularEntityDTO implements Serializable {
     private String monitoringType;
 
     @NotNull
-    private transient MethodElementDTO methodElementDTO;
+    private MethodElementDTO methodElementDTO;
 
     @NotNull
-    private transient IterationDTO iterationDTO;
+    private IterationDTO iterationDTO;
 
     @NotNull
-    private transient CommitSimpleDTO commitSimpleDTO;
+    private CommitSimpleDTO commitSimpleDTO;
 
     public String getId() {
         return id;

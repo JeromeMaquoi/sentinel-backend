@@ -54,6 +54,11 @@ public class JoularServiceImpl implements JoularEntityService {
     }
 
     @Override
+    public List<JoularEntity> findByCommitSha(String sha) {
+        return joularEntityRepository.findByCommitSha(sha);
+    }
+
+    @Override
     public List<JoularEntityDTO> bulkAdd(List<JoularEntityDTO> listJoular) {
         List<JoularEntity> listEntity = joularEntityMapper.toEntity(listJoular);
         listEntity = joularEntityRepository.insert(listEntity);
@@ -72,6 +77,7 @@ public class JoularServiceImpl implements JoularEntityService {
         Set<Path> fileList = Util.getFileList(iterationPath);
         for (Path filePath: fileList) {
             JoularEntityListDTO iterationJoularDTOList = createJoularEntityDTOListForOneIteration(filePath, ckAggregateLineHashMapDTO, commitCompleteDTO);
+            log.info("iterationJoularDTOList[0] : {}", iterationJoularDTOList.getList().get(0));
             joularEntityDTOList.concat(joularEntityDTOList, iterationJoularDTOList);
         }
         return joularEntityDTOList;
