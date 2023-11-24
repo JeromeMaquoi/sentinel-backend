@@ -100,10 +100,16 @@ public class CkResource {
         jabref.put(Util.NAME, "jabref");
         jabref.put(Util.SHA, "5c9d8989f968d0ee3a942b411ef7fe121ed94609");
 
+        HashMap<String, String> spoon = new HashMap<>();
+        spoon.put(Util.OWNER, "INRIA");
+        spoon.put(Util.NAME, "spoon");
+        spoon.put(Util.SHA, "066f4cf207359e06d30911a553dedd054aef595c");
+
         this.repoData.add(commonsConfiguration);
         this.repoData.add(springBoot);
         this.repoData.add(hibernate);
         this.repoData.add(jabref);
+        this.repoData.add(spoon);
     }
 
     public void insertCommits(List<CommitCompleteDTO> listCommits) {
