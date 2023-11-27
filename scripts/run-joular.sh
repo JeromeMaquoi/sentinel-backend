@@ -123,15 +123,6 @@ cd "$REPO_DIRECTORY/spring-boot" || exit
 package_spring_boot="filter-method-names=org.springframework.boot"
 sed -i "17s/.*/${package_spring_boot}/" "$config_file"
 cp "$config_file" "$REPO_DIRECTORY/spring-boot/spring-boot-project/spring-boot/"
-:'
-# Add config.properties for every subproject
-find . -type f -name "build.gradle" -exec dirname {} \; | while read dir; do
-  if [ -d "$dir/src" ]; then
-    echo "Copying config.properties to $dir"
-    cp "$config_file" "$dir"
-  fi
-done
-'
 
 # Update root build.gradle with joularjx plugin path
 build_gradle="$PLUGINS_DIRECTORY/spring-boot/build.gradle"
@@ -150,3 +141,40 @@ do
     echo -e "Test for iteration $i done!\n\n"
 done
 echo -e "\n\n\n\n"
+
+
+# -----
+# spoon
+# -----
+echo -e "-----"
+echo -e "SPOON"
+echo -e "-----"
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+sudo update-alternatives --set java "/usr/lib/jvm/java-17-openjdk-amd64/bin/java"
+mvn -v
+cd "$REPO_DIRECTORY/spoon" || exit
+
+# Update config.properties
+package_spoon="filter-method-names=spoon"
+sed -i "17s/.*/${package_spoon}/" "$config_file"
+cp "$config_file" "$REPO_DIRECTORY/spoon"
+
+# Update pom.xml with joularjx plugin path
+build_maven_spoon="$PLUGINS_DIRECTORY/spoon/pom.xml"
+line_number=$(awk '/-javaagent/{print NR; exit}' "$build_maven_spoon")
+sed -i "${line_number}s|-javaagent.*|-javaagent:${PLUGINS_DIRECTORY}/joularjx-2.0-modified.jar|" "$build_maven_spoon"
+cp "$build_maven_spoon" "$REPO_DIRECTORY/spoon"
+
+sudo chmod 777 -R "$REPO_DIRECTORY/spoon"
+
+# Run tests with joular
+for ((i=1;i<=NB_ITERATION;i++))
+do
+    export ITERATION_ID=$i
+    echo -e "Start test for iteration $i\n"
+    mvn clean test -Drat.skip=true
+    echo -e "\n\n"
+done
+echo -e "\n\n\n\n"
+
+
