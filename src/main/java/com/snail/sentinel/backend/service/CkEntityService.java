@@ -1,5 +1,6 @@
 package com.snail.sentinel.backend.service;
 
+import com.snail.sentinel.backend.domain.CkEntity;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineHashMapDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkEntityDTO;
 
@@ -13,4 +14,6 @@ public interface CkEntityService {
     void deleteAll();
 
     CkAggregateLineHashMapDTO aggregate(String repoName);
+
+    List<CkEntity> findByCommitSha(String sha);
 }

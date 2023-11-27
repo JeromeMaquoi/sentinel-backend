@@ -2,14 +2,17 @@ package com.snail.sentinel.backend.web.rest;
 
 import com.snail.sentinel.backend.domain.CkEntity;
 import com.snail.sentinel.backend.repository.CkEntityRepository;
+import com.snail.sentinel.backend.service.CkEntityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
@@ -21,8 +24,11 @@ public class CkEntityResource {
 
     private final CkEntityRepository ckEntityRepository;
 
-    public CkEntityResource(CkEntityRepository ckEntityRepository) {
+    private final CkEntityService ckService;
+
+    public CkEntityResource(CkEntityRepository ckEntityRepository, CkEntityService ckService) {
         this.ckEntityRepository = ckEntityRepository;
+        this.ckService = ckService;
     }
 
     @GetMapping("/ck-entities")
@@ -33,5 +39,22 @@ public class CkEntityResource {
         log.debug("REST request to get all CkEntities");
         PageRequest pageRequest = PageRequest.of(page, size);
         return ckEntityRepository.findAll(pageRequest);
+    }
+
+    @GetMapping("/ck-entities/by-commit/{sha}")
+    public ResponseEntity<Page<CkEntity>> getAllCkEntitiesByCommitSha(@PathVariable String sha, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "100") int size) {
+        log.debug("REST request to get all ck entities data from commit : {}", sha);
+        List<CkEntity> ckEntities = ckService.findByCommitSha(sha);
+        if (!ckEntities.isEmpty()) {
+            int totalSize = ckEntities.size();
+            int startIndex = page * size;
+            int endIndex = Math.min(startIndex + size, totalSize);
+
+            List<CkEntity> ckContent = ckEntities.subList(startIndex, endIndex);
+            Page<CkEntity> pageContent = new PageImpl<>(ckContent, PageRequest.of(page, size), totalSize);
+            return new ResponseEntity<>(pageContent, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }

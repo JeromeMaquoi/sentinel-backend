@@ -47,6 +47,11 @@ public class CkServiceImpl implements CkEntityService {
     }
 
     @Override
+    public List<CkEntity> findByCommitSha(String sha) {
+        return ckEntityRepository.findByCommitSha(sha);
+    }
+
+    @Override
     public List<CkEntityDTO> bulkAdd(List<CkEntityDTO> listCk) {
         List<CkEntity> listEntity = ckEntityMapper.toEntity(listCk);
         listEntity = ckEntityRepository.insert(listEntity);
