@@ -123,15 +123,6 @@ cd "$REPO_DIRECTORY/spring-boot" || exit
 package_spring_boot="filter-method-names=org.springframework.boot"
 sed -i "17s/.*/${package_spring_boot}/" "$config_file"
 cp "$config_file" "$REPO_DIRECTORY/spring-boot/spring-boot-project/spring-boot/"
-:'
-# Add config.properties for every subproject
-find . -type f -name "build.gradle" -exec dirname {} \; | while read dir; do
-  if [ -d "$dir/src" ]; then
-    echo "Copying config.properties to $dir"
-    cp "$config_file" "$dir"
-  fi
-done
-'
 
 # Update root build.gradle with joularjx plugin path
 build_gradle="$PLUGINS_DIRECTORY/spring-boot/build.gradle"
