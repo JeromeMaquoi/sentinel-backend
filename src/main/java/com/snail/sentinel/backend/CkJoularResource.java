@@ -2,11 +2,11 @@ package com.snail.sentinel.backend;
 
 import com.snail.sentinel.backend.commons.Util;
 import com.snail.sentinel.backend.repository.CkEntityRepositoryAggregation;
+import com.snail.sentinel.backend.service.CkEntityService;
 import com.snail.sentinel.backend.service.CommitEntityService;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineHashMapDTO;
 import com.snail.sentinel.backend.service.dto.joular.JoularEntityListDTO;
-import com.snail.sentinel.backend.service.impl.CkServiceImpl;
-import com.snail.sentinel.backend.service.impl.JoularServiceImpl;
+import com.snail.sentinel.backend.service.impl.JoularEntityServiceImpl;
 import com.snail.sentinel.backend.service.dto.ck.CkEntityDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitCompleteDTO;
 import org.json.JSONObject;
@@ -25,20 +25,20 @@ public class CkJoularResource {
 
     private final List<HashMap<String, String>> repoData;
 
-    private final CkServiceImpl ckService;
+    private final CkEntityService ckEntityService;
 
     private final CommitEntityService commitEntityService;
 
-    private final JoularServiceImpl joularServiceImpl;
+    private final JoularEntityServiceImpl joularEntityServiceImpl;
 
     private final CkEntityRepositoryAggregation ckEntityRepositoryAggregation;
 
     private long startTime;
 
-    public CkJoularResource(CkServiceImpl ckService, CommitEntityService commitEntityService, JoularServiceImpl joularServiceImpl, CkEntityRepositoryAggregation ckEntityRepositoryAggregation) {
-        this.ckService = ckService;
+    public CkJoularResource(CkEntityService ckEntityService, CommitEntityService commitEntityService, JoularEntityServiceImpl joularEntityServiceImpl, CkEntityRepositoryAggregation ckEntityRepositoryAggregation) {
+        this.ckEntityService = ckEntityService;
         this.commitEntityService = commitEntityService;
-        this.joularServiceImpl = joularServiceImpl;
+        this.joularEntityServiceImpl = joularEntityServiceImpl;
         this.ckEntityRepositoryAggregation = ckEntityRepositoryAggregation;
         this.repoData = new ArrayList<>();
     }
@@ -46,8 +46,8 @@ public class CkJoularResource {
     public void insertAllData() throws Exception {
         startTime = System.currentTimeMillis();
 
-        ckService.deleteAll();
-        joularServiceImpl.deleteAll();
+        ckEntityService.deleteAll();
+        joularEntityServiceImpl.deleteAll();
         setRepoData();
         List<CommitCompleteDTO> listCommits = new ArrayList<>();
         // For each repository
@@ -62,7 +62,7 @@ public class CkJoularResource {
 
             // Insertion of CK data
             String csvPath = System.getenv("REPO_DIRECTORY") + repoItem.get(Util.NAME) + "/output-ck/";
-            ckService.insertBatchCkEntityDTO(commitCompleteDTO, csvPath, Integer.parseInt(System.getenv("BATCH_SIZE")));
+            ckEntityService.insertBatchCkEntityDTO(commitCompleteDTO, csvPath, Integer.parseInt(System.getenv("BATCH_SIZE")));
 
             // Insertion of Joular data
             CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO = ckEntityRepositoryAggregation.aggregate(repoItem.get(Util.NAME));
@@ -70,7 +70,7 @@ public class CkJoularResource {
 
             for (File iterationFilePath : iterationPaths) {
                 String iterationPath = iterationFilePath.getAbsolutePath();
-                JoularEntityListDTO joularEntityDTOList = joularServiceImpl.createJoularEntityDTOList(ckAggregateLineHashMapDTO, commitCompleteDTO, iterationPath);
+                JoularEntityListDTO joularEntityDTOList = joularEntityServiceImpl.createJoularEntityDTOList(ckAggregateLineHashMapDTO, commitCompleteDTO, iterationPath);
                 insertJoularData(joularEntityDTOList);
             }
 
@@ -123,12 +123,12 @@ public class CkJoularResource {
     }
 
     public void insertCkData(List<CkEntityDTO> listCks) {
-        ckService.bulkAdd(listCks);
+        ckEntityService.bulkAdd(listCks);
         log.info("List of CkEntity inserted to the database");
     }
 
     public void insertJoularData(JoularEntityListDTO joularEntityListDTO) {
-        joularServiceImpl.bulkAdd(joularEntityListDTO.getList());
+        joularEntityServiceImpl.bulkAdd(joularEntityListDTO.getList());
         log.info("List of JoularEntity inserted to the database");
     }
 }

@@ -23,14 +23,14 @@ import static java.lang.Boolean.parseBoolean;
 import static java.lang.Double.parseDouble;
 
 @Service
-public class CkServiceImpl implements CkEntityService {
-    private final Logger log = LoggerFactory.getLogger(CkServiceImpl.class);
+public class CkEntityServiceImpl implements CkEntityService {
+    private final Logger log = LoggerFactory.getLogger(CkEntityServiceImpl.class);
 
     private final CkEntityRepository ckEntityRepository;
 
     private final CkEntityMapper ckEntityMapper;
 
-    public CkServiceImpl(CkEntityRepository ckEntityRepository, CkEntityMapper ckEntityMapper) {
+    public CkEntityServiceImpl(CkEntityRepository ckEntityRepository, CkEntityMapper ckEntityMapper) {
         this.ckEntityRepository = ckEntityRepository;
         this.ckEntityMapper = ckEntityMapper;
     }
@@ -58,6 +58,7 @@ public class CkServiceImpl implements CkEntityService {
         ckEntityRepository.deleteAll();
     }
 
+    @Override
     public void insertBatchCkEntityDTO(CommitCompleteDTO commitCompleteDTO, String csvPath, int batchSize) throws IOException {
         List<CkEntityDTO> batch = new ArrayList<>();
         for (String astElem: Arrays.asList(Util.AST_ELEM_CLASS, Util.AST_ELEM_METHOD, Util.AST_ELEM_VARIABLE)) {

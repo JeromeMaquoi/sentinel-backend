@@ -3,9 +3,9 @@ package com.snail.sentinel.backend.service;
 import com.snail.sentinel.backend.repository.*;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineHashMapDTO;
-import com.snail.sentinel.backend.service.impl.CkServiceImpl;
+import com.snail.sentinel.backend.service.impl.CkEntityServiceImpl;
 import com.snail.sentinel.backend.service.impl.CommitEntityServiceImpl;
-import com.snail.sentinel.backend.service.impl.JoularServiceImpl;
+import com.snail.sentinel.backend.service.impl.JoularEntityServiceImpl;
 import com.snail.sentinel.backend.service.mapper.CkEntityMapper;
 import com.snail.sentinel.backend.service.mapper.JoularEntityMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,9 +18,9 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 
 
-class JoularServiceImplTest {
+class JoularEntityServiceImplTest {
 
-    private final Logger log = LoggerFactory.getLogger(JoularServiceImplTest.class);
+    private final Logger log = LoggerFactory.getLogger(JoularEntityServiceImplTest.class);
 
     @Mock
     private CkEntityRepository ckEntityRepository;
@@ -29,7 +29,7 @@ class JoularServiceImplTest {
     private CkEntityMapper ckEntityMapper;
 
     @InjectMocks
-    private CkServiceImpl ckService;
+    private CkEntityServiceImpl ckService;
 
     @Mock
     private CommitEntityRepository commitEntityRepository;
@@ -44,7 +44,7 @@ class JoularServiceImplTest {
     private JoularEntityMapper joularEntityMapper;
 
     @InjectMocks
-    private JoularServiceImpl joularService;
+    private JoularEntityServiceImpl joularService;
 
     @BeforeEach
     public void init() {
@@ -67,10 +67,10 @@ class JoularServiceImplTest {
         ckAggregateLineHashMapDTO.insertOne(ckAggregateLineDTO2);
 
         ckEntityRepository = Mockito.mock(CkEntityRepository.class);
-        ckService = new CkServiceImpl(ckEntityRepository, ckEntityMapper);
+        ckService = new CkEntityServiceImpl(ckEntityRepository, ckEntityMapper);
 
         joularEntityRepository = Mockito.mock(JoularEntityRepository.class);
-        joularService = new JoularServiceImpl(joularEntityRepository, joularEntityMapper);
+        joularService = new JoularEntityServiceImpl(joularEntityRepository, joularEntityMapper);
 
         commitEntityRepository = Mockito.mock(CommitEntityRepository.class);
         commitEntityServiceImpl = new CommitEntityServiceImpl(commitEntityRepository);

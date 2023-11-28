@@ -30,8 +30,8 @@ import static java.lang.Integer.parseInt;
 import static java.lang.Long.parseLong;
 
 @Service
-public class JoularServiceImpl implements JoularEntityService {
-    private final Logger log = LoggerFactory.getLogger(JoularServiceImpl.class);
+public class JoularEntityServiceImpl implements JoularEntityService {
+    private final Logger log = LoggerFactory.getLogger(JoularEntityServiceImpl.class);
 
     private final JoularEntityRepository joularEntityRepository;
 
@@ -43,7 +43,7 @@ public class JoularServiceImpl implements JoularEntityService {
 
     private static final String LINE_NUMBER = "lineNumber";
 
-    public JoularServiceImpl(JoularEntityRepository joularEntityRepository, JoularEntityMapper joularEntityMapper) {
+    public JoularEntityServiceImpl(JoularEntityRepository joularEntityRepository, JoularEntityMapper joularEntityMapper) {
         this.joularEntityRepository = joularEntityRepository;
         this.joularEntityMapper = joularEntityMapper;
     }
