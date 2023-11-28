@@ -1,8 +1,9 @@
-package com.snail.sentinel.backend.service;
+package com.snail.sentinel.backend.service.impl;
 
 import com.snail.sentinel.backend.commons.Util;
 import com.snail.sentinel.backend.domain.CommitEntity;
 import com.snail.sentinel.backend.repository.CommitEntityRepository;
+import com.snail.sentinel.backend.service.CommitEntityService;
 import com.snail.sentinel.backend.service.dto.commit.CommitCompleteDTO;
 import com.snail.sentinel.backend.service.dto.commit.StatsDTO;
 import com.snail.sentinel.backend.service.dto.repository.RepositoryCompleteDTO;
@@ -18,35 +19,38 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static java.lang.Integer.parseInt;
 
 @Service
-public class CommitService {
-    private static final Logger log = LoggerFactory.getLogger(CommitService.class);
+public class CommitEntityServiceImpl implements CommitEntityService {
+    private static final Logger log = LoggerFactory.getLogger(CommitEntityServiceImpl.class);
 
     private final CommitEntityRepository commitEntityRepository;
 
-    public CommitService(CommitEntityRepository commitEntityRepository) {
+    public CommitEntityServiceImpl(CommitEntityRepository commitEntityRepository) {
         this.commitEntityRepository = commitEntityRepository;
     }
 
+    @Override
     public CommitEntity add(CommitCompleteDTO commitCompleteDTO) {
         CommitEntity commitEntity = buildNewCommitItem(commitCompleteDTO);
         log.debug("Created Information for Commit: {}", commitEntity);
         return commitEntityRepository.save(commitEntity);
     }
 
+    @Override
     public Optional<CommitEntity> findOneBySha(String sha) {
         return commitEntityRepository.findOneBySha(sha);
     }
 
+    @Override
     public List<CommitEntity> bulkAdd(List<CommitCompleteDTO> listCommitDTO) {
         return commitEntityRepository.insert(listCommitDTO.stream().map(this::buildNewCommitItem).toList());
     }
 
+    @Override
     public void deleteAll() {
         commitEntityRepository.deleteAll();
     }
@@ -62,6 +66,7 @@ public class CommitService {
         return commit;
     }
 
+    @Override
     public CommitCompleteDTO createCommitEntityDTO(Map<String, String> repoItem, JSONObject commitData) {
         RepositoryCompleteDTO repositoryCompleteDTO = new RepositoryCompleteDTO();
         repositoryCompleteDTO.setName(repoItem.get(Util.NAME));
@@ -85,9 +90,10 @@ public class CommitService {
     private List<String> createParentsList(JSONArray parents) {
         return IntStream.range(0, parents.length())
             .mapToObj(index -> ((JSONObject)parents.get(index)).optString(Util.SHA))
-            .collect(Collectors.toList());
+            .toList();
     }
 
+    @Override
     public JSONObject getCommitData(String owner, String repoName, String sha) throws Exception {
         String bearer = System.getenv("GITHUB_TOKEN");
         String strUrl = "https://api.github.com/repos/" + owner + "/" + repoName + "/commits/" + sha;

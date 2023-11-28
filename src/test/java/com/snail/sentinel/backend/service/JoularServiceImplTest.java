@@ -4,6 +4,7 @@ import com.snail.sentinel.backend.repository.*;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineHashMapDTO;
 import com.snail.sentinel.backend.service.impl.CkServiceImpl;
+import com.snail.sentinel.backend.service.impl.CommitEntityServiceImpl;
 import com.snail.sentinel.backend.service.impl.JoularServiceImpl;
 import com.snail.sentinel.backend.service.mapper.CkEntityMapper;
 import com.snail.sentinel.backend.service.mapper.JoularEntityMapper;
@@ -13,8 +14,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 
@@ -36,7 +35,7 @@ class JoularServiceImplTest {
     private CommitEntityRepository commitEntityRepository;
 
     @InjectMocks
-    private CommitService commitService;
+    private CommitEntityServiceImpl commitEntityServiceImpl;
 
     @Mock
     private JoularEntityRepository joularEntityRepository;
@@ -74,7 +73,7 @@ class JoularServiceImplTest {
         joularService = new JoularServiceImpl(joularEntityRepository, joularEntityMapper);
 
         commitEntityRepository = Mockito.mock(CommitEntityRepository.class);
-        commitService = new CommitService(commitEntityRepository);
+        commitEntityServiceImpl = new CommitEntityServiceImpl(commitEntityRepository);
     }
 
     /*@Test

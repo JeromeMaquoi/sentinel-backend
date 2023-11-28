@@ -2,10 +2,10 @@ package com.snail.sentinel.backend;
 
 import com.snail.sentinel.backend.commons.Util;
 import com.snail.sentinel.backend.repository.CkEntityRepositoryAggregation;
+import com.snail.sentinel.backend.service.CommitEntityService;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineHashMapDTO;
 import com.snail.sentinel.backend.service.dto.joular.JoularEntityListDTO;
 import com.snail.sentinel.backend.service.impl.CkServiceImpl;
-import com.snail.sentinel.backend.service.CommitService;
 import com.snail.sentinel.backend.service.impl.JoularServiceImpl;
 import com.snail.sentinel.backend.service.dto.ck.CkEntityDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitCompleteDTO;
@@ -27,7 +27,7 @@ public class CkJoularResource {
 
     private final CkServiceImpl ckService;
 
-    private final CommitService commitService;
+    private final CommitEntityService commitEntityService;
 
     private final JoularServiceImpl joularServiceImpl;
 
@@ -35,9 +35,9 @@ public class CkJoularResource {
 
     private long startTime;
 
-    public CkJoularResource(CkServiceImpl ckService, CommitService commitService, JoularServiceImpl joularServiceImpl, CkEntityRepositoryAggregation ckEntityRepositoryAggregation) {
+    public CkJoularResource(CkServiceImpl ckService, CommitEntityService commitEntityService, JoularServiceImpl joularServiceImpl, CkEntityRepositoryAggregation ckEntityRepositoryAggregation) {
         this.ckService = ckService;
-        this.commitService = commitService;
+        this.commitEntityService = commitEntityService;
         this.joularServiceImpl = joularServiceImpl;
         this.ckEntityRepositoryAggregation = ckEntityRepositoryAggregation;
         this.repoData = new ArrayList<>();
@@ -54,10 +54,10 @@ public class CkJoularResource {
         for (HashMap<String, String> repoItem : repoData) {
             log.info("Beginning for repository : {}", repoItem.get(Util.NAME));
 
-            JSONObject commitData = commitService.getCommitData(repoItem.get(Util.OWNER), repoItem.get(Util.NAME), repoItem.get(Util.SHA));
+            JSONObject commitData = commitEntityService.getCommitData(repoItem.get(Util.OWNER), repoItem.get(Util.NAME), repoItem.get(Util.SHA));
 
             // Preparation of the Commit data to be inserted
-            CommitCompleteDTO commitCompleteDTO = commitService.createCommitEntityDTO(repoItem, commitData);
+            CommitCompleteDTO commitCompleteDTO = commitEntityService.createCommitEntityDTO(repoItem, commitData);
             listCommits.add(commitCompleteDTO);
 
             // Insertion of CK data
@@ -117,8 +117,8 @@ public class CkJoularResource {
     }
 
     public void insertCommits(List<CommitCompleteDTO> listCommits) {
-        commitService.deleteAll();
-        commitService.bulkAdd(listCommits);
+        commitEntityService.deleteAll();
+        commitEntityService.bulkAdd(listCommits);
         log.info("Created information for the list of CommitEntity");
     }
 
