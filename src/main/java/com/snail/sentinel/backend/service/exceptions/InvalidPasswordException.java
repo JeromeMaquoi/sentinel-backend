@@ -1,4 +1,4 @@
-package com.snail.sentinel.backend.service;
+package com.snail.sentinel.backend.service.exceptions;
 
 public class InvalidPasswordException extends RuntimeException {
 

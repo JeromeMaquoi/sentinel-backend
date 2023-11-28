@@ -13,6 +13,10 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import com.snail.sentinel.backend.service.exceptions.EmailAlreadyUsedException;
+import com.snail.sentinel.backend.service.exceptions.InvalidPasswordException;
+import com.snail.sentinel.backend.service.exceptions.UsernameAlreadyUsedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;

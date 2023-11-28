@@ -1,4 +1,4 @@
-package com.snail.sentinel.backend.service;
+package com.snail.sentinel.backend.service.exceptions;
 
 public class JoularEntityDTONotFoundException extends RuntimeException {
     public JoularEntityDTONotFoundException(Exception e) {

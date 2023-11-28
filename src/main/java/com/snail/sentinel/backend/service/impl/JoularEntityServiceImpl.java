@@ -4,7 +4,7 @@ import com.snail.sentinel.backend.commons.Util;
 import com.snail.sentinel.backend.domain.JoularEntity;
 import com.snail.sentinel.backend.repository.JoularEntityRepository;
 import com.snail.sentinel.backend.service.JoularEntityService;
-import com.snail.sentinel.backend.service.NoCsvLineFoundException;
+import com.snail.sentinel.backend.service.exceptions.NoCsvLineFoundException;
 import com.snail.sentinel.backend.service.dto.IterationDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitCompleteDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
