@@ -2,6 +2,8 @@ package com.snail.sentinel.backend.web.rest.errors;
 
 import static org.springframework.core.annotation.AnnotatedElementUtils.findMergedAnnotation;
 
+import com.snail.sentinel.backend.service.exceptions.EmailAlreadyUsedException;
+import com.snail.sentinel.backend.service.exceptions.UsernameAlreadyUsedException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.Arrays;
@@ -88,15 +90,15 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
 
     private ProblemDetailWithCause getProblemDetailWithCause(Throwable ex) {
         if (
-            ex instanceof com.snail.sentinel.backend.service.EmailAlreadyUsedException ||
-            ex instanceof com.snail.sentinel.backend.service.UsernameAlreadyUsedException
+            ex instanceof EmailAlreadyUsedException ||
+            ex instanceof UsernameAlreadyUsedException
         ) {
             // return 201 - CREATED on purpose to not reveal information to potential attackers
             // see https://github.com/jhipster/generator-jhipster/issues/21731
             return ProblemDetailWithCauseBuilder.instance().withStatus(201).build();
         }
         if (
-            ex instanceof com.snail.sentinel.backend.service.InvalidPasswordException
+            ex instanceof com.snail.sentinel.backend.service.exceptions.InvalidPasswordException
         ) return (ProblemDetailWithCause) new InvalidPasswordException().getBody();
 
         if (
