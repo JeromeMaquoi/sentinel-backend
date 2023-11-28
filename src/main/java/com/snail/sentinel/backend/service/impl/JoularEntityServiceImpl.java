@@ -71,13 +71,13 @@ public class JoularEntityServiceImpl implements JoularEntityService {
         joularEntityRepository.deleteAll();
     }
 
+    @Override
     public JoularEntityListDTO createJoularEntityDTOList(CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO, CommitCompleteDTO commitCompleteDTO, String iterationPath) {
         log.info("Request to create JoularEntityDTO list for {}", iterationPath);
         JoularEntityListDTO joularEntityDTOList = new JoularEntityListDTO();
         Set<Path> fileList = Util.getFileList(iterationPath);
         for (Path filePath: fileList) {
             JoularEntityListDTO iterationJoularDTOList = createJoularEntityDTOListForOneIteration(filePath, ckAggregateLineHashMapDTO, commitCompleteDTO);
-            log.info("iterationJoularDTOList[0] : {}", iterationJoularDTOList.getList().get(0));
             joularEntityDTOList.concat(joularEntityDTOList, iterationJoularDTOList);
         }
         return joularEntityDTOList;
