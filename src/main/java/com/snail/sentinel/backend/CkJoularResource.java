@@ -1,6 +1,7 @@
 package com.snail.sentinel.backend;
 
 import com.snail.sentinel.backend.commons.Util;
+import com.snail.sentinel.backend.repository.CkEntityRepositoryAggregation;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineHashMapDTO;
 import com.snail.sentinel.backend.service.dto.joular.JoularEntityListDTO;
 import com.snail.sentinel.backend.service.impl.CkServiceImpl;
@@ -19,8 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 
 @Service
-public class CkResource {
-    private final Logger log = LoggerFactory.getLogger(CkResource.class);
+public class CkJoularResource {
+    private final Logger log = LoggerFactory.getLogger(CkJoularResource.class);
 
     private final List<HashMap<String, String>> repoData;
 
@@ -30,12 +31,15 @@ public class CkResource {
 
     private final JoularServiceImpl joularServiceImpl;
 
+    private final CkEntityRepositoryAggregation ckEntityRepositoryAggregation;
+
     private long startTime;
 
-    public CkResource(CkServiceImpl ckService, CommitService commitService, JoularServiceImpl joularServiceImpl) {
+    public CkJoularResource(CkServiceImpl ckService, CommitService commitService, JoularServiceImpl joularServiceImpl, CkEntityRepositoryAggregation ckEntityRepositoryAggregation) {
         this.ckService = ckService;
         this.commitService = commitService;
         this.joularServiceImpl = joularServiceImpl;
+        this.ckEntityRepositoryAggregation = ckEntityRepositoryAggregation;
         this.repoData = new ArrayList<>();
     }
 
@@ -61,7 +65,7 @@ public class CkResource {
             ckService.insertBatchCkEntityDTO(commitCompleteDTO, csvPath, Integer.parseInt(System.getenv("BATCH_SIZE")));
 
             // Insertion of Joular data
-            CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO = ckService.aggregate(repoItem.get(Util.NAME));
+            CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO = ckEntityRepositoryAggregation.aggregate(repoItem.get(Util.NAME));
             List<File> iterationPaths = Util.searchDirectories("joularjx-result", new File(System.getenv("REPO_DIRECTORY") + repoItem.get(Util.NAME)));
 
             for (File iterationFilePath : iterationPaths) {

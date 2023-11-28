@@ -3,9 +3,7 @@ package com.snail.sentinel.backend.service.impl;
 import com.snail.sentinel.backend.commons.Util;
 import com.snail.sentinel.backend.domain.CkEntity;
 import com.snail.sentinel.backend.repository.CkEntityRepository;
-import com.snail.sentinel.backend.repository.CkEntityRepositoryAggregationImpl;
 import com.snail.sentinel.backend.service.CkEntityService;
-import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineHashMapDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkEntityDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitCompleteDTO;
 import com.snail.sentinel.backend.service.dto.measurableelement.MeasurableElementDTO;
@@ -19,7 +17,6 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.snail.sentinel.backend.commons.Util.getMeasurableElement;
 import static java.lang.Boolean.parseBoolean;
@@ -33,17 +30,14 @@ public class CkServiceImpl implements CkEntityService {
 
     private final CkEntityMapper ckEntityMapper;
 
-    private final CkEntityRepositoryAggregationImpl ckEntityRepositoryAggregationImpl;
-
-    public CkServiceImpl(CkEntityRepository ckEntityRepository, CkEntityMapper ckEntityMapper, CkEntityRepositoryAggregationImpl ckEntityRepositoryAggregationImpl) {
+    public CkServiceImpl(CkEntityRepository ckEntityRepository, CkEntityMapper ckEntityMapper) {
         this.ckEntityRepository = ckEntityRepository;
         this.ckEntityMapper = ckEntityMapper;
-        this.ckEntityRepositoryAggregationImpl = ckEntityRepositoryAggregationImpl;
     }
 
     @Override
     public List<CkEntityDTO> findAll() {
-        return ckEntityRepository.findAll().stream().map(ckEntityMapper::toDto).collect(Collectors.toList());
+        return ckEntityRepository.findAll().stream().map(ckEntityMapper::toDto).toList();
     }
 
     @Override
@@ -62,11 +56,6 @@ public class CkServiceImpl implements CkEntityService {
     @Override
     public void deleteAll() {
         ckEntityRepository.deleteAll();
-    }
-
-    @Override
-    public CkAggregateLineHashMapDTO aggregate(String repoName) {
-        return ckEntityRepositoryAggregationImpl.aggregate(repoName);
     }
 
     public void insertBatchCkEntityDTO(CommitCompleteDTO commitCompleteDTO, String csvPath, int batchSize) throws IOException {

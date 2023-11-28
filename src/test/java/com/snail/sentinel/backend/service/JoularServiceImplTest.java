@@ -18,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 
-import static org.mockito.Mockito.when;
 
 class JoularServiceImplTest {
 
@@ -26,9 +25,6 @@ class JoularServiceImplTest {
 
     @Mock
     private CkEntityRepository ckEntityRepository;
-
-    @Mock
-    private CkEntityRepositoryAggregationImpl ckEntityRepositoryAggregationImpl;
 
     @Mock
     private CkEntityMapper ckEntityMapper;
@@ -72,9 +68,7 @@ class JoularServiceImplTest {
         ckAggregateLineHashMapDTO.insertOne(ckAggregateLineDTO2);
 
         ckEntityRepository = Mockito.mock(CkEntityRepository.class);
-        ckEntityRepositoryAggregationImpl = Mockito.mock(CkEntityRepositoryAggregationImpl.class);
-        when(ckEntityRepositoryAggregationImpl.aggregate(Mockito.anyString())).thenReturn(ckAggregateLineHashMapDTO);
-        ckService = new CkServiceImpl(ckEntityRepository, ckEntityMapper, ckEntityRepositoryAggregationImpl);
+        ckService = new CkServiceImpl(ckEntityRepository, ckEntityMapper);
 
         joularEntityRepository = Mockito.mock(JoularEntityRepository.class);
         joularService = new JoularServiceImpl(joularEntityRepository, joularEntityMapper);

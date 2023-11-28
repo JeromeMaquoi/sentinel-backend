@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.snail.sentinel.backend.commons.Util;
 import com.snail.sentinel.backend.repository.CkEntityRepository;
-import com.snail.sentinel.backend.repository.CkEntityRepositoryAggregationImpl;
 import com.snail.sentinel.backend.service.dto.ck.CkEntityDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitCompleteDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
@@ -27,9 +26,6 @@ class CkServiceImplTest {
 
     @Mock
     private CkEntityRepository ckEntityRepository;
-
-    @Mock
-    private CkEntityRepositoryAggregationImpl ckEntityRepositoryAggregationImpl;
 
     @Mock
     private CkEntityMapper ckEntityMapper;
@@ -73,7 +69,7 @@ class CkServiceImplTest {
     @BeforeEach
     public void init() {
         ckEntityRepository = Mockito.mock(CkEntityRepository.class);
-        ckService = new CkServiceImpl(ckEntityRepository, ckEntityMapper, ckEntityRepositoryAggregationImpl);
+        ckService = new CkServiceImpl(ckEntityRepository, ckEntityMapper);
 
         line.put("loc", "3");
         line.put("fanout", "0");

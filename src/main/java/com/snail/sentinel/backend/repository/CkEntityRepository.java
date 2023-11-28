@@ -12,6 +12,6 @@ import java.util.List;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface CkEntityRepository extends MongoRepository<CkEntity, String>, CkEntityRepositoryAggregation {
+public interface CkEntityRepository extends MongoRepository<CkEntity, String> {
     List<CkEntity> findByCommitSha(String sha);
 }
