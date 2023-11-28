@@ -14,4 +14,5 @@ import java.util.List;
 @Repository
 public interface CkEntityRepository extends MongoRepository<CkEntity, String> {
     List<CkEntity> findByCommitSha(String sha);
+    List<CkEntity> findByCommitShaAndName(String sha, String name);
 }
