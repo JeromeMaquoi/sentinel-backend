@@ -109,10 +109,10 @@ public class Util {
     public static MeasurableElementDTO getMeasurableElement(String astElem, Object line) {
         try {
             MeasurableElementDTO measurableElementDTO = new MeasurableElementDTO();
-            measurableElementDTO.setAstElem(astElem);
-            measurableElementDTO.setFilePath(((JSONObject) line).getString(Util.FILE));
-            measurableElementDTO.setClassName(((JSONObject) line).getString(Util.AST_ELEM_CLASS));
             if (line instanceof JSONObject) {
+                measurableElementDTO.setAstElem(astElem);
+                measurableElementDTO.setFilePath(((JSONObject) line).getString(Util.FILE));
+                measurableElementDTO.setClassName(((JSONObject) line).getString(Util.AST_ELEM_CLASS));
                 switch (astElem) {
                     case Util.AST_ELEM_CLASS -> {
                         measurableElementDTO.setClassType(((JSONObject) line).getString("type"));
@@ -130,7 +130,10 @@ public class Util {
                 }
                 return measurableElementDTO;
             } else if (line instanceof CkAggregateLineDTO) {
-                measurableElementDTO.setMethodSignature(((JSONObject) line).getString(Util.AST_ELEM_METHOD));
+                measurableElementDTO.setAstElem(astElem);
+                measurableElementDTO.setClassName(((CkAggregateLineDTO) line).getClassName());
+                measurableElementDTO.setMethodSignature(((CkAggregateLineDTO) line).getMethodSignature());
+                measurableElementDTO.setFilePath(((CkAggregateLineDTO) line).getFilePath());
                 return measurableElementDTO;
             }
             /*if (line instanceof JSONObject) {

@@ -103,7 +103,7 @@ public class JoularEntityServiceImpl implements JoularEntityService {
                         if (matchedCkJoular != null) {
                             CommitSimpleDTO commitSimpleDTO = Util.createCommitSimpleFromCommitCompleteDTO(commitCompleteDTO);
                             JoularEntityDTO joularEntityDTO = new JoularEntityDTO();
-                            MeasurableElementDTO methodElementDTO = (MeasurableElementDTO) getMeasurableElement("method", matchedCkJoular);
+                            MeasurableElementDTO methodElementDTO = getMeasurableElement("method", matchedCkJoular);
 
                             if (methodElementSetDTO.has(methodElementDTO)){
                                 joularEntityDTOList.update(methodElementDTO, value);
