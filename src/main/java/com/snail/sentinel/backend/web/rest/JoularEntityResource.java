@@ -48,6 +48,20 @@ public class JoularEntityResource {
         return getPageResponseEntity(page, size, joularEntities);
     }
 
+    @GetMapping("/joular-entities/by-commit-and-ast-elem/{sha}")
+    public ResponseEntity<Page<JoularEntity>> getAllJoularDataFromOneCommitAndAstElem(
+        @PathVariable String sha,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "100") int size,
+        @RequestParam String className,
+        @RequestParam String methodSignature
+    ) {
+        log.debug("REST request to get all joular entities data from commit {} and astElem {}", sha, className + "." + methodSignature);
+        List<JoularEntity> joularEntities = joularService.findByCommitShaAndAstElement(sha, className, methodSignature);
+        return getPageResponseEntity(page, size, joularEntities);
+
+    }
+
     private ResponseEntity<Page<JoularEntity>> getPageResponseEntity(int page, int size, List<JoularEntity> joularEntities) {
         if (!joularEntities.isEmpty()) {
             int totalSize = joularEntities.size();

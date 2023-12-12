@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface JoularEntityRepository extends MongoRepository<JoularEntity, String> {
     List<JoularEntity> findByCommitSha(String sha);
+
+    List<JoularEntity> findByCommitShaAndMeasurableElementClassNameAndMeasurableElementMethodSignature(String sha, String className, String methodSignature);
 }

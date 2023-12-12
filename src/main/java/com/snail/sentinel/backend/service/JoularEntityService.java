@@ -17,5 +17,7 @@ public interface JoularEntityService {
 
     List<JoularEntity> findByCommitSha(String sha);
 
+    List<JoularEntity> findByCommitShaAndAstElement(String sha, String className, String methodSignature);
+
     JoularEntityListDTO createJoularEntityDTOList(CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO, CommitCompleteDTO commitCompleteDTO, String iterationPath);
 }
