@@ -29,11 +29,11 @@ public class JoularEntity implements Serializable {
     private String scope;
 
     @NotNull
-    @Field("monitoring_type")
+    @Field("monitoringType")
     private String monitoringType;
 
     @NotNull
-    @Field("measurable_element")
+    @Field("measurableElement")
     private transient MeasurableElementDTO measurableElement;
 
     @NotNull

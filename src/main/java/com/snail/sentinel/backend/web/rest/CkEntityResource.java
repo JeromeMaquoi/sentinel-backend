@@ -52,7 +52,21 @@ public class CkEntityResource {
         return getPageResponseEntity(page, size, ckEntities);
     }
 
-    @GetMapping("/ck-entities/by-commit-and-metric/{sha}")
+    @GetMapping("/ck-entities/by-commit-and-ast-elem/{sha}")
+    public ResponseEntity<Page<CkEntity>> getAllCkEntitiesByCommitShaAndMeasurableElem(
+        @PathVariable String sha,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "100") int size,
+        @RequestParam String astElem,
+        @RequestParam String className,
+        @RequestParam(required = false) String methodSignature
+    ) {
+        log.debug("REST request to get all ck entities data from commit : {}", sha);
+        List<CkEntity> ckEntities = ckService.findByCommitShaAndMethodElement(sha, astElem, className, methodSignature);
+        return getPageResponseEntity(page, size, ckEntities);
+    }
+
+    /*@GetMapping("/ck-entities/by-commit-and-metric/{sha}")
     public ResponseEntity<Page<CkEntity>> getAllCkEntitiesByCommitShaAndMetricName(
         @PathVariable String sha,
         @RequestParam(defaultValue = "0") int page,
@@ -62,7 +76,7 @@ public class CkEntityResource {
         log.debug("REST request to get all ck entities data from commit : {}", sha);
         List<CkEntity> ckEntities = ckService.findByCommitShaAndMetricName(sha, metricName);
         return getPageResponseEntity(page, size, ckEntities);
-    }
+    }*/
 
     private ResponseEntity<Page<CkEntity>> getPageResponseEntity(int page, int size, List<CkEntity> ckEntities) {
         if (!ckEntities.isEmpty()) {

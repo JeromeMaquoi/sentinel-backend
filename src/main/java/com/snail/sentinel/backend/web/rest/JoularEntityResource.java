@@ -6,6 +6,7 @@ import com.snail.sentinel.backend.service.JoularEntityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,11 +38,25 @@ public class JoularEntityResource {
     }
 
     @GetMapping("/joular-entities/by-commit/{sha}")
-    public ResponseEntity<List<JoularEntity>> getAllJoularDataFromOneCommit(@PathVariable String sha) {
+    public ResponseEntity<Page<JoularEntity>> getAllJoularDataFromOneCommit(
+        @PathVariable String sha,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "100") int size
+    ) {
         log.debug("REST request to get all joular data from commit : {}", sha);
         List<JoularEntity> joularEntities = joularService.findByCommitSha(sha);
+        return getPageResponseEntity(page, size, joularEntities);
+    }
+
+    private ResponseEntity<Page<JoularEntity>> getPageResponseEntity(int page, int size, List<JoularEntity> joularEntities) {
         if (!joularEntities.isEmpty()) {
-            return new ResponseEntity<>(joularEntities, HttpStatus.OK);
+            int totalSize = joularEntities.size();
+            int startIndex = page * size;
+            int endIndex = Math.min(startIndex + size, totalSize);
+
+            List<JoularEntity> ckContent = joularEntities.subList(startIndex, endIndex);
+            Page<JoularEntity> pageContent = new PageImpl<>(ckContent, PageRequest.of(page, size), totalSize);
+            return new ResponseEntity<>(pageContent, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

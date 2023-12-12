@@ -15,4 +15,5 @@ import java.util.List;
 public interface CkEntityRepository extends MongoRepository<CkEntity, String> {
     List<CkEntity> findByCommitSha(String sha);
     List<CkEntity> findByCommitShaAndName(String sha, String name);
+    List<CkEntity> findByCommitShaAndMeasurableElementAstElemAndMeasurableElementClassNameAndMeasurableElement_MethodSignature(String sha, String astElem, String className, String methodSignature);
 }

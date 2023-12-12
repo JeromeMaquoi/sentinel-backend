@@ -51,6 +51,11 @@ public class CkEntityServiceImpl implements CkEntityService {
     }
 
     @Override
+    public List<CkEntity> findByCommitShaAndMethodElement(String sha, String astElem, String className, String methodSignature) {
+        return ckEntityRepository.findByCommitShaAndMeasurableElementAstElemAndMeasurableElementClassNameAndMeasurableElement_MethodSignature(sha, astElem, className, methodSignature);
+    }
+
+    @Override
     public List<CkEntityDTO> bulkAdd(List<CkEntityDTO> listCk) {
         List<CkEntity> listEntity = ckEntityMapper.toEntity(listCk);
         listEntity = ckEntityRepository.insert(listEntity);
