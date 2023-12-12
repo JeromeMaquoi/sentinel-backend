@@ -1,11 +1,8 @@
 package com.snail.sentinel.backend.service.dto.measurableelement;
 
-import jakarta.validation.constraints.NotNull;
 
-import java.io.Serializable;
-import java.util.Objects;
 
-public class MethodElementDTO implements MeasurableElementDTO, Serializable {
+/*public class MethodElementDTO implements Serializable {
     @NotNull
     private String astElem;
 
@@ -78,4 +75,4 @@ public class MethodElementDTO implements MeasurableElementDTO, Serializable {
             ",\n        methodSignature='" + methodSignature + '\'' +
             "\n    }\n";
     }
-}
+}*/

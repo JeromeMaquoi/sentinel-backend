@@ -5,10 +5,7 @@ import com.snail.sentinel.backend.service.exceptions.NoCsvLineFoundException;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitCompleteDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
-import com.snail.sentinel.backend.service.dto.measurableelement.ClassElementDTO;
 import com.snail.sentinel.backend.service.dto.measurableelement.MeasurableElementDTO;
-import com.snail.sentinel.backend.service.dto.measurableelement.MethodElementDTO;
-import com.snail.sentinel.backend.service.dto.measurableelement.VariableElementDTO;
 import com.snail.sentinel.backend.service.dto.repository.RepositorySimpleDTO;
 import org.json.CDL;
 import org.json.JSONArray;
@@ -110,9 +107,33 @@ public class Util {
     }
 
     public static MeasurableElementDTO getMeasurableElement(String astElem, Object line) {
-        MeasurableElementDTO returnElement;
         try {
+            MeasurableElementDTO measurableElementDTO = new MeasurableElementDTO();
+            measurableElementDTO.setAstElem(astElem);
+            measurableElementDTO.setFilePath(((JSONObject) line).getString(Util.FILE));
+            measurableElementDTO.setClassName(((JSONObject) line).getString(Util.AST_ELEM_CLASS));
             if (line instanceof JSONObject) {
+                switch (astElem) {
+                    case Util.AST_ELEM_CLASS -> {
+                        measurableElementDTO.setClassType(((JSONObject) line).getString("type"));
+                    }
+                    case Util.AST_ELEM_METHOD -> {
+                        measurableElementDTO.setMethodSignature(((JSONObject) line).getString(Util.AST_ELEM_METHOD));
+                    }
+                    case Util.AST_ELEM_VARIABLE -> {
+                        measurableElementDTO.setMethodSignature(((JSONObject) line).getString(Util.AST_ELEM_METHOD));
+                        measurableElementDTO.setVariableName(((JSONObject) line).getString(Util.AST_ELEM_VARIABLE));
+                    }
+                    default -> {
+                        return null;
+                    }
+                }
+                return measurableElementDTO;
+            } else if (line instanceof CkAggregateLineDTO) {
+                measurableElementDTO.setMethodSignature(((JSONObject) line).getString(Util.AST_ELEM_METHOD));
+                return measurableElementDTO;
+            }
+            /*if (line instanceof JSONObject) {
                 switch (astElem) {
                     case Util.AST_ELEM_CLASS -> {
                         ClassElementDTO element = new ClassElementDTO();
@@ -151,7 +172,7 @@ public class Util {
                 element.setMethodSignature(((CkAggregateLineDTO) line).getMethodSignature());
                 element.setFilePath(((CkAggregateLineDTO) line).getFilePath());
                 return element;
-            }
+            }*/
             return null;
         } catch (JSONException e) {
             throw new AstElemNotKnownException(e);

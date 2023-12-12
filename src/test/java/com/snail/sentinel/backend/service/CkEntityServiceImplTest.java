@@ -7,7 +7,6 @@ import com.snail.sentinel.backend.repository.CkEntityRepository;
 import com.snail.sentinel.backend.service.dto.ck.CkEntityDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitCompleteDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
-import com.snail.sentinel.backend.service.dto.measurableelement.ClassElementDTO;
 import com.snail.sentinel.backend.service.dto.measurableelement.MeasurableElementDTO;
 import com.snail.sentinel.backend.service.dto.repository.RepositoryCompleteDTO;
 import com.snail.sentinel.backend.service.dto.repository.RepositorySimpleDTO;
@@ -64,7 +63,7 @@ class CkEntityServiceImplTest {
 
     private static CommitSimpleDTO commitSimpleDTO;
 
-    private ClassElementDTO classElementDTO;
+    private MeasurableElementDTO classElementDTO;
 
     @BeforeEach
     public void init() {
@@ -99,7 +98,7 @@ class CkEntityServiceImplTest {
         commitSimpleDTO.setRepository(repositorySimpleDTO);
         commitSimpleDTO.setSha(SHA);
 
-        classElementDTO = new ClassElementDTO();
+        classElementDTO = new MeasurableElementDTO();
         classElementDTO.setAstElem(AST_ELEM);
         classElementDTO.setFilePath(FILE_PATH);
         classElementDTO.setClassName(CLASS_NAME);
@@ -123,7 +122,7 @@ class CkEntityServiceImplTest {
     @Test
     void getMeasurableElementTest() {
         MeasurableElementDTO maybeElement = Util.getMeasurableElement(AST_ELEM, line);
-        ClassElementDTO measurableElementDTO = new ClassElementDTO();
+        MeasurableElementDTO measurableElementDTO = new MeasurableElementDTO();
         measurableElementDTO.setAstElem(AST_ELEM);
         measurableElementDTO.setFilePath(line.getString(Util.FILE));
         measurableElementDTO.setClassName(line.getString(Util.AST_ELEM_CLASS));

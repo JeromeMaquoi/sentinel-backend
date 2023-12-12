@@ -4,6 +4,7 @@ import com.snail.sentinel.backend.commons.Util;
 import com.snail.sentinel.backend.domain.JoularEntity;
 import com.snail.sentinel.backend.repository.JoularEntityRepository;
 import com.snail.sentinel.backend.service.JoularEntityService;
+import com.snail.sentinel.backend.service.dto.measurableelement.MeasurableElementDTO;
 import com.snail.sentinel.backend.service.exceptions.NoCsvLineFoundException;
 import com.snail.sentinel.backend.service.dto.IterationDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitCompleteDTO;
@@ -12,7 +13,6 @@ import com.snail.sentinel.backend.service.dto.joular.JoularEntityDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineHashMapDTO;
 import com.snail.sentinel.backend.service.dto.joular.JoularEntityListDTO;
-import com.snail.sentinel.backend.service.dto.measurableelement.MethodElementDTO;
 import com.snail.sentinel.backend.service.dto.measurableelement.MethodElementSetDTO;
 import com.snail.sentinel.backend.service.mapper.JoularEntityMapper;
 import org.json.JSONObject;
@@ -103,7 +103,7 @@ public class JoularEntityServiceImpl implements JoularEntityService {
                         if (matchedCkJoular != null) {
                             CommitSimpleDTO commitSimpleDTO = Util.createCommitSimpleFromCommitCompleteDTO(commitCompleteDTO);
                             JoularEntityDTO joularEntityDTO = new JoularEntityDTO();
-                            MethodElementDTO methodElementDTO = (MethodElementDTO) getMeasurableElement("method", matchedCkJoular);
+                            MeasurableElementDTO methodElementDTO = (MeasurableElementDTO) getMeasurableElement("method", matchedCkJoular);
 
                             if (methodElementSetDTO.has(methodElementDTO)){
                                 joularEntityDTOList.update(methodElementDTO, value);

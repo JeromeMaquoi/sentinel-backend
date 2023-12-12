@@ -2,7 +2,7 @@ package com.snail.sentinel.backend.service.dto.joular;
 
 import com.snail.sentinel.backend.service.dto.IterationDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
-import com.snail.sentinel.backend.service.dto.measurableelement.MethodElementDTO;
+import com.snail.sentinel.backend.service.dto.measurableelement.MeasurableElementDTO;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.Objects;
@@ -20,7 +20,7 @@ public class JoularEntityDTO {
     private String monitoringType;
 
     @NotNull
-    private MethodElementDTO methodElementDTO;
+    private MeasurableElementDTO methodElementDTO;
 
     @NotNull
     private IterationDTO iterationDTO;
@@ -60,11 +60,11 @@ public class JoularEntityDTO {
         this.monitoringType = monitoringType;
     }
 
-    public MethodElementDTO getMethodElementDTO() {
+    public MeasurableElementDTO getMethodElementDTO() {
         return methodElementDTO;
     }
 
-    public void setMethodElementDTO(MethodElementDTO methodElementDTO) {
+    public void setMethodElementDTO(MeasurableElementDTO methodElementDTO) {
         this.methodElementDTO = methodElementDTO;
     }
 
@@ -84,7 +84,7 @@ public class JoularEntityDTO {
         this.commitSimpleDTO = commitSimpleDTO;
     }
 
-    public Boolean hasMethodElement(MethodElementDTO methodElementDTO) {
+    public Boolean hasMethodElement(MeasurableElementDTO methodElementDTO) {
         return this.methodElementDTO.equals(methodElementDTO);
     }
 
