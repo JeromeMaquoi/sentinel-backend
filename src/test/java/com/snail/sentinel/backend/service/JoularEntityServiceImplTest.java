@@ -3,8 +3,9 @@ package com.snail.sentinel.backend.service;
 import com.snail.sentinel.backend.repository.*;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineHashMapDTO;
-import com.snail.sentinel.backend.service.impl.CkServiceImpl;
-import com.snail.sentinel.backend.service.impl.JoularServiceImpl;
+import com.snail.sentinel.backend.service.impl.CkEntityServiceImpl;
+import com.snail.sentinel.backend.service.impl.CommitEntityServiceImpl;
+import com.snail.sentinel.backend.service.impl.JoularEntityServiceImpl;
 import com.snail.sentinel.backend.service.mapper.CkEntityMapper;
 import com.snail.sentinel.backend.service.mapper.JoularEntityMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,33 +15,27 @@ import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.util.ArrayList;
 
-import static org.mockito.Mockito.when;
 
-class JoularServiceImplTest {
+class JoularEntityServiceImplTest {
 
-    private final Logger log = LoggerFactory.getLogger(JoularServiceImplTest.class);
+    private final Logger log = LoggerFactory.getLogger(JoularEntityServiceImplTest.class);
 
     @Mock
     private CkEntityRepository ckEntityRepository;
 
     @Mock
-    private CkEntityRepositoryAggregationImpl ckEntityRepositoryAggregationImpl;
-
-    @Mock
     private CkEntityMapper ckEntityMapper;
 
     @InjectMocks
-    private CkServiceImpl ckService;
+    private CkEntityServiceImpl ckService;
 
     @Mock
     private CommitEntityRepository commitEntityRepository;
 
     @InjectMocks
-    private CommitService commitService;
+    private CommitEntityServiceImpl commitEntityServiceImpl;
 
     @Mock
     private JoularEntityRepository joularEntityRepository;
@@ -49,7 +44,7 @@ class JoularServiceImplTest {
     private JoularEntityMapper joularEntityMapper;
 
     @InjectMocks
-    private JoularServiceImpl joularService;
+    private JoularEntityServiceImpl joularService;
 
     @BeforeEach
     public void init() {
@@ -72,15 +67,13 @@ class JoularServiceImplTest {
         ckAggregateLineHashMapDTO.insertOne(ckAggregateLineDTO2);
 
         ckEntityRepository = Mockito.mock(CkEntityRepository.class);
-        ckEntityRepositoryAggregationImpl = Mockito.mock(CkEntityRepositoryAggregationImpl.class);
-        when(ckEntityRepositoryAggregationImpl.aggregate(Mockito.anyString())).thenReturn(ckAggregateLineHashMapDTO);
-        ckService = new CkServiceImpl(ckEntityRepository, ckEntityMapper, ckEntityRepositoryAggregationImpl);
+        ckService = new CkEntityServiceImpl(ckEntityRepository, ckEntityMapper);
 
         joularEntityRepository = Mockito.mock(JoularEntityRepository.class);
-        joularService = new JoularServiceImpl(joularEntityRepository, joularEntityMapper);
+        joularService = new JoularEntityServiceImpl(joularEntityRepository, joularEntityMapper);
 
         commitEntityRepository = Mockito.mock(CommitEntityRepository.class);
-        commitService = new CommitService(commitEntityRepository);
+        commitEntityServiceImpl = new CommitEntityServiceImpl(commitEntityRepository);
     }
 
     /*@Test

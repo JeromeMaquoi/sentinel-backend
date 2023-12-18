@@ -4,7 +4,8 @@ import com.snail.sentinel.backend.commons.Util;
 import com.snail.sentinel.backend.domain.JoularEntity;
 import com.snail.sentinel.backend.repository.JoularEntityRepository;
 import com.snail.sentinel.backend.service.JoularEntityService;
-import com.snail.sentinel.backend.service.NoCsvLineFoundException;
+import com.snail.sentinel.backend.service.dto.measurableelement.MeasurableElementDTO;
+import com.snail.sentinel.backend.service.exceptions.NoCsvLineFoundException;
 import com.snail.sentinel.backend.service.dto.IterationDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitCompleteDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
@@ -12,7 +13,6 @@ import com.snail.sentinel.backend.service.dto.joular.JoularEntityDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineHashMapDTO;
 import com.snail.sentinel.backend.service.dto.joular.JoularEntityListDTO;
-import com.snail.sentinel.backend.service.dto.measurableelement.MethodElementDTO;
 import com.snail.sentinel.backend.service.dto.measurableelement.MethodElementSetDTO;
 import com.snail.sentinel.backend.service.mapper.JoularEntityMapper;
 import org.json.JSONObject;
@@ -30,8 +30,8 @@ import static java.lang.Integer.parseInt;
 import static java.lang.Long.parseLong;
 
 @Service
-public class JoularServiceImpl implements JoularEntityService {
-    private final Logger log = LoggerFactory.getLogger(JoularServiceImpl.class);
+public class JoularEntityServiceImpl implements JoularEntityService {
+    private final Logger log = LoggerFactory.getLogger(JoularEntityServiceImpl.class);
 
     private final JoularEntityRepository joularEntityRepository;
 
@@ -43,7 +43,7 @@ public class JoularServiceImpl implements JoularEntityService {
 
     private static final String LINE_NUMBER = "lineNumber";
 
-    public JoularServiceImpl(JoularEntityRepository joularEntityRepository, JoularEntityMapper joularEntityMapper) {
+    public JoularEntityServiceImpl(JoularEntityRepository joularEntityRepository, JoularEntityMapper joularEntityMapper) {
         this.joularEntityRepository = joularEntityRepository;
         this.joularEntityMapper = joularEntityMapper;
     }
@@ -51,6 +51,16 @@ public class JoularServiceImpl implements JoularEntityService {
     @Override
     public List<JoularEntityDTO> findAll() {
         return joularEntityRepository.findAll().stream().map(joularEntityMapper::toDto).toList();
+    }
+
+    @Override
+    public List<JoularEntity> findByCommitSha(String sha) {
+        return joularEntityRepository.findByCommitSha(sha);
+    }
+
+    @Override
+    public List<JoularEntity> findByCommitShaAndAstElement(String sha, String className, String methodSignature) {
+        return joularEntityRepository.findByCommitShaAndMeasurableElementClassNameAndMeasurableElementMethodSignature(sha, className, methodSignature);
     }
 
     @Override
@@ -66,6 +76,7 @@ public class JoularServiceImpl implements JoularEntityService {
         joularEntityRepository.deleteAll();
     }
 
+    @Override
     public JoularEntityListDTO createJoularEntityDTOList(CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO, CommitCompleteDTO commitCompleteDTO, String iterationPath) {
         log.info("Request to create JoularEntityDTO list for {}", iterationPath);
         JoularEntityListDTO joularEntityDTOList = new JoularEntityListDTO();
@@ -97,7 +108,7 @@ public class JoularServiceImpl implements JoularEntityService {
                         if (matchedCkJoular != null) {
                             CommitSimpleDTO commitSimpleDTO = Util.createCommitSimpleFromCommitCompleteDTO(commitCompleteDTO);
                             JoularEntityDTO joularEntityDTO = new JoularEntityDTO();
-                            MethodElementDTO methodElementDTO = (MethodElementDTO) getMeasurableElement("method", matchedCkJoular);
+                            MeasurableElementDTO methodElementDTO = getMeasurableElement("method", matchedCkJoular);
 
                             if (methodElementSetDTO.has(methodElementDTO)){
                                 joularEntityDTOList.update(methodElementDTO, value);

@@ -22,6 +22,14 @@ public class IterationDTO {
         this.startTimestamp = startTimestamp;
     }
 
+    public Integer getIterationId() {
+        return iterationId;
+    }
+
+    public void setIterationId(Integer iterationId) {
+        this.iterationId = iterationId;
+    }
+
     public Integer getPid() {
         return pid;
     }

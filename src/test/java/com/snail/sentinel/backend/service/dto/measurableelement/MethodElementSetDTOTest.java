@@ -14,8 +14,8 @@ class MethodElementSetDTOTest {
     private static final String CLASS_NAME_1 = "className";
     private static final String CLASS_NAME_2 = "className2";
 
-    private static MethodElementDTO method1 = new MethodElementDTO();
-    private static MethodElementDTO method2 = new MethodElementDTO();
+    private static MeasurableElementDTO method1 = new MeasurableElementDTO();
+    private static MeasurableElementDTO method2 = new MeasurableElementDTO();
     private static MethodElementSetDTO methodSet = new MethodElementSetDTO();
 
     @BeforeEach
@@ -36,7 +36,7 @@ class MethodElementSetDTOTest {
 
     @Test
     void has() {
-        MethodElementDTO hasMethod = new MethodElementDTO();
+        MeasurableElementDTO hasMethod = new MeasurableElementDTO();
         hasMethod.setAstElem(Util.AST_ELEM_METHOD);
         hasMethod.setFilePath(FILE_PATH_1);
         hasMethod.setClassName(CLASS_NAME_1);
@@ -47,7 +47,7 @@ class MethodElementSetDTOTest {
 
     @Test
     void hasNot() {
-        MethodElementDTO hasMethod = new MethodElementDTO();
+        MeasurableElementDTO hasMethod = new MeasurableElementDTO();
         hasMethod.setAstElem(Util.AST_ELEM_METHOD);
         hasMethod.setFilePath(FILE_PATH_1);
         hasMethod.setClassName("otherClassName");

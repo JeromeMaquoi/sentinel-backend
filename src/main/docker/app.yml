@@ -30,3 +30,5 @@ services:
     extends:
       file: ./mongodb.yml
       service: mongodb
+volumes:
+  mongodb_data:

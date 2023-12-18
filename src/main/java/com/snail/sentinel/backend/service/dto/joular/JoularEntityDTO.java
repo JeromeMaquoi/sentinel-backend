@@ -2,13 +2,12 @@ package com.snail.sentinel.backend.service.dto.joular;
 
 import com.snail.sentinel.backend.service.dto.IterationDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
-import com.snail.sentinel.backend.service.dto.measurableelement.MethodElementDTO;
+import com.snail.sentinel.backend.service.dto.measurableelement.MeasurableElementDTO;
 import jakarta.validation.constraints.NotNull;
 
-import java.io.Serializable;
 import java.util.Objects;
 
-public class JoularEntityDTO implements Serializable {
+public class JoularEntityDTO {
     private String id;
 
     @NotNull
@@ -21,13 +20,13 @@ public class JoularEntityDTO implements Serializable {
     private String monitoringType;
 
     @NotNull
-    private transient MethodElementDTO methodElementDTO;
+    private MeasurableElementDTO methodElementDTO;
 
     @NotNull
-    private transient IterationDTO iterationDTO;
+    private IterationDTO iterationDTO;
 
     @NotNull
-    private transient CommitSimpleDTO commitSimpleDTO;
+    private CommitSimpleDTO commitSimpleDTO;
 
     public String getId() {
         return id;
@@ -61,11 +60,11 @@ public class JoularEntityDTO implements Serializable {
         this.monitoringType = monitoringType;
     }
 
-    public MethodElementDTO getMethodElementDTO() {
+    public MeasurableElementDTO getMethodElementDTO() {
         return methodElementDTO;
     }
 
-    public void setMethodElementDTO(MethodElementDTO methodElementDTO) {
+    public void setMethodElementDTO(MeasurableElementDTO methodElementDTO) {
         this.methodElementDTO = methodElementDTO;
     }
 
@@ -85,7 +84,7 @@ public class JoularEntityDTO implements Serializable {
         this.commitSimpleDTO = commitSimpleDTO;
     }
 
-    public Boolean hasMethodElement(MethodElementDTO methodElementDTO) {
+    public Boolean hasMethodElement(MeasurableElementDTO methodElementDTO) {
         return this.methodElementDTO.equals(methodElementDTO);
     }
 

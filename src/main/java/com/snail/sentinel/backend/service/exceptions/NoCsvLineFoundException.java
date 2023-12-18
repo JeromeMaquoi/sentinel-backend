@@ -1,4 +1,4 @@
-package com.snail.sentinel.backend.service;
+package com.snail.sentinel.backend.service.exceptions;
 
 import java.io.IOException;
 

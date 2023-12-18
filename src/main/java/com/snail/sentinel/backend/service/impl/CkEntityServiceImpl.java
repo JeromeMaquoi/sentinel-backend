@@ -3,9 +3,7 @@ package com.snail.sentinel.backend.service.impl;
 import com.snail.sentinel.backend.commons.Util;
 import com.snail.sentinel.backend.domain.CkEntity;
 import com.snail.sentinel.backend.repository.CkEntityRepository;
-import com.snail.sentinel.backend.repository.CkEntityRepositoryAggregationImpl;
 import com.snail.sentinel.backend.service.CkEntityService;
-import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineHashMapDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkEntityDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitCompleteDTO;
 import com.snail.sentinel.backend.service.dto.measurableelement.MeasurableElementDTO;
@@ -19,31 +17,42 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.snail.sentinel.backend.commons.Util.getMeasurableElement;
 import static java.lang.Boolean.parseBoolean;
 import static java.lang.Double.parseDouble;
 
 @Service
-public class CkServiceImpl implements CkEntityService {
-    private final Logger log = LoggerFactory.getLogger(CkServiceImpl.class);
+public class CkEntityServiceImpl implements CkEntityService {
+    private final Logger log = LoggerFactory.getLogger(CkEntityServiceImpl.class);
 
     private final CkEntityRepository ckEntityRepository;
 
     private final CkEntityMapper ckEntityMapper;
 
-    private final CkEntityRepositoryAggregationImpl ckEntityRepositoryAggregationImpl;
-
-    public CkServiceImpl(CkEntityRepository ckEntityRepository, CkEntityMapper ckEntityMapper, CkEntityRepositoryAggregationImpl ckEntityRepositoryAggregationImpl) {
+    public CkEntityServiceImpl(CkEntityRepository ckEntityRepository, CkEntityMapper ckEntityMapper) {
         this.ckEntityRepository = ckEntityRepository;
         this.ckEntityMapper = ckEntityMapper;
-        this.ckEntityRepositoryAggregationImpl = ckEntityRepositoryAggregationImpl;
     }
 
     @Override
     public List<CkEntityDTO> findAll() {
-        return ckEntityRepository.findAll().stream().map(ckEntityMapper::toDto).collect(Collectors.toList());
+        return ckEntityRepository.findAll().stream().map(ckEntityMapper::toDto).toList();
+    }
+
+    @Override
+    public List<CkEntity> findByCommitSha(String sha) {
+        return ckEntityRepository.findByCommitSha(sha);
+    }
+
+    @Override
+    public List<CkEntity> findByCommitShaAndMetricName(String sha, String metricName) {
+        return ckEntityRepository.findByCommitShaAndName(sha, metricName);
+    }
+
+    @Override
+    public List<CkEntity> findByCommitShaAndMethodElement(String sha, String astElem, String className, String methodSignature) {
+        return ckEntityRepository.findByCommitShaAndMeasurableElementAstElemAndMeasurableElementClassNameAndMeasurableElement_MethodSignature(sha, astElem, className, methodSignature);
     }
 
     @Override
@@ -60,10 +69,6 @@ public class CkServiceImpl implements CkEntityService {
     }
 
     @Override
-    public CkAggregateLineHashMapDTO aggregate(String repoName) {
-        return ckEntityRepositoryAggregationImpl.aggregate(repoName);
-    }
-
     public void insertBatchCkEntityDTO(CommitCompleteDTO commitCompleteDTO, String csvPath, int batchSize) throws IOException {
         List<CkEntityDTO> batch = new ArrayList<>();
         for (String astElem: Arrays.asList(Util.AST_ELEM_CLASS, Util.AST_ELEM_METHOD, Util.AST_ELEM_VARIABLE)) {

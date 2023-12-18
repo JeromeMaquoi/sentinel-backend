@@ -6,12 +6,14 @@ import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineHashMapDTO;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.stereotype.Service;
 
 
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.group;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 
+@Service
 public class CkEntityRepositoryAggregationImpl implements CkEntityRepositoryAggregation {
     private final MongoTemplate mongoTemplate;
 

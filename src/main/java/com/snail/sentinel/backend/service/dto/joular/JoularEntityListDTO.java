@@ -1,6 +1,6 @@
 package com.snail.sentinel.backend.service.dto.joular;
 
-import com.snail.sentinel.backend.service.dto.measurableelement.MethodElementDTO;
+import com.snail.sentinel.backend.service.dto.measurableelement.MeasurableElementDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,14 +29,14 @@ public class JoularEntityListDTO {
         this.joularEntityDTOList = Stream.concat(firstJoularListDTO.getList().stream(), secondEntityListDTO.getList().stream()).toList();
     }
 
-    public void update(MethodElementDTO methodElementDTO, Float newValue) {
+    public void update(MeasurableElementDTO methodElementDTO, Float newValue) {
         //log.info("Update asked for joularEntityDTOList");
         JoularEntityDTO dataToUpdate = getOneWithMethodElement(methodElementDTO);
         Float oldValue = dataToUpdate.getValue();
         dataToUpdate.setValue(oldValue + newValue);
     }
 
-    private JoularEntityDTO getOneWithMethodElement(MethodElementDTO methodElementDTO) {
+    private JoularEntityDTO getOneWithMethodElement(MeasurableElementDTO methodElementDTO) {
         for (JoularEntityDTO entity: this.joularEntityDTOList) {
             if (Boolean.TRUE.equals(entity.hasMethodElement(methodElementDTO))) {
                 return entity;

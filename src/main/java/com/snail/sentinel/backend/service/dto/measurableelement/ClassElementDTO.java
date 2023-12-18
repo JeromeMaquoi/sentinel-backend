@@ -1,10 +1,8 @@
 package com.snail.sentinel.backend.service.dto.measurableelement;
 
-import jakarta.validation.constraints.NotNull;
 
-import java.util.Objects;
 
-public class ClassElementDTO implements MeasurableElementDTO {
+/*public class ClassElementDTO {
     @NotNull
     private String astElem;
 
@@ -77,4 +75,4 @@ public class ClassElementDTO implements MeasurableElementDTO {
             ", classType='" + classType + '\'' +
             '}';
     }
-}
+}*/

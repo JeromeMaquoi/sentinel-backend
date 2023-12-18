@@ -4,15 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.snail.sentinel.backend.commons.Util;
 import com.snail.sentinel.backend.repository.CkEntityRepository;
-import com.snail.sentinel.backend.repository.CkEntityRepositoryAggregationImpl;
 import com.snail.sentinel.backend.service.dto.ck.CkEntityDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitCompleteDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
-import com.snail.sentinel.backend.service.dto.measurableelement.ClassElementDTO;
 import com.snail.sentinel.backend.service.dto.measurableelement.MeasurableElementDTO;
 import com.snail.sentinel.backend.service.dto.repository.RepositoryCompleteDTO;
 import com.snail.sentinel.backend.service.dto.repository.RepositorySimpleDTO;
-import com.snail.sentinel.backend.service.impl.CkServiceImpl;
+import com.snail.sentinel.backend.service.impl.CkEntityServiceImpl;
 import com.snail.sentinel.backend.service.mapper.CkEntityMapper;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,19 +21,16 @@ import org.mockito.Mockito;
 
 import java.util.List;
 
-class CkServiceImplTest {
+class CkEntityServiceImplTest {
 
     @Mock
     private CkEntityRepository ckEntityRepository;
 
     @Mock
-    private CkEntityRepositoryAggregationImpl ckEntityRepositoryAggregationImpl;
-
-    @Mock
     private CkEntityMapper ckEntityMapper;
 
     @InjectMocks
-    private CkServiceImpl ckService;
+    private CkEntityServiceImpl ckService;
 
     private static final String AST_ELEM = Util.AST_ELEM_CLASS;
 
@@ -68,12 +63,12 @@ class CkServiceImplTest {
 
     private static CommitSimpleDTO commitSimpleDTO;
 
-    private ClassElementDTO classElementDTO;
+    private MeasurableElementDTO classElementDTO;
 
     @BeforeEach
     public void init() {
         ckEntityRepository = Mockito.mock(CkEntityRepository.class);
-        ckService = new CkServiceImpl(ckEntityRepository, ckEntityMapper, ckEntityRepositoryAggregationImpl);
+        ckService = new CkEntityServiceImpl(ckEntityRepository, ckEntityMapper);
 
         line.put("loc", "3");
         line.put("fanout", "0");
@@ -103,7 +98,7 @@ class CkServiceImplTest {
         commitSimpleDTO.setRepository(repositorySimpleDTO);
         commitSimpleDTO.setSha(SHA);
 
-        classElementDTO = new ClassElementDTO();
+        classElementDTO = new MeasurableElementDTO();
         classElementDTO.setAstElem(AST_ELEM);
         classElementDTO.setFilePath(FILE_PATH);
         classElementDTO.setClassName(CLASS_NAME);
@@ -127,7 +122,7 @@ class CkServiceImplTest {
     @Test
     void getMeasurableElementTest() {
         MeasurableElementDTO maybeElement = Util.getMeasurableElement(AST_ELEM, line);
-        ClassElementDTO measurableElementDTO = new ClassElementDTO();
+        MeasurableElementDTO measurableElementDTO = new MeasurableElementDTO();
         measurableElementDTO.setAstElem(AST_ELEM);
         measurableElementDTO.setFilePath(line.getString(Util.FILE));
         measurableElementDTO.setClassName(line.getString(Util.AST_ELEM_CLASS));
