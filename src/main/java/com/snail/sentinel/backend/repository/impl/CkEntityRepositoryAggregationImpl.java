@@ -1,6 +1,7 @@
-package com.snail.sentinel.backend.repository;
+package com.snail.sentinel.backend.repository.impl;
 
 import com.snail.sentinel.backend.domain.CkEntity;
+import com.snail.sentinel.backend.repository.CkEntityRepositoryAggregation;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineHashMapDTO;
 import org.springframework.data.mongodb.core.MongoTemplate;
