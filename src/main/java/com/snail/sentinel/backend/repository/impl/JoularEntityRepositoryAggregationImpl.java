@@ -32,8 +32,7 @@ public class JoularEntityRepositoryAggregationImpl implements JoularEntityReposi
         MatchOperation matchOperation30Values = getAllMethodsHaving30Values();
         ProjectionOperation projectionOperation = addFields();
 
-        //Aggregation aggregation = newAggregation(matchOperation, groupOperation, matchOperation30Values, projectionOperation);
-        Aggregation aggregation = newAggregation(matchOperation, groupOperation, projectionOperation);
+        Aggregation aggregation = newAggregation(matchOperation, groupOperation, matchOperation30Values, projectionOperation);
         AggregationResults<JoularAggregateDTO> output = mongoTemplate.aggregate(aggregation, JoularEntity.class, JoularAggregateDTO.class);
         return output.getMappedResults();
     }
@@ -65,7 +64,6 @@ public class JoularEntityRepositoryAggregationImpl implements JoularEntityReposi
 
     private ProjectionOperation addFields() {
         return Aggregation.project("allValues", "size")
-            .andExpression("size").as("size")
             .andExpression("$_id.sha").as("commit.sha")
             .andExpression("$_id.repoName").as("commit.repository.name")
             .andExpression("$_id.owner").as("commit.repository.owner")
