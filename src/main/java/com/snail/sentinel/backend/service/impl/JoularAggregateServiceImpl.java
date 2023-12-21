@@ -19,4 +19,9 @@ public class JoularAggregateServiceImpl implements JoularAggregateService {
     public List<JoularAggregateDTO> aggregateAll() {
         return joularEntityRepositoryAggregation.aggregateAll();
     }
+
+    @Override
+    public List<JoularAggregateDTO> aggregateAllByCommit(String sha) {
+        return joularEntityRepositoryAggregation.aggregateAllByCommit(sha);
+    }
 }

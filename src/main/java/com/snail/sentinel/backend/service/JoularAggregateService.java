@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface JoularAggregateService {
     List<JoularAggregateDTO> aggregateAll();
+    List<JoularAggregateDTO> aggregateAllByCommit(String sha);
 }
