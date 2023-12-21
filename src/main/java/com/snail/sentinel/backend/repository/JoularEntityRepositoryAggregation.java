@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface JoularEntityRepositoryAggregation {
     List<JoularAggregateDTO> aggregateAll();
+    List<JoularAggregateDTO> aggregateAllByCommit(String sha);
 }

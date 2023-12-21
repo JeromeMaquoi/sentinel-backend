@@ -12,8 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.group;
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 
 @Service
@@ -33,6 +32,19 @@ public class JoularEntityRepositoryAggregationImpl implements JoularEntityReposi
         ProjectionOperation projectionOperation = addFields();
 
         Aggregation aggregation = newAggregation(matchOperation, groupOperation, matchOperation30Values, projectionOperation);
+        AggregationResults<JoularAggregateDTO> output = mongoTemplate.aggregate(aggregation, JoularEntity.class, JoularAggregateDTO.class);
+        return output.getMappedResults();
+    }
+
+    @Override
+    public List<JoularAggregateDTO> aggregateAllByCommit(String sha) {
+        MatchOperation matchOperation = getAllValues();
+        GroupOperation groupOperation = groupAllValues();
+        MatchOperation matchOperation30Values = getAllMethodsHaving30Values();
+        ProjectionOperation projectionOperation = addFields();
+        MatchOperation matchCommitSha = matchCommitSha(sha);
+
+        Aggregation aggregation = newAggregation(matchOperation, groupOperation, matchOperation30Values, projectionOperation, matchCommitSha);
         AggregationResults<JoularAggregateDTO> output = mongoTemplate.aggregate(aggregation, JoularEntity.class, JoularAggregateDTO.class);
         return output.getMappedResults();
     }
@@ -71,5 +83,10 @@ public class JoularEntityRepositoryAggregationImpl implements JoularEntityReposi
             .andExpression("$_id.filePath").as("measurableElement.filePath")
             .andExpression("$_id.className").as("measurableElement.className")
             .andExpression("$_id.methodSignature").as("measurableElement.methodSignature");
+    }
+
+    private MatchOperation matchCommitSha(String sha) {
+        Criteria criteria = where("commit.sha").is(sha);
+        return Aggregation.match(criteria);
     }
 }
