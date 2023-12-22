@@ -53,17 +53,14 @@ public class CkEntityResource {
     }
 
     @GetMapping("/ck-entities/by-commit-and-ast-elem/{sha}")
-    public ResponseEntity<Page<CkEntity>> getAllCkEntitiesByCommitShaAndMeasurableElem(
+    public List<CkEntity> getSeveralCkEntitiesForOneMethodFromOneCommit(
         @PathVariable String sha,
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "100") int size,
-        @RequestParam String astElem,
         @RequestParam String className,
-        @RequestParam(required = false) String methodSignature
+        @RequestParam String methodSignature,
+        @RequestParam List<String> names
     ) {
         log.debug("REST request to get all ck entities data from commit : {}", sha);
-        List<CkEntity> ckEntities = ckService.findByCommitShaAndMethodElement(sha, astElem, className, methodSignature);
-        return getPageResponseEntity(page, size, ckEntities);
+        return ckService.findByCommitShaAndMethodElementAndMetricNames(sha, className, methodSignature, names);
     }
 
     /*@GetMapping("/ck-entities/by-commit-and-metric/{sha}")
