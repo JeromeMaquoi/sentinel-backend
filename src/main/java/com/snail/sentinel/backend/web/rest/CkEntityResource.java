@@ -56,11 +56,10 @@ public class CkEntityResource {
     public List<CkEntity> getSeveralCkEntitiesForOneMethodFromOneCommit(
         @PathVariable String sha,
         @RequestParam String className,
-        @RequestParam String methodSignature,
-        @RequestParam List<String> names
+        @RequestParam String methodSignature
     ) {
         log.debug("REST request to get all ck entities data from commit : {}", sha);
-        return ckService.findByCommitShaAndMethodElementAndMetricNames(sha, className, methodSignature, names);
+        return ckService.findByCommitShaAndMethodElement(sha, className, methodSignature);
     }
 
     /*@GetMapping("/ck-entities/by-commit-and-metric/{sha}")
