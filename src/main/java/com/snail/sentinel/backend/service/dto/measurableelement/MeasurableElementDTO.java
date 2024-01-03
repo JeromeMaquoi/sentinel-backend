@@ -1,6 +1,7 @@
 package com.snail.sentinel.backend.service.dto.measurableelement;
 
 import jakarta.validation.constraints.NotNull;
+import org.springframework.data.mongodb.core.index.Indexed;
 
 import java.util.Objects;
 
@@ -12,6 +13,7 @@ public class MeasurableElementDTO {
     private String filePath;
 
     @NotNull
+    @Indexed
     private String className;
 
     private String methodSignature;
