@@ -6,8 +6,6 @@ import com.snail.sentinel.backend.commons.Util;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class MethodElementSetDTOTest {
     private static final String FILE_PATH_1 = "/file/path/to/files";
     private static final String FILE_PATH_2 = "/file/path/to/files2";
@@ -23,12 +21,12 @@ class MethodElementSetDTOTest {
         method1.setAstElem(Util.AST_ELEM_METHOD);
         method1.setFilePath(FILE_PATH_1);
         method1.setClassName(CLASS_NAME_1);
-        method1.setMethodSignature("method1");
+        method1.setMethodName("method1");
 
         method2.setAstElem(Util.AST_ELEM_METHOD);
         method2.setFilePath(FILE_PATH_2);
         method2.setClassName(CLASS_NAME_2);
-        method2.setMethodSignature("method2");
+        method2.setMethodName("method2");
 
         methodSet.add(method1);
         methodSet.add(method2);
@@ -40,7 +38,7 @@ class MethodElementSetDTOTest {
         hasMethod.setAstElem(Util.AST_ELEM_METHOD);
         hasMethod.setFilePath(FILE_PATH_1);
         hasMethod.setClassName(CLASS_NAME_1);
-        hasMethod.setMethodSignature("method1");
+        hasMethod.setMethodName("method1");
 
         assertThat(methodSet.has(hasMethod)).isTrue();
     }
@@ -51,7 +49,7 @@ class MethodElementSetDTOTest {
         hasMethod.setAstElem(Util.AST_ELEM_METHOD);
         hasMethod.setFilePath(FILE_PATH_1);
         hasMethod.setClassName("otherClassName");
-        hasMethod.setMethodSignature("method111111");
+        hasMethod.setMethodName("method111111");
 
         assertThat(methodSet.has(hasMethod)).isFalse();
     }
