@@ -82,6 +82,7 @@ public class JoularEntityServiceImpl implements JoularEntityService {
         JoularEntityListDTO joularEntityDTOList = new JoularEntityListDTO();
         Set<Path> fileList = Util.getFileList(iterationPath);
         for (Path filePath: fileList) {
+            log.info(String.valueOf(filePath));
             JoularEntityListDTO iterationJoularDTOList = createJoularEntityDTOListForOneIteration(filePath, ckAggregateLineHashMapDTO, commitCompleteDTO);
             joularEntityDTOList.concat(joularEntityDTOList, iterationJoularDTOList);
         }
@@ -112,6 +113,7 @@ public class JoularEntityServiceImpl implements JoularEntityService {
                     }
                 }
             }
+            log.info(String.valueOf(joularEntityDTOList.size()));
         } catch (IOException e) {
             throw new NoCsvLineFoundException(e);
         }
@@ -127,6 +129,7 @@ public class JoularEntityServiceImpl implements JoularEntityService {
         JoularEntityDTO joularEntityDTO = new JoularEntityDTO();
         MeasurableElementDTO methodElementDTO = getMeasurableElementForJoular(matchedCkJoular, classMethodSignature);
         if (methodElementSetDTO.has(methodElementDTO)){
+            log.info("heyy");
             joularEntityDTOList.update(methodElementDTO, value);
         } else {
             methodElementSetDTO.add(methodElementDTO);
@@ -136,6 +139,7 @@ public class JoularEntityServiceImpl implements JoularEntityService {
             joularEntityDTO.setMonitoringType("total");
             joularEntityDTO.setValue(value);
             joularEntityDTO.setMethodElementDTO(methodElementDTO);
+            log.info("New : {}", joularEntityDTO.getMethodElementDTO().getClassMethodSignature());
             joularEntityDTOList.add(joularEntityDTO);
         }
     }
