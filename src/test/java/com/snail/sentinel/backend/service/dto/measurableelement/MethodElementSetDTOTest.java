@@ -22,11 +22,13 @@ class MethodElementSetDTOTest {
         method1.setFilePath(FILE_PATH_1);
         method1.setClassName(CLASS_NAME_1);
         method1.setMethodName("method1");
+        method1.setClassMethodSignature(CLASS_NAME_1 + ".method1");
 
         method2.setAstElem(Util.AST_ELEM_METHOD);
         method2.setFilePath(FILE_PATH_2);
         method2.setClassName(CLASS_NAME_2);
         method2.setMethodName("method2");
+        method2.setClassMethodSignature(CLASS_NAME_2 + ".method2");
 
         methodSet.add(method1);
         methodSet.add(method2);
@@ -39,6 +41,7 @@ class MethodElementSetDTOTest {
         hasMethod.setFilePath(FILE_PATH_1);
         hasMethod.setClassName(CLASS_NAME_1);
         hasMethod.setMethodName("method1");
+        hasMethod.setClassMethodSignature(CLASS_NAME_1 + ".method1");
 
         assertThat(methodSet.has(hasMethod)).isTrue();
     }
@@ -50,6 +53,7 @@ class MethodElementSetDTOTest {
         hasMethod.setFilePath(FILE_PATH_1);
         hasMethod.setClassName("otherClassName");
         hasMethod.setMethodName("method111111");
+        hasMethod.setClassMethodSignature("otherClassName.method111111");
 
         assertThat(methodSet.has(hasMethod)).isFalse();
     }

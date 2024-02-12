@@ -118,10 +118,10 @@ public class Util {
                         measurableElementDTO.setClassType(((JSONObject) line).getString("type"));
                     }
                     case Util.AST_ELEM_METHOD -> {
-                        measurableElementDTO.setMethodSignature(((JSONObject) line).getString(Util.AST_ELEM_METHOD));
+                        measurableElementDTO.setMethodName(((JSONObject) line).getString(Util.AST_ELEM_METHOD));
                     }
                     case Util.AST_ELEM_VARIABLE -> {
-                        measurableElementDTO.setMethodSignature(((JSONObject) line).getString(Util.AST_ELEM_METHOD));
+                        measurableElementDTO.setMethodName(((JSONObject) line).getString(Util.AST_ELEM_METHOD));
                         measurableElementDTO.setVariableName(((JSONObject) line).getString(Util.AST_ELEM_VARIABLE));
                     }
                     default -> {
@@ -132,7 +132,7 @@ public class Util {
             } else if (line instanceof CkAggregateLineDTO) {
                 measurableElementDTO.setAstElem(astElem);
                 measurableElementDTO.setClassName(((CkAggregateLineDTO) line).getClassName());
-                measurableElementDTO.setMethodSignature(((CkAggregateLineDTO) line).getMethodSignature());
+                measurableElementDTO.setMethodName(((CkAggregateLineDTO) line).getMethodSignature());
                 measurableElementDTO.setFilePath(((CkAggregateLineDTO) line).getFilePath());
                 return measurableElementDTO;
             }

@@ -99,7 +99,8 @@ public class MeasurableElementDTO {
             "astElem='" + astElem + '\'' +
             ", filePath='" + filePath + '\'' +
             ", className='" + className + '\'' +
-            ", methodSignature='" + methodName + '\'' +
+            ", methodName='" + methodName + '\'' +
+            ", classMethodSignature='" + classMethodSignature + '\'' +
             ", variableName='" + variableName + '\'' +
             ", classType='" + classType + '\'' +
             '}';

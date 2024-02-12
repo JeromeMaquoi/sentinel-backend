@@ -18,7 +18,7 @@ public interface CkEntityService {
 
     List<CkEntity> findByCommitShaAndMetricName(String sha, String metricName);
 
-    List<CkEntity> findByCommitShaAndMethodElementAndMetricNames(String sha, String className, String methodSignature, List<String> names);
+    List<CkEntity> findByCommitShaAndMethodElementAndMetricNames(String sha, String className, String methodName, List<String> names);
 
     void insertBatchCkEntityDTO(CommitCompleteDTO commitCompleteDTO, String csvPath, int batchSize) throws IOException;
 }

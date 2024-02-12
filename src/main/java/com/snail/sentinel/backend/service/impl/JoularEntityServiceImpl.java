@@ -59,8 +59,8 @@ public class JoularEntityServiceImpl implements JoularEntityService {
     }
 
     @Override
-    public List<JoularEntity> findByCommitShaAndAstElement(String sha, String className, String methodSignature) {
-        return joularEntityRepository.findByCommitShaAndMeasurableElementClassNameAndMeasurableElementMethodSignature(sha, className, methodSignature);
+    public List<JoularEntity> findByCommitShaAndAstElement(String sha, String className, String classMethodSignature) {
+        return joularEntityRepository.findByCommitShaAndMeasurableElementClassNameAndMeasurableElementClassMethodSignature(sha, className, classMethodSignature);
     }
 
     @Override

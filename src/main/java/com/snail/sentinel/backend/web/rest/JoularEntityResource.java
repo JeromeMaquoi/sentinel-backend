@@ -52,10 +52,10 @@ public class JoularEntityResource {
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "100") int size,
         @RequestParam String className,
-        @RequestParam String methodSignature
+        @RequestParam String classMethodSignature
     ) {
-        log.debug("REST request to get all joular entities data from commit {} and astElem {}", sha, className + "." + methodSignature);
-        List<JoularEntity> joularEntities = joularService.findByCommitShaAndAstElement(sha, className, methodSignature);
+        log.debug("REST request to get all joular entities data from commit {} and astElem {}", sha, classMethodSignature);
+        List<JoularEntity> joularEntities = joularService.findByCommitShaAndAstElement(sha, className, classMethodSignature);
         return getPageResponseEntity(page, size, joularEntities);
     }
 
