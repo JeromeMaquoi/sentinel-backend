@@ -10,12 +10,12 @@ public class CkAggregateLineDTO {
     private Object id;
     private String className;
     private String filePath;
-    private String methodSignature;
+    private String methodName;
     private List<Integer> line;
     private List<Integer> loc;
 
     public String getLabel() {
-        return this.className + "." + this.methodSignature;
+        return this.className + "." + this.methodName;
     }
 
     public Object getId() {
@@ -42,12 +42,12 @@ public class CkAggregateLineDTO {
         this.filePath = filePath;
     }
 
-    public String getMethodSignature() {
-        return methodSignature;
+    public String getMethodName() {
+        return methodName;
     }
 
-    public void setMethodSignature(String methodSignature) {
-        this.methodSignature = methodSignature;
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
     }
 
     public Integer getLine() {
@@ -72,7 +72,7 @@ public class CkAggregateLineDTO {
             "id=" + id +
             ", className='" + className + '\'' +
             ", filePath='" + filePath + '\'' +
-            ", methodSignature='" + methodSignature + '\'' +
+            ", methodSignature='" + methodName + '\'' +
             ", line=" + line.get(0) +
             ", loc=" + loc.get(0) +
             '}';

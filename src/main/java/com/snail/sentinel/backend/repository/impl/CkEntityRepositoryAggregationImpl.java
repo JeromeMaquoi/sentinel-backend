@@ -35,7 +35,6 @@ public class CkEntityRepositoryAggregationImpl implements CkEntityRepositoryAggr
         AggregationResults<CkAggregateLineDTO> output = mongoTemplate.aggregate(aggregation, CkEntity.class, CkAggregateLineDTO.class);
         CkAggregateLineHashMapDTO result = new CkAggregateLineHashMapDTO();
         result.setCkAggregateLineHashMapDTO(output.getMappedResults());
-        log.info("CkAggregateLineHashMapDTO : {}", result);
         return result;
 
     }

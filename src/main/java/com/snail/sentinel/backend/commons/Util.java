@@ -106,6 +106,16 @@ public class Util {
         return parsedClass;
     }
 
+    public static MeasurableElementDTO getMeasurableElementForJoular(CkAggregateLineDTO line, String classMethodSignature) {
+        MeasurableElementDTO measurableElementDTO = new MeasurableElementDTO();
+        measurableElementDTO.setAstElem(AST_ELEM_METHOD);
+        measurableElementDTO.setClassName(line.getClassName());
+        measurableElementDTO.setMethodName(line.getMethodName());
+        measurableElementDTO.setFilePath(line.getFilePath());
+        measurableElementDTO.setClassMethodSignature(classMethodSignature);
+        return measurableElementDTO;
+    }
+
     public static MeasurableElementDTO getMeasurableElement(String astElem, Object line) {
         try {
             MeasurableElementDTO measurableElementDTO = new MeasurableElementDTO();
@@ -130,9 +140,10 @@ public class Util {
                 }
                 return measurableElementDTO;
             } else if (line instanceof CkAggregateLineDTO) {
+                log.info("CkAggregateLineDTO");
                 measurableElementDTO.setAstElem(astElem);
                 measurableElementDTO.setClassName(((CkAggregateLineDTO) line).getClassName());
-                measurableElementDTO.setMethodName(((CkAggregateLineDTO) line).getMethodSignature());
+                measurableElementDTO.setMethodName(((CkAggregateLineDTO) line).getMethodName());
                 measurableElementDTO.setFilePath(((CkAggregateLineDTO) line).getFilePath());
                 return measurableElementDTO;
             }

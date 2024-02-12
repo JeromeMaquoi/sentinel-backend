@@ -52,14 +52,14 @@ class JoularEntityServiceImplTest {
         CkAggregateLineDTO ckAggregateLineDTO1 = new CkAggregateLineDTO();
         ckAggregateLineDTO1.setClassName("org.springframework.boot.context.config.ConfigDataLocationRuntimeHints");
         ckAggregateLineDTO1.setFilePath("filePath");
-        ckAggregateLineDTO1.setMethodSignature("getFileNames(arg1, arg2)");
+        ckAggregateLineDTO1.setMethodName("getFileNames(arg1, arg2)");
         ckAggregateLineDTO1.setLine(new ArrayList<>(){{add(63);}});
         ckAggregateLineDTO1.setLoc(new ArrayList<>(){{add(5);}});
 
         CkAggregateLineDTO ckAggregateLineDTO2 = new CkAggregateLineDTO();
         ckAggregateLineDTO2.setClassName("org.springframework.boot.testsupport.classpath.ModifiedClassPathClassLoader");
         ckAggregateLineDTO2.setFilePath("filePath2");
-        ckAggregateLineDTO2.setMethodSignature("loadClass(arg1)");
+        ckAggregateLineDTO2.setMethodName("loadClass(arg1)");
         ckAggregateLineDTO2.setLine(new ArrayList<>(){{add(90);}});
         ckAggregateLineDTO2.setLoc(new ArrayList<>(){{add(15);}});
 
