@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.snail.sentinel.backend.commons.Util.getMeasurableElement;
+import static com.snail.sentinel.backend.commons.Util.getMeasurableElementForCk;
 import static java.lang.Boolean.parseBoolean;
 import static java.lang.Double.parseDouble;
 
@@ -94,7 +94,7 @@ public class CkEntityServiceImpl implements CkEntityService {
     }
 
     public CkEntityDTO createCkEntityDTOForList(String astElem, JSONObject line, CommitCompleteDTO commitCompleteDTO, String metric) {
-        MeasurableElementDTO measurableElementDTO = getMeasurableElement(astElem, line);
+        MeasurableElementDTO measurableElementDTO = getMeasurableElementForCk(astElem, line);
 
         CkEntityDTO ckEntityDTO = new CkEntityDTO();
         ckEntityDTO.setCommit(Util.createCommitSimpleFromCommitCompleteDTO(commitCompleteDTO));
