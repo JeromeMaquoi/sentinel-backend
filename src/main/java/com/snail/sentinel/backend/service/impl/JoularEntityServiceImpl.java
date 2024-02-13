@@ -89,7 +89,7 @@ public class JoularEntityServiceImpl implements JoularEntityService {
         return joularEntityDTOList;
     }
 
-    private JoularEntityListDTO createJoularEntityDTOListForOneIteration(Path iterationDirPath, CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO, CommitCompleteDTO commitCompleteDTO) {
+    public JoularEntityListDTO createJoularEntityDTOListForOneIteration(Path iterationDirPath, CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO, CommitCompleteDTO commitCompleteDTO) {
         JoularEntityListDTO joularEntityDTOList = new JoularEntityListDTO();
         MethodElementSetDTO methodElementSetDTO = new MethodElementSetDTO();
 
@@ -103,7 +103,7 @@ public class JoularEntityServiceImpl implements JoularEntityService {
             int nbAfterMatchedCkJoular = 0;
             for (JSONObject line: allLines) {
                 String nextLine = line.keySet().iterator().next();
-                log.debug("nextLine : {}", nextLine);
+                log.info("nextLine : {}", nextLine);
                 String regex = "^([+-]?\\d*\\.?\\d*)$";
                 if (Pattern.matches(regex, line.getString(nextLine))) {
                     nbAfterPatternMatching += 1;

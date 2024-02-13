@@ -66,6 +66,7 @@ public class Util {
 
     public static Set<Path> getFileList(String path) {
         try (Stream<Path> stream = Files.list(Paths.get(path))) {
+            log.info("stream = {}", stream);
             return stream
                 .collect(Collectors.toSet());
         } catch (IOException e) {

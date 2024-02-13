@@ -5,11 +5,14 @@ import com.snail.sentinel.backend.repository.*;
 import com.snail.sentinel.backend.service.dto.IterationDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineHashMapDTO;
+import com.snail.sentinel.backend.service.dto.commit.CommitCompleteDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
+import com.snail.sentinel.backend.service.dto.commit.StatsDTO;
 import com.snail.sentinel.backend.service.dto.joular.JoularEntityDTO;
 import com.snail.sentinel.backend.service.dto.joular.JoularEntityListDTO;
 import com.snail.sentinel.backend.service.dto.measurableelement.MeasurableElementDTO;
 import com.snail.sentinel.backend.service.dto.measurableelement.MethodElementSetDTO;
+import com.snail.sentinel.backend.service.dto.repository.RepositoryCompleteDTO;
 import com.snail.sentinel.backend.service.dto.repository.RepositorySimpleDTO;
 import com.snail.sentinel.backend.service.impl.CkEntityServiceImpl;
 import com.snail.sentinel.backend.service.impl.CommitEntityServiceImpl;
@@ -26,7 +29,10 @@ import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -90,6 +96,68 @@ class JoularEntityServiceImplTest {
 
         commitEntityRepository = Mockito.mock(CommitEntityRepository.class);
         commitEntityServiceImpl = new CommitEntityServiceImpl(commitEntityRepository);
+    }
+
+    @Test
+    void createJoularEntityDTOListForOneIterationTest() {
+        Path iterationDirPath = Paths.get("src/test/resources/joular-csv-test/1-1326858-1701080339565");
+
+        List<String> parentsSha = new ArrayList<>();
+        parentsSha.add("f540433112b9a93c26c43277c3ec7a3d40565115");
+        parentsSha.add("41823fe1509c84324a975297bc09e0d884e1c2e9");
+
+        RepositoryCompleteDTO repository = new RepositoryCompleteDTO();
+        repository.setName("commons-configuration");
+        repository.setOwner("apache");
+        repository.setUrl("https://github.com/apache/commons-configuration");
+
+        StatsDTO statsDTO = new StatsDTO();
+        statsDTO.setAdditions(183);
+        statsDTO.setDeletions(102);
+
+        CommitCompleteDTO commitCompleteDTO = new CommitCompleteDTO();
+        commitCompleteDTO.setSha("59e5152722198526c6ffe5361de7d1a6a87275c7");
+        commitCompleteDTO.setDate("2022-06-30T03:54:57Z");
+        commitCompleteDTO.setMessage("merging doc updates from master");
+        commitCompleteDTO.setParentsSha(parentsSha);
+        commitCompleteDTO.setRepository(repository);
+        commitCompleteDTO.setStatsDTO(statsDTO);
+
+        JoularEntityListDTO maybeJoularEntityListDTO = joularService.createJoularEntityDTOListForOneIteration(iterationDirPath, ckAggregateLineHashMapDTO, commitCompleteDTO);
+
+
+        MeasurableElementDTO methodElementDTO = new MeasurableElementDTO();
+        methodElementDTO.setAstElem("method");
+        methodElementDTO.setFilePath("filePath");
+        methodElementDTO.setClassName("org.springframework.boot.context.config.ConfigDataLocationRuntimeHints");
+        methodElementDTO.setMethodName("getFileNames/2");
+        methodElementDTO.setClassMethodSignature("org.springframework.boot.context.config.ConfigDataLocationRuntimeHints.getFileNames");
+
+        IterationDTO iterationDTO = new IterationDTO();
+        iterationDTO.setIterationId(1);
+        iterationDTO.setPid(1326858);
+        iterationDTO.setStartTimestamp(1701080339565L);
+
+        CommitSimpleDTO commitSimpleDTO = new CommitSimpleDTO();
+        RepositorySimpleDTO repositorySimpleDTO = new RepositorySimpleDTO();
+        repositorySimpleDTO.setOwner(repository.getOwner());
+        repositorySimpleDTO.setName(repository.getName());
+        commitSimpleDTO.setRepository(repositorySimpleDTO);
+        commitSimpleDTO.setSha("59e5152722198526c6ffe5361de7d1a6a87275c7");
+
+
+        JoularEntityDTO joularEntityDTO = new JoularEntityDTO();
+        joularEntityDTO.setValue(107.43F);
+        joularEntityDTO.setScope("app");
+        joularEntityDTO.setMonitoringType("total");
+        joularEntityDTO.setMethodElementDTO(methodElementDTO);
+        joularEntityDTO.setIterationDTO(iterationDTO);
+        joularEntityDTO.setCommitSimpleDTO(commitSimpleDTO);
+
+        JoularEntityListDTO joularEntityListDTO = new JoularEntityListDTO();
+        joularEntityListDTO.add(joularEntityDTO);
+
+        assertEquals(maybeJoularEntityListDTO, joularEntityListDTO);
     }
 
     @Test
