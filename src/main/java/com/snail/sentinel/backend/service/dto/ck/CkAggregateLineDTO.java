@@ -3,6 +3,7 @@ package com.snail.sentinel.backend.service.dto.ck;
 import org.springframework.data.annotation.Id;
 
 import java.util.List;
+import java.util.Objects;
 
 
 public class CkAggregateLineDTO {
@@ -64,6 +65,19 @@ public class CkAggregateLineDTO {
 
     public void setLoc(List<Integer> loc) {
         this.loc = loc;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CkAggregateLineDTO that = (CkAggregateLineDTO) o;
+        return Objects.equals(id, that.id) && Objects.equals(className, that.className) && Objects.equals(filePath, that.filePath) && Objects.equals(methodName, that.methodName) && Objects.equals(line, that.line) && Objects.equals(loc, that.loc);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, className, filePath, methodName, line, loc);
     }
 
     @Override

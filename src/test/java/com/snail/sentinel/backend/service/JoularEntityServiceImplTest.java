@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
@@ -51,22 +52,24 @@ class JoularEntityServiceImplTest {
     @InjectMocks
     private JoularEntityServiceImpl joularService;
 
+    private CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO;
+
     @BeforeEach
     public void init() {
-        CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO = new CkAggregateLineHashMapDTO();
+        ckAggregateLineHashMapDTO = new CkAggregateLineHashMapDTO();
         CkAggregateLineDTO ckAggregateLineDTO1 = new CkAggregateLineDTO();
         ckAggregateLineDTO1.setClassName("org.springframework.boot.context.config.ConfigDataLocationRuntimeHints");
         ckAggregateLineDTO1.setFilePath("filePath");
-        ckAggregateLineDTO1.setMethodName("getFileNames(arg1, arg2)");
+        ckAggregateLineDTO1.setMethodName("getFileNames/2");
         ckAggregateLineDTO1.setLine(new ArrayList<>(){{add(63);}});
         ckAggregateLineDTO1.setLoc(new ArrayList<>(){{add(5);}});
 
         CkAggregateLineDTO ckAggregateLineDTO2 = new CkAggregateLineDTO();
-        ckAggregateLineDTO2.setClassName("org.springframework.boot.testsupport.classpath.ModifiedClassPathClassLoader");
+        ckAggregateLineDTO2.setClassName("org.apache.commons.configuration2.tree.DefaultConfigurationKey");
         ckAggregateLineDTO2.setFilePath("filePath2");
-        ckAggregateLineDTO2.setMethodName("loadClass(arg1)");
-        ckAggregateLineDTO2.setLine(new ArrayList<>(){{add(90);}});
-        ckAggregateLineDTO2.setLoc(new ArrayList<>(){{add(15);}});
+        ckAggregateLineDTO2.setMethodName("nextDelimiterPos/1");
+        ckAggregateLineDTO2.setLine(new ArrayList<>(){{add(660);}});
+        ckAggregateLineDTO2.setLoc(new ArrayList<>(){{add(10);}});
 
         ckAggregateLineHashMapDTO.insertOne(ckAggregateLineDTO1);
         ckAggregateLineHashMapDTO.insertOne(ckAggregateLineDTO2);
@@ -94,6 +97,18 @@ class JoularEntityServiceImplTest {
         assertTrue(maybeClassMethodLine.similar(classMethodLine));
     }
 
+    @Test
+    void simple2GetClassMethodLineTest() {
+        JSONObject maybeClassMethodLine = joularService.getClassMethodLine("org.springframework.boot.context.config.ConfigDataLocationRuntimeHints.getFileNames 60");
+
+        JSONObject classMethodLine = new JSONObject();
+        classMethodLine.put("className", "org.springframework.boot.context.config.ConfigDataLocationRuntimeHints");
+        classMethodLine.put("methodName", "getFileNames");
+        classMethodLine.put("lineNumber", 60);
+
+        assertTrue(maybeClassMethodLine.similar(classMethodLine));
+    }
+
     /*@Test
     void complexGetClassMethodLineTest() {
         String line = "org.apache.commons.configuration2.builder.BasicConfigurationBuilder.lambda$getFilteredParameters$0";
@@ -103,6 +118,36 @@ class JoularEntityServiceImplTest {
         classMethodLine.put("className", "org.apache.commons.configuration2.builder.BasicConfigurationBuilder");
         classMethodLine.put("methodName", "");
     }*/
+
+    @Test
+    void simpleGetMatchCkJoularTest() {
+        JSONObject classMethodLine = joularService.getClassMethodLine("org.springframework.boot.context.config.ConfigDataLocationRuntimeHints.getFileNames 67");
+        CkAggregateLineDTO maybeCkAggregateLineDTO = joularService.getMatchCkJoular(classMethodLine, ckAggregateLineHashMapDTO);
+
+        CkAggregateLineDTO ckAggregateLineDTO = new CkAggregateLineDTO();
+        ckAggregateLineDTO.setClassName("org.springframework.boot.context.config.ConfigDataLocationRuntimeHints");
+        ckAggregateLineDTO.setMethodName("getFileNames/2");
+        ckAggregateLineDTO.setFilePath("filePath");
+        ckAggregateLineDTO.setLine(new ArrayList<>(){{add(63);}});
+        ckAggregateLineDTO.setLoc(new ArrayList<>(){{add(5);}});
+
+        assertEquals(maybeCkAggregateLineDTO, ckAggregateLineDTO);
+    }
+
+    @Test
+    void complexGetMatchCkJoularTest() {
+        JSONObject classMethodLine = joularService.getClassMethodLine("org.apache.commons.configuration2.tree.DefaultConfigurationKey$KeyIterator.nextDelimiterPos 662");
+        CkAggregateLineDTO maybeCkAggregateLineDTO = joularService.getMatchCkJoular(classMethodLine, ckAggregateLineHashMapDTO);
+
+        CkAggregateLineDTO ckAggregateLineDTO = new CkAggregateLineDTO();
+        ckAggregateLineDTO.setClassName("org.apache.commons.configuration2.tree.DefaultConfigurationKey");
+        ckAggregateLineDTO.setMethodName("nextDelimiterPos/1");
+        ckAggregateLineDTO.setFilePath("filePath2");
+        ckAggregateLineDTO.setLine(new ArrayList<>(){{add(660);}});
+        ckAggregateLineDTO.setLoc(new ArrayList<>(){{add(10);}});
+
+        assertEquals(maybeCkAggregateLineDTO, ckAggregateLineDTO);
+    }
 
     /*@Test
     void createJoularEntityDTOList() throws Exception {
