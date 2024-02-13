@@ -1,8 +1,16 @@
 package com.snail.sentinel.backend.service;
 
+import com.snail.sentinel.backend.commons.Util;
 import com.snail.sentinel.backend.repository.*;
+import com.snail.sentinel.backend.service.dto.IterationDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineHashMapDTO;
+import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
+import com.snail.sentinel.backend.service.dto.joular.JoularEntityDTO;
+import com.snail.sentinel.backend.service.dto.joular.JoularEntityListDTO;
+import com.snail.sentinel.backend.service.dto.measurableelement.MeasurableElementDTO;
+import com.snail.sentinel.backend.service.dto.measurableelement.MethodElementSetDTO;
+import com.snail.sentinel.backend.service.dto.repository.RepositorySimpleDTO;
 import com.snail.sentinel.backend.service.impl.CkEntityServiceImpl;
 import com.snail.sentinel.backend.service.impl.CommitEntityServiceImpl;
 import com.snail.sentinel.backend.service.impl.JoularEntityServiceImpl;
@@ -147,6 +155,101 @@ class JoularEntityServiceImplTest {
         ckAggregateLineDTO.setLoc(new ArrayList<>(){{add(10);}});
 
         assertEquals(maybeCkAggregateLineDTO, ckAggregateLineDTO);
+    }
+
+    @Test
+    void addOrUpdateJoularEntityListDTOHasNotMethodElementTest() {
+        // Arrange
+        String line = "org.apache.commons.configuration2.tree.DefaultConfigurationKey$KeyIterator.nextDelimiterPos 662";
+        JSONObject classMethodLine = joularService.getClassMethodLine(line);
+        String classMethodSignature = joularService.getClassMethodSignature(line);
+        CkAggregateLineDTO matchedCkJoular = joularService.getMatchCkJoular(classMethodLine, ckAggregateLineHashMapDTO);
+        MeasurableElementDTO methodElementDTO = Util.getMeasurableElementForJoular(matchedCkJoular, classMethodSignature);
+
+        CommitSimpleDTO commitSimpleDTO = new CommitSimpleDTO();
+        commitSimpleDTO.setSha("1234");
+        RepositorySimpleDTO repositorySimpleDTO = new RepositorySimpleDTO();
+        repositorySimpleDTO.setName("commons-configuration");
+        repositorySimpleDTO.setOwner("apache");
+        commitSimpleDTO.setRepository(repositorySimpleDTO);
+
+        MethodElementSetDTO methodElementSetDTO = new MethodElementSetDTO();
+
+        Float value = 2.3391F;
+
+        IterationDTO iterationDTO = joularService.createIterationDTOFromCsvFileName("1-1326858-1701080339565");
+
+        JoularEntityListDTO maybeJoularEntityListDTO = new JoularEntityListDTO();
+
+        // Act
+        joularService.addOrUpdateJoularEntityListDTO(methodElementDTO, commitSimpleDTO, methodElementSetDTO, maybeJoularEntityListDTO, value, iterationDTO);
+
+
+        JoularEntityDTO joularEntityDTO = new JoularEntityDTO();
+        joularEntityDTO.setIterationDTO(iterationDTO);
+        joularEntityDTO.setCommitSimpleDTO(commitSimpleDTO);
+        joularEntityDTO.setScope("app");
+        joularEntityDTO.setMonitoringType("total");
+        joularEntityDTO.setValue(value);
+        joularEntityDTO.setMethodElementDTO(methodElementDTO);
+
+        JoularEntityListDTO joularEntityListDTO = new JoularEntityListDTO();
+        joularEntityListDTO.add(joularEntityDTO);
+
+        // Assert
+        assertEquals(maybeJoularEntityListDTO, joularEntityListDTO);
+    }
+
+    @Test
+    void addOrUpdateJoularEntityListDTOHasMethodElementTest() {
+        // Arrange
+        String line = "org.apache.commons.configuration2.tree.DefaultConfigurationKey$KeyIterator.nextDelimiterPos 662";
+        JSONObject classMethodLine = joularService.getClassMethodLine(line);
+        String classMethodSignature = joularService.getClassMethodSignature(line);
+        CkAggregateLineDTO matchedCkJoular = joularService.getMatchCkJoular(classMethodLine, ckAggregateLineHashMapDTO);
+        MeasurableElementDTO methodElementDTO = Util.getMeasurableElementForJoular(matchedCkJoular, classMethodSignature);
+
+        CommitSimpleDTO commitSimpleDTO = new CommitSimpleDTO();
+        commitSimpleDTO.setSha("1234");
+        RepositorySimpleDTO repositorySimpleDTO = new RepositorySimpleDTO();
+        repositorySimpleDTO.setName("commons-configuration");
+        repositorySimpleDTO.setOwner("apache");
+        commitSimpleDTO.setRepository(repositorySimpleDTO);
+
+        MethodElementSetDTO methodElementSetDTO = new MethodElementSetDTO();
+        methodElementSetDTO.add(methodElementDTO);
+
+        Float firstValue = 2.3391F;
+        Float addedValue = 10F;
+
+        IterationDTO iterationDTO = joularService.createIterationDTOFromCsvFileName("1-1326858-1701080339565");
+
+        JoularEntityListDTO maybeJoularEntityListDTO = new JoularEntityListDTO();
+        JoularEntityDTO maybeJoularEntityDTO = new JoularEntityDTO();
+        maybeJoularEntityDTO.setIterationDTO(iterationDTO);
+        maybeJoularEntityDTO.setCommitSimpleDTO(commitSimpleDTO);
+        maybeJoularEntityDTO.setScope("app");
+        maybeJoularEntityDTO.setMonitoringType("total");
+        maybeJoularEntityDTO.setValue(firstValue);
+        maybeJoularEntityDTO.setMethodElementDTO(methodElementDTO);
+        maybeJoularEntityListDTO.add(maybeJoularEntityDTO);
+
+        // Act
+        joularService.addOrUpdateJoularEntityListDTO(methodElementDTO, commitSimpleDTO, methodElementSetDTO, maybeJoularEntityListDTO, addedValue, iterationDTO);
+
+        JoularEntityDTO joularEntityDTO = new JoularEntityDTO();
+        joularEntityDTO.setIterationDTO(iterationDTO);
+        joularEntityDTO.setCommitSimpleDTO(commitSimpleDTO);
+        joularEntityDTO.setScope("app");
+        joularEntityDTO.setMonitoringType("total");
+        joularEntityDTO.setValue(firstValue + addedValue);
+        joularEntityDTO.setMethodElementDTO(methodElementDTO);
+
+        JoularEntityListDTO joularEntityListDTO = new JoularEntityListDTO();
+        joularEntityListDTO.add(joularEntityDTO);
+
+        // Assert
+        assertEquals(maybeJoularEntityListDTO, joularEntityListDTO);
     }
 
     /*@Test

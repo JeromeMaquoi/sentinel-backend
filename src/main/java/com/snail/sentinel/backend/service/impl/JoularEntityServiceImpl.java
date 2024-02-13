@@ -136,11 +136,11 @@ public class JoularEntityServiceImpl implements JoularEntityService {
         return joularEntityDTOList;
     }
 
-    private String getClassMethodSignature(String line) {
+    public String getClassMethodSignature(String line) {
         return line.substring(0, line.lastIndexOf(" "));
     }
 
-    private void addOrUpdateJoularEntityListDTO(MeasurableElementDTO methodElementDTO, CommitSimpleDTO commitSimpleDTO, MethodElementSetDTO methodElementSetDTO, JoularEntityListDTO joularEntityDTOList, Float value, IterationDTO iterationDTO) {
+    public void addOrUpdateJoularEntityListDTO(MeasurableElementDTO methodElementDTO, CommitSimpleDTO commitSimpleDTO, MethodElementSetDTO methodElementSetDTO, JoularEntityListDTO joularEntityDTOList, Float value, IterationDTO iterationDTO) {
         JoularEntityDTO joularEntityDTO = new JoularEntityDTO();
         if (methodElementSetDTO.has(methodElementDTO)){
             joularEntityDTOList.update(methodElementDTO, value);
