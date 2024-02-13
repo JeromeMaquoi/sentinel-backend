@@ -56,12 +56,12 @@ public class CkEntityRepositoryAggregationImpl implements CkEntityRepositoryAggr
     private GroupOperation groupOperation() {
         Fields idGroup = Fields.from(
             Fields.field("className", "$measurableElement.className"),
-            Fields.field("methodName", "$measurableElement.methodSignature"));
+            Fields.field("methodName", "$measurableElement.methodName"));
 
         return group(idGroup)
             .first("measurableElement.className").as("className")
             .first("measurableElement.filePath").as("filePath")
-            .first("measurableElement.methodSignature").as("methodSignature")
+            .first("measurableElement.methodName").as("methodName")
             .push("line").as("line")
             .push("loc").as("loc");
     }
