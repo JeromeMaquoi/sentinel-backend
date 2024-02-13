@@ -116,7 +116,9 @@ public class JoularEntityServiceImpl implements JoularEntityService {
                         if (matchedCkJoular != null) {
                             nbAfterMatchedCkJoular += 1;
                             String classMethodSignature = getClassMethodSignature(nextLine);
-                            addOrUpdateJoularEntityListDTO(matchedCkJoular, commitCompleteDTO, methodElementSetDTO, joularEntityDTOList, value, iterationDTO, classMethodSignature);
+                            CommitSimpleDTO commitSimpleDTO = Util.createCommitSimpleFromCommitCompleteDTO(commitCompleteDTO);
+                            MeasurableElementDTO methodElementDTO = getMeasurableElementForJoular(matchedCkJoular, classMethodSignature);
+                            addOrUpdateJoularEntityListDTO(methodElementDTO, commitSimpleDTO, methodElementSetDTO, joularEntityDTOList, value, iterationDTO);
                         }
                     }
                 }
@@ -138,10 +140,8 @@ public class JoularEntityServiceImpl implements JoularEntityService {
         return line.substring(0, line.lastIndexOf(" "));
     }
 
-    private void addOrUpdateJoularEntityListDTO(CkAggregateLineDTO matchedCkJoular, CommitCompleteDTO commitCompleteDTO, MethodElementSetDTO methodElementSetDTO, JoularEntityListDTO joularEntityDTOList, Float value, IterationDTO iterationDTO, String classMethodSignature) {
-        CommitSimpleDTO commitSimpleDTO = Util.createCommitSimpleFromCommitCompleteDTO(commitCompleteDTO);
+    private void addOrUpdateJoularEntityListDTO(MeasurableElementDTO methodElementDTO, CommitSimpleDTO commitSimpleDTO, MethodElementSetDTO methodElementSetDTO, JoularEntityListDTO joularEntityDTOList, Float value, IterationDTO iterationDTO) {
         JoularEntityDTO joularEntityDTO = new JoularEntityDTO();
-        MeasurableElementDTO methodElementDTO = getMeasurableElementForJoular(matchedCkJoular, classMethodSignature);
         if (methodElementSetDTO.has(methodElementDTO)){
             joularEntityDTOList.update(methodElementDTO, value);
         } else {
@@ -163,8 +163,10 @@ public class JoularEntityServiceImpl implements JoularEntityService {
         int numberLine = classMethodLine.getInt(LINE_NUMBER);
         if (numberLine > 0) {
             List<CkAggregateLineDTO> allOccurrences = ckAggregateLineHashMapDTO.getAllOccurrences(className, methodName);
+            //log.debug("allOccurrences : {}", allOccurrences);
             if (!allOccurrences.isEmpty()) {
                 for (CkAggregateLineDTO occ : allOccurrences) {
+                    //log.debug("{} <= {} && ({} + {}) >= {} ?", occ.getLine(), numberLine, occ.getLine(), occ.getLoc(), numberLine);
                     if (occ.getLine() <= numberLine && (occ.getLine() + occ.getLoc()) >= numberLine) {
                         //log.debug("Occurrence returned for \"{}.{}\" at line {}", className, methodName, numberLine);
                         return occ;
