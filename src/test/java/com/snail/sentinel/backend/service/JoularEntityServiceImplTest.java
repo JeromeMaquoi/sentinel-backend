@@ -8,14 +8,19 @@ import com.snail.sentinel.backend.service.impl.CommitEntityServiceImpl;
 import com.snail.sentinel.backend.service.impl.JoularEntityServiceImpl;
 import com.snail.sentinel.backend.service.mapper.CkEntityMapper;
 import com.snail.sentinel.backend.service.mapper.JoularEntityMapper;
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 class JoularEntityServiceImplTest {
@@ -75,6 +80,29 @@ class JoularEntityServiceImplTest {
         commitEntityRepository = Mockito.mock(CommitEntityRepository.class);
         commitEntityServiceImpl = new CommitEntityServiceImpl(commitEntityRepository);
     }
+
+    @Test
+    void simpleGetClassMethodLineTest() {
+        String line = "org.apache.commons.configuration2.TestINIConfiguration.testValueWithSemicolon 1006";
+        JSONObject maybeClassMethodLine = joularService.getClassMethodLine(line);
+
+        JSONObject classMethodLine = new JSONObject();
+        classMethodLine.put("className", "org.apache.commons.configuration2.TestINIConfiguration");
+        classMethodLine.put("methodName", "testValueWithSemicolon");
+        classMethodLine.put("lineNumber", 1006);
+
+        assertTrue(maybeClassMethodLine.similar(classMethodLine));
+    }
+
+    /*@Test
+    void complexGetClassMethodLineTest() {
+        String line = "org.apache.commons.configuration2.builder.BasicConfigurationBuilder.lambda$getFilteredParameters$0";
+        JSONObject maybeClassMethodLine = joularService.getClassMethodLine(line);
+
+        JSONObject classMethodLine = new JSONObject();
+        classMethodLine.put("className", "org.apache.commons.configuration2.builder.BasicConfigurationBuilder");
+        classMethodLine.put("methodName", "");
+    }*/
 
     /*@Test
     void createJoularEntityDTOList() throws Exception {
