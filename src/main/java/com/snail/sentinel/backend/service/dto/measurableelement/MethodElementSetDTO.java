@@ -20,7 +20,7 @@ public class MethodElementSetDTO {
 
     public boolean has(MeasurableElementDTO measurableElementDTO) {
         for (MeasurableElementDTO item : this.measurableElementDTOList) {
-            if (item.getClassMethodSignature().equals(measurableElementDTO.getClassMethodSignature())) {
+            if (item.equals(measurableElementDTO)) {
                 return true;
             }
         }
