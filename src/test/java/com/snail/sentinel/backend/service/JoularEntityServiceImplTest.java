@@ -102,7 +102,7 @@ class JoularEntityServiceImplTest {
 
     @Test
     void createJoularEntityDTOListForOneIterationTest() {
-        Path iterationDirPath = Paths.get("src/test/resources/joular-csv-test/1-1326858-1701080339565");
+        Path iterationDirPath = Paths.get("joular-csv-test/1-1326858-1701080339565");
 
         List<String> parentsSha = new ArrayList<>();
         parentsSha.add("f540433112b9a93c26c43277c3ec7a3d40565115");

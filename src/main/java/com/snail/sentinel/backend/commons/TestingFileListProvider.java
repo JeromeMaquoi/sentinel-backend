@@ -1,27 +1,23 @@
 package com.snail.sentinel.backend.commons;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 public class TestingFileListProvider implements FileListProvider {
-    private static final Logger log = LoggerFactory.getLogger(TestingFileListProvider.class);
-
     @Override
     public Set<Path> getFileList(String folder) {
-        log.info("testing");
         try {
             Set<Path> fileList = new HashSet<>();
             File resourceFolder = getResourceFolder(folder);
-            if (resourceFolder.isDirectory()) {
-                for (File file : Objects.requireNonNull(resourceFolder.listFiles())) {
-                    fileList.add(file.toPath());
+            if (resourceFolder != null && resourceFolder.isDirectory()) {
+                File[] files = resourceFolder.listFiles((dir, name) -> name.endsWith(".csv"));
+                if (files != null) {
+                    for (File file : files) {
+                        fileList.add(file.toPath());
+                    }
                 }
             }
             return fileList;
@@ -31,6 +27,6 @@ public class TestingFileListProvider implements FileListProvider {
     }
 
     private File getResourceFolder(String folder) throws URISyntaxException {
-        return new File(Objects.requireNonNull(getClass().getClassLoader().getResource(folder)).toURI());
+        return new File(getClass().getClassLoader().getResource(folder).toURI());
     }
 }
