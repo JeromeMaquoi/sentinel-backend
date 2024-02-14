@@ -5,12 +5,15 @@ import com.snail.sentinel.backend.repository.JoularEntityRepository;
 import com.snail.sentinel.backend.service.JoularEntityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import tech.jhipster.web.util.HeaderUtil;
+
 import java.util.List;
 
 @RestController
@@ -19,6 +22,9 @@ public class JoularEntityResource {
     private final Logger log = LoggerFactory.getLogger(JoularEntityResource.class);
     private final JoularEntityRepository joularEntityRepository;
     private final JoularEntityService joularService;
+    private static final String ENTITY_NAME = "joularEntity";
+    @Value("${jhipster.clientApp.name}")
+    private String applicationName;
 
     public JoularEntityResource(JoularEntityRepository joularEntityRepository, JoularEntityService joularService) {
         this.joularEntityRepository = joularEntityRepository;
@@ -57,6 +63,13 @@ public class JoularEntityResource {
         log.debug("REST request to get all joular entities data from commit {} and astElem {}", sha, classMethodSignature);
         List<JoularEntity> joularEntities = joularService.findByCommitShaAndAstElement(sha, className, classMethodSignature);
         return getPageResponseEntity(page, size, joularEntities);
+    }
+
+    @DeleteMapping("/entities/by-repository/{repoName}")
+    public ResponseEntity<Void> deleteJoularEntitiesFromOneRepository(@PathVariable String repoName) {
+        log.debug("REST request to delete all joular entities from repository {}", repoName);
+        joularEntityRepository.deleteJoularEntitiesByCommit_Repository_Name(repoName);
+        return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, repoName)).build();
     }
 
     private ResponseEntity<Page<JoularEntity>> getPageResponseEntity(int page, int size, List<JoularEntity> joularEntities) {

@@ -52,7 +52,7 @@ public class CkEntityServiceImpl implements CkEntityService {
 
     @Override
     public List<CkEntity> findByCommitShaAndMethodElementAndMetricNames(String sha, String className, String methodName, List<String> names) {
-        return ckEntityRepository.findByCommitShaAndMeasurableElementClassNameAndMeasurableElement_ClassMethodSignatureAndNameIn(sha, className, methodName, names);
+        return ckEntityRepository.findByCommitShaAndMeasurableElementClassNameAndMeasurableElementMethodNameAndNameIn(sha, className, methodName, names);
     }
 
     @Override

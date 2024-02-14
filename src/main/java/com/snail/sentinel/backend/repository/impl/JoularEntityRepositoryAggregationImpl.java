@@ -59,7 +59,8 @@ public class JoularEntityRepositoryAggregationImpl implements JoularEntityReposi
             Fields.field("repoName", "$commit.repository.name"),
             Fields.field("sha", "$commit.sha"),
             Fields.field("className", "$measurableElement.className"),
-            Fields.field("methodSignature", "$measurableElement.methodSignature"),
+            Fields.field("methodName", "$measurableElement.methodName"),
+            Fields.field("classMethodSignature", "$measurableElement.classMethodSignature"),
             Fields.field("owner", "$commit.repository.owner"),
             Fields.field("astElem", "$measurableElement.astElem"),
             Fields.field("filePath", "$measurableElement.filePath")
@@ -82,7 +83,8 @@ public class JoularEntityRepositoryAggregationImpl implements JoularEntityReposi
             .andExpression("$_id.astElem").as("measurableElement.astElem")
             .andExpression("$_id.filePath").as("measurableElement.filePath")
             .andExpression("$_id.className").as("measurableElement.className")
-            .andExpression("$_id.methodSignature").as("measurableElement.methodSignature");
+            .andExpression("$_id.methodName").as("measurableElement.methodName")
+            .andExpression("$_id.classMethodSignature").as("measurableElement.classMethodSignature");
     }
 
     private MatchOperation matchCommitSha(String sha) {
