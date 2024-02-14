@@ -1,7 +1,6 @@
 package com.snail.sentinel.backend.commons;
 
 import com.snail.sentinel.backend.service.exceptions.AstElemNotKnownException;
-import com.snail.sentinel.backend.service.exceptions.NoCsvLineFoundException;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitCompleteDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
@@ -16,13 +15,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public class Util {
     public Util() {}
@@ -62,16 +57,6 @@ public class Util {
             }
         }
         return jsonObjectList;
-    }
-
-    public static Set<Path> getFileList(String path) {
-        try (Stream<Path> stream = Files.list(Paths.get(path))) {
-            log.info("stream = {}", stream);
-            return stream
-                .collect(Collectors.toSet());
-        } catch (IOException e) {
-            throw new NoCsvLineFoundException(e);
-        }
     }
 
     public static String methodNameParser(String className, String methodName) {

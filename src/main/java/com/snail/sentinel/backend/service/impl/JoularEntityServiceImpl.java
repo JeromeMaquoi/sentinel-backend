@@ -1,5 +1,6 @@
 package com.snail.sentinel.backend.service.impl;
 
+import com.snail.sentinel.backend.commons.FileListProvider;
 import com.snail.sentinel.backend.commons.Util;
 import com.snail.sentinel.backend.domain.JoularEntity;
 import com.snail.sentinel.backend.repository.JoularEntityRepository;
@@ -77,25 +78,25 @@ public class JoularEntityServiceImpl implements JoularEntityService {
     }
 
     @Override
-    public JoularEntityListDTO createJoularEntityDTOList(CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO, CommitCompleteDTO commitCompleteDTO, String iterationPath) {
+    public JoularEntityListDTO createJoularEntityDTOList(CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO, CommitCompleteDTO commitCompleteDTO, String iterationPath, FileListProvider fileListProvider) {
         log.info("Request to create JoularEntityDTO list for {}", iterationPath);
         JoularEntityListDTO joularEntityDTOList = new JoularEntityListDTO();
-        Set<Path> fileList = Util.getFileList(iterationPath);
+        Set<Path> fileList = fileListProvider.getFileList(iterationPath);
         log.debug("ckAggregateLineHashMapDTO size : {}", ckAggregateLineHashMapDTO.size());
         for (Path filePath: fileList) {
-            JoularEntityListDTO iterationJoularDTOList = createJoularEntityDTOListForOneIteration(filePath, ckAggregateLineHashMapDTO, commitCompleteDTO);
+            JoularEntityListDTO iterationJoularDTOList = createJoularEntityDTOListForOneIteration(filePath, ckAggregateLineHashMapDTO, commitCompleteDTO, fileListProvider);
             joularEntityDTOList.concat(joularEntityDTOList, iterationJoularDTOList);
         }
         return joularEntityDTOList;
     }
 
-    public JoularEntityListDTO createJoularEntityDTOListForOneIteration(Path iterationDirPath, CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO, CommitCompleteDTO commitCompleteDTO) {
+    public JoularEntityListDTO createJoularEntityDTOListForOneIteration(Path iterationDirPath, CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO, CommitCompleteDTO commitCompleteDTO, FileListProvider fileListProvider) {
         JoularEntityListDTO joularEntityDTOList = new JoularEntityListDTO();
         MethodElementSetDTO methodElementSetDTO = new MethodElementSetDTO();
 
         String csvPathFileName = iterationDirPath.getFileName().toString();
         IterationDTO iterationDTO = createIterationDTOFromCsvFileName(csvPathFileName);
-        Path csvPath = Util.getFileList(iterationDirPath + "/app/total/methods/").iterator().next();
+        Path csvPath = fileListProvider.getFileList(iterationDirPath + "/app/total/methods/").iterator().next();
         try {
             List<JSONObject> allLines = Util.readCsvWithoutHeaderToJson(csvPath.toString());
             int nbAfterPatternMatching = 0;
@@ -103,7 +104,7 @@ public class JoularEntityServiceImpl implements JoularEntityService {
             int nbAfterMatchedCkJoular = 0;
             for (JSONObject line: allLines) {
                 String nextLine = line.keySet().iterator().next();
-                log.info("nextLine : {}", nextLine);
+                //log.debug("nextLine : {}", nextLine);
                 String regex = "^([+-]?\\d*\\.?\\d*)$";
                 if (Pattern.matches(regex, line.getString(nextLine))) {
                     nbAfterPatternMatching += 1;

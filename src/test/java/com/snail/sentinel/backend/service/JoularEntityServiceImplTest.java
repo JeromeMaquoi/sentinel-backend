@@ -1,5 +1,7 @@
 package com.snail.sentinel.backend.service;
 
+import com.snail.sentinel.backend.commons.FileListProvider;
+import com.snail.sentinel.backend.commons.TestingFileListProvider;
 import com.snail.sentinel.backend.commons.Util;
 import com.snail.sentinel.backend.repository.*;
 import com.snail.sentinel.backend.service.dto.IterationDTO;
@@ -123,7 +125,9 @@ class JoularEntityServiceImplTest {
         commitCompleteDTO.setRepository(repository);
         commitCompleteDTO.setStatsDTO(statsDTO);
 
-        JoularEntityListDTO maybeJoularEntityListDTO = joularService.createJoularEntityDTOListForOneIteration(iterationDirPath, ckAggregateLineHashMapDTO, commitCompleteDTO);
+        FileListProvider fileListProvider = new TestingFileListProvider();
+
+        JoularEntityListDTO maybeJoularEntityListDTO = joularService.createJoularEntityDTOListForOneIteration(iterationDirPath, ckAggregateLineHashMapDTO, commitCompleteDTO, fileListProvider);
 
 
         MeasurableElementDTO methodElementDTO = new MeasurableElementDTO();
