@@ -70,6 +70,10 @@ class JoularEntityServiceImplTest {
 
     private CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO;
 
+    private CommitCompleteDTO commitCompleteDTO;
+
+    private RepositoryCompleteDTO repository;
+
     @BeforeEach
     public void init() {
         ckAggregateLineHashMapDTO = new CkAggregateLineHashMapDTO();
@@ -90,6 +94,8 @@ class JoularEntityServiceImplTest {
         ckAggregateLineHashMapDTO.insertOne(ckAggregateLineDTO1);
         ckAggregateLineHashMapDTO.insertOne(ckAggregateLineDTO2);
 
+        createCompleteCommitDTO();
+
         ckEntityRepository = Mockito.mock(CkEntityRepository.class);
         ckService = new CkEntityServiceImpl(ckEntityRepository, ckEntityMapper);
 
@@ -100,30 +106,32 @@ class JoularEntityServiceImplTest {
         commitEntityServiceImpl = new CommitEntityServiceImpl(commitEntityRepository);
     }
 
-    @Test
-    void createJoularEntityDTOListForOneIterationTest() {
-        Path iterationDirPath = Paths.get("joular-csv-test/1-1326858-1701080339565");
-
+    private void createCompleteCommitDTO() {
         List<String> parentsSha = new ArrayList<>();
         parentsSha.add("f540433112b9a93c26c43277c3ec7a3d40565115");
         parentsSha.add("41823fe1509c84324a975297bc09e0d884e1c2e9");
 
-        RepositoryCompleteDTO repository = new RepositoryCompleteDTO();
-        repository.setName("commons-configuration");
-        repository.setOwner("apache");
-        repository.setUrl("https://github.com/apache/commons-configuration");
+        this.repository = new RepositoryCompleteDTO();
+        this.repository.setName("commons-configuration");
+        this.repository.setOwner("apache");
+        this.repository.setUrl("https://github.com/apache/commons-configuration");
 
         StatsDTO statsDTO = new StatsDTO();
         statsDTO.setAdditions(183);
         statsDTO.setDeletions(102);
 
-        CommitCompleteDTO commitCompleteDTO = new CommitCompleteDTO();
-        commitCompleteDTO.setSha("59e5152722198526c6ffe5361de7d1a6a87275c7");
-        commitCompleteDTO.setDate("2022-06-30T03:54:57Z");
-        commitCompleteDTO.setMessage("merging doc updates from master");
-        commitCompleteDTO.setParentsSha(parentsSha);
-        commitCompleteDTO.setRepository(repository);
-        commitCompleteDTO.setStatsDTO(statsDTO);
+        this.commitCompleteDTO = new CommitCompleteDTO();
+        this.commitCompleteDTO.setSha("59e5152722198526c6ffe5361de7d1a6a87275c7");
+        this.commitCompleteDTO.setDate("2022-06-30T03:54:57Z");
+        this.commitCompleteDTO.setMessage("merging doc updates from master");
+        this.commitCompleteDTO.setParentsSha(parentsSha);
+        this.commitCompleteDTO.setRepository(repository);
+        this.commitCompleteDTO.setStatsDTO(statsDTO);
+    }
+
+    @Test
+    void createJoularEntityDTOListForOneIterationTest() {
+        Path iterationDirPath = Paths.get("joular-csv-test/1-1326858-1701080339565");
 
         FileListProvider fileListProvider = new TestingFileListProvider();
 
