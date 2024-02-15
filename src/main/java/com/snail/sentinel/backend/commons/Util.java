@@ -73,7 +73,7 @@ public class Util {
             // Removing "$[0-9]" at the end of the string
             method = tmpMethod.split("\\$\\d+")[0];
             //log.warn("{} => {}", methodName, method);
-        } else if (!methodName.equals("<clinit>")) {
+        } else {
             method = methodName;
         }
 
