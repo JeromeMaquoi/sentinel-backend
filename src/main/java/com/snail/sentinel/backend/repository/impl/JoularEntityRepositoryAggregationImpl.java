@@ -26,12 +26,11 @@ public class JoularEntityRepositoryAggregationImpl implements JoularEntityReposi
 
     @Override
     public List<JoularAggregateDTO> aggregateAll() {
-        MatchOperation matchOperation = getAllValues();
         GroupOperation groupOperation = groupAllValues();
-        MatchOperation matchOperation30Values = getAllMethodsHaving30Values();
+        MatchOperation matchOperation30Values = getAllMethodsHavingAtLeast25Values();
         ProjectionOperation projectionOperation = addFields();
 
-        Aggregation aggregation = newAggregation(matchOperation, groupOperation, matchOperation30Values, projectionOperation);
+        Aggregation aggregation = newAggregation(groupOperation, matchOperation30Values, projectionOperation);
         AggregationResults<JoularAggregateDTO> output = mongoTemplate.aggregate(aggregation, JoularEntity.class, JoularAggregateDTO.class);
         return output.getMappedResults();
     }
@@ -40,7 +39,7 @@ public class JoularEntityRepositoryAggregationImpl implements JoularEntityReposi
     public List<JoularAggregateDTO> aggregateAllByCommit(String sha) {
         MatchOperation matchOperation = getAllValues();
         GroupOperation groupOperation = groupAllValues();
-        MatchOperation matchOperation30Values = getAllMethodsHaving30Values();
+        MatchOperation matchOperation30Values = getAllMethodsHavingAtLeast25Values();
         ProjectionOperation projectionOperation = addFields();
         MatchOperation matchCommitSha = matchCommitSha(sha);
 
@@ -70,8 +69,8 @@ public class JoularEntityRepositoryAggregationImpl implements JoularEntityReposi
             .count().as("size");
     }
 
-    private MatchOperation getAllMethodsHaving30Values() {
-        Criteria criteria = where("size").is(30);
+    private MatchOperation getAllMethodsHavingAtLeast25Values() {
+        Criteria criteria = where("size").gte(25);
         return Aggregation.match(criteria);
     }
 
