@@ -10,5 +10,7 @@ import java.util.List;
 public interface JoularEntityRepository extends MongoRepository<JoularEntity, String> {
     List<JoularEntity> findByCommitSha(String sha);
 
-    List<JoularEntity> findByCommitShaAndMeasurableElementClassNameAndMeasurableElementMethodSignature(String sha, String className, String methodSignature);
+    List<JoularEntity> findByCommitShaAndMeasurableElementClassNameAndMeasurableElementClassMethodSignature(String sha, String className, String classMethodSignature);
+
+    void deleteJoularEntitiesByCommit_Repository_Name(String repoName);
 }

@@ -43,6 +43,10 @@ public class CkAggregateLineHashMapDTO {
         this.ckAggregateLineHashMapDTO.put(label, ckAggregateLineDTO);
     }
 
+    public int size() {
+        return this.ckAggregateLineHashMapDTO.size();
+    }
+
     @Override
     public String toString() {
         return "CkAggregateLineListDTO{" +

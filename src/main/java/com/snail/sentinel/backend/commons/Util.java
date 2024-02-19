@@ -1,7 +1,6 @@
 package com.snail.sentinel.backend.commons;
 
 import com.snail.sentinel.backend.service.exceptions.AstElemNotKnownException;
-import com.snail.sentinel.backend.service.exceptions.NoCsvLineFoundException;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitCompleteDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
@@ -16,13 +15,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public class Util {
     public Util() {}
@@ -64,15 +59,6 @@ public class Util {
         return jsonObjectList;
     }
 
-    public static Set<Path> getFileList(String path) {
-        try (Stream<Path> stream = Files.list(Paths.get(path))) {
-            return stream
-                .collect(Collectors.toSet());
-        } catch (IOException e) {
-            throw new NoCsvLineFoundException(e);
-        }
-    }
-
     public static String methodNameParser(String className, String methodName) {
         String method = "";
         if (methodName.equals("<init>")) {
@@ -87,7 +73,7 @@ public class Util {
             // Removing "$[0-9]" at the end of the string
             method = tmpMethod.split("\\$\\d+")[0];
             //log.warn("{} => {}", methodName, method);
-        } else if (!methodName.equals("<clinit>")) {
+        } else {
             method = methodName;
         }
 
@@ -106,77 +92,38 @@ public class Util {
         return parsedClass;
     }
 
-    public static MeasurableElementDTO getMeasurableElement(String astElem, Object line) {
+    public static MeasurableElementDTO getMeasurableElementForJoular(CkAggregateLineDTO line, String classMethodSignature) {
+        MeasurableElementDTO measurableElementDTO = new MeasurableElementDTO();
+        measurableElementDTO.setAstElem(AST_ELEM_METHOD);
+        measurableElementDTO.setClassName(line.getClassName());
+        measurableElementDTO.setMethodName(line.getMethodName());
+        measurableElementDTO.setFilePath(line.getFilePath());
+        measurableElementDTO.setClassMethodSignature(classMethodSignature);
+        return measurableElementDTO;
+    }
+
+    public static MeasurableElementDTO getMeasurableElementForCk(String astElem, Object line) {
         try {
             MeasurableElementDTO measurableElementDTO = new MeasurableElementDTO();
-            if (line instanceof JSONObject) {
-                measurableElementDTO.setAstElem(astElem);
-                measurableElementDTO.setFilePath(((JSONObject) line).getString(Util.FILE));
-                measurableElementDTO.setClassName(((JSONObject) line).getString(Util.AST_ELEM_CLASS));
-                switch (astElem) {
-                    case Util.AST_ELEM_CLASS -> {
-                        measurableElementDTO.setClassType(((JSONObject) line).getString("type"));
-                    }
-                    case Util.AST_ELEM_METHOD -> {
-                        measurableElementDTO.setMethodSignature(((JSONObject) line).getString(Util.AST_ELEM_METHOD));
-                    }
-                    case Util.AST_ELEM_VARIABLE -> {
-                        measurableElementDTO.setMethodSignature(((JSONObject) line).getString(Util.AST_ELEM_METHOD));
-                        measurableElementDTO.setVariableName(((JSONObject) line).getString(Util.AST_ELEM_VARIABLE));
-                    }
-                    default -> {
-                        return null;
-                    }
+            measurableElementDTO.setAstElem(astElem);
+            measurableElementDTO.setFilePath(((JSONObject) line).getString(Util.FILE));
+            measurableElementDTO.setClassName(((JSONObject) line).getString(Util.AST_ELEM_CLASS));
+            switch (astElem) {
+                case Util.AST_ELEM_CLASS -> {
+                    measurableElementDTO.setClassType(((JSONObject) line).getString("type"));
                 }
-                return measurableElementDTO;
-            } else if (line instanceof CkAggregateLineDTO) {
-                measurableElementDTO.setAstElem(astElem);
-                measurableElementDTO.setClassName(((CkAggregateLineDTO) line).getClassName());
-                measurableElementDTO.setMethodSignature(((CkAggregateLineDTO) line).getMethodSignature());
-                measurableElementDTO.setFilePath(((CkAggregateLineDTO) line).getFilePath());
-                return measurableElementDTO;
+                case Util.AST_ELEM_METHOD -> {
+                    measurableElementDTO.setMethodName(((JSONObject) line).getString(Util.AST_ELEM_METHOD));
+                }
+                case Util.AST_ELEM_VARIABLE -> {
+                    measurableElementDTO.setMethodName(((JSONObject) line).getString(Util.AST_ELEM_METHOD));
+                    measurableElementDTO.setVariableName(((JSONObject) line).getString(Util.AST_ELEM_VARIABLE));
+                }
+                default -> {
+                    return null;
+                }
             }
-            /*if (line instanceof JSONObject) {
-                switch (astElem) {
-                    case Util.AST_ELEM_CLASS -> {
-                        ClassElementDTO element = new ClassElementDTO();
-                        element.setAstElem(astElem);
-                        element.setClassName(((JSONObject) line).getString(Util.AST_ELEM_CLASS));
-                        element.setFilePath(((JSONObject) line).getString(Util.FILE));
-                        element.setClassType(((JSONObject) line).getString("type"));
-                        returnElement = element;
-                    }
-                    case Util.AST_ELEM_METHOD -> {
-                        MethodElementDTO element = new MethodElementDTO();
-                        element.setAstElem(astElem);
-                        element.setClassName(((JSONObject) line).getString(Util.AST_ELEM_CLASS));
-                        element.setFilePath(((JSONObject) line).getString(Util.FILE));
-                        element.setMethodSignature(((JSONObject) line).getString(Util.AST_ELEM_METHOD));
-                        returnElement = element;
-                    }
-                    case Util.AST_ELEM_VARIABLE -> {
-                        VariableElementDTO element = new VariableElementDTO();
-                        element.setAstElem(astElem);
-                        element.setClassName(((JSONObject) line).getString(Util.AST_ELEM_CLASS));
-                        element.setFilePath(((JSONObject) line).getString(Util.FILE));
-                        element.setMethodSignature(((JSONObject) line).getString(Util.AST_ELEM_METHOD));
-                        element.setVariableName(((JSONObject) line).getString(Util.AST_ELEM_VARIABLE));
-                        returnElement = element;
-                    }
-                    default -> {
-                        return null;
-                    }
-                }
-                return returnElement;
-            } else if (line instanceof CkAggregateLineDTO) {
-                MethodElementDTO element = new MethodElementDTO();
-                element.setAstElem(astElem);
-                element.setClassName(((CkAggregateLineDTO) line).getClassName());
-                element.setMethodSignature(((CkAggregateLineDTO) line).getMethodSignature());
-                element.setFilePath(((CkAggregateLineDTO) line).getFilePath());
-                return element;
-            }*/
-            return null;
+            return measurableElementDTO;
         } catch (JSONException e) {
             throw new AstElemNotKnownException(e);
         }

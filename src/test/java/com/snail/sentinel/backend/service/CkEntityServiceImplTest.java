@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.snail.sentinel.backend.commons.Util;
 import com.snail.sentinel.backend.repository.CkEntityRepository;
+import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkEntityDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitCompleteDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
@@ -59,6 +60,8 @@ class CkEntityServiceImplTest {
 
     private static final JSONObject line = new JSONObject();
 
+    private static final CkAggregateLineDTO ckAggregateLineDTO = new CkAggregateLineDTO();
+
     private static CommitCompleteDTO commitCompleteDTO;
 
     private static CommitSimpleDTO commitSimpleDTO;
@@ -77,6 +80,15 @@ class CkEntityServiceImplTest {
         line.put("file", FILE_PATH);
         line.put("class", CLASS_NAME);
         line.put("type", "innerclass");
+
+        List<Integer> line = List.of(1, 2, 3);
+        List<Integer> loc = List.of(5, 10, 15);
+
+        ckAggregateLineDTO.setClassName(CLASS_NAME);
+        ckAggregateLineDTO.setFilePath(FILE_PATH);
+        ckAggregateLineDTO.setMethodName("method");
+        ckAggregateLineDTO.setLine(line);
+        ckAggregateLineDTO.setLoc(loc);
 
         RepositoryCompleteDTO repositoryCompleteDTO = new RepositoryCompleteDTO();
         repositoryCompleteDTO.setUrl(REPO_URL);
@@ -120,13 +132,26 @@ class CkEntityServiceImplTest {
     }
 
     @Test
-    void getMeasurableElementTest() {
-        MeasurableElementDTO maybeElement = Util.getMeasurableElement(AST_ELEM, line);
+    void getMeasurableElementForCkTest() {
+        MeasurableElementDTO maybeElement = Util.getMeasurableElementForCk(AST_ELEM, line);
         MeasurableElementDTO measurableElementDTO = new MeasurableElementDTO();
         measurableElementDTO.setAstElem(AST_ELEM);
         measurableElementDTO.setFilePath(line.getString(Util.FILE));
         measurableElementDTO.setClassName(line.getString(Util.AST_ELEM_CLASS));
         measurableElementDTO.setClassType(line.getString("type"));
+
+        assertThat(maybeElement).isEqualTo(measurableElementDTO);
+    }
+
+    @Test
+    void getMeasurableElementForJoularTest() {
+        MeasurableElementDTO maybeElement = Util.getMeasurableElementForJoular(ckAggregateLineDTO, "class.method<init>");
+        MeasurableElementDTO measurableElementDTO = new MeasurableElementDTO();
+        measurableElementDTO.setAstElem("method");
+        measurableElementDTO.setClassMethodSignature("class.method<init>");
+        measurableElementDTO.setFilePath(ckAggregateLineDTO.getFilePath());
+        measurableElementDTO.setClassName(ckAggregateLineDTO.getClassName());
+        measurableElementDTO.setMethodName(ckAggregateLineDTO.getMethodName());
 
         assertThat(maybeElement).isEqualTo(measurableElementDTO);
     }

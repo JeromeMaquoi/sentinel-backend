@@ -1,5 +1,6 @@
 package com.snail.sentinel.backend.service;
 
+import com.snail.sentinel.backend.commons.FileListProvider;
 import com.snail.sentinel.backend.domain.JoularEntity;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineHashMapDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitCompleteDTO;
@@ -19,5 +20,5 @@ public interface JoularEntityService {
 
     List<JoularEntity> findByCommitShaAndAstElement(String sha, String className, String methodSignature);
 
-    JoularEntityListDTO createJoularEntityDTOList(CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO, CommitCompleteDTO commitCompleteDTO, String iterationPath);
+    JoularEntityListDTO createJoularEntityDTOList(CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO, CommitCompleteDTO commitCompleteDTO, String iterationPath, FileListProvider fileListProvider);
 }

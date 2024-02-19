@@ -1,5 +1,7 @@
 package com.snail.sentinel.backend;
 
+import com.snail.sentinel.backend.commons.FileListProvider;
+import com.snail.sentinel.backend.commons.ProductionFileListProvider;
 import com.snail.sentinel.backend.commons.Util;
 import com.snail.sentinel.backend.repository.CkEntityRepositoryAggregation;
 import com.snail.sentinel.backend.service.CkEntityService;
@@ -67,9 +69,11 @@ public class CkJoularResource {
             CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO = ckEntityRepositoryAggregation.aggregate(repoItem.get(Util.NAME));
             List<File> iterationPaths = Util.searchDirectories("joularjx-result", new File(System.getenv("REPO_DIRECTORY") + repoItem.get(Util.NAME)));
 
+            FileListProvider fileListProvider = new ProductionFileListProvider();
+
             for (File iterationFilePath : iterationPaths) {
                 String iterationPath = iterationFilePath.getAbsolutePath();
-                JoularEntityListDTO joularEntityDTOList = joularEntityService.createJoularEntityDTOList(ckAggregateLineHashMapDTO, commitCompleteDTO, iterationPath);
+                JoularEntityListDTO joularEntityDTOList = joularEntityService.createJoularEntityDTOList(ckAggregateLineHashMapDTO, commitCompleteDTO, iterationPath, fileListProvider);
                 insertJoularData(joularEntityDTOList);
             }
 

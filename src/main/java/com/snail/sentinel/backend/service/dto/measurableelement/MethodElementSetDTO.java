@@ -4,23 +4,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MethodElementSetDTO {
-    private final List<MeasurableElementDTO> MeasurableElementDTOList;
+    private final List<MeasurableElementDTO> measurableElementDTOList;
 
     public MethodElementSetDTO() {
-        this.MeasurableElementDTOList = new ArrayList<>();
+        this.measurableElementDTOList = new ArrayList<>();
     }
 
-    public void add(MeasurableElementDTO MeasurableElementDTO) {
-        this.MeasurableElementDTOList.add(MeasurableElementDTO);
+    public void add(MeasurableElementDTO measurableElementDTO) {
+        this.measurableElementDTOList.add(measurableElementDTO);
     }
 
     public List<MeasurableElementDTO> getAll() {
-        return this.MeasurableElementDTOList;
+        return this.measurableElementDTOList;
     }
 
-    public boolean has(MeasurableElementDTO MeasurableElementDTO) {
-        for (MeasurableElementDTO item : this.MeasurableElementDTOList) {
-            if (item.equals(MeasurableElementDTO)) {
+    public boolean has(MeasurableElementDTO measurableElementDTO) {
+        for (MeasurableElementDTO item : this.measurableElementDTOList) {
+            if (item.equals(measurableElementDTO)) {
                 return true;
             }
         }
@@ -30,7 +30,7 @@ public class MethodElementSetDTO {
     @Override
     public String toString() {
         return "MethodElementSetDTO{" +
-            "MeasurableElementDTOList=" + MeasurableElementDTOList +
+            "MeasurableElementDTOList=" + measurableElementDTOList +
             '}';
     }
 }

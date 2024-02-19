@@ -46,6 +46,10 @@ public class JoularEntityListDTO {
         return null;
     }
 
+    public Integer size() {
+        return this.joularEntityDTOList.size();
+    }
+
     @Override
     public String toString() {
         return "JoularEntityListDTO{" +

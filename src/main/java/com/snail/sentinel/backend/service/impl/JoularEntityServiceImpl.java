@@ -1,5 +1,6 @@
 package com.snail.sentinel.backend.service.impl;
 
+import com.snail.sentinel.backend.commons.FileListProvider;
 import com.snail.sentinel.backend.commons.Util;
 import com.snail.sentinel.backend.domain.JoularEntity;
 import com.snail.sentinel.backend.repository.JoularEntityRepository;
@@ -25,7 +26,7 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import static com.snail.sentinel.backend.commons.Util.getMeasurableElement;
+import static com.snail.sentinel.backend.commons.Util.getMeasurableElementForJoular;
 import static java.lang.Integer.parseInt;
 import static java.lang.Long.parseLong;
 
@@ -59,8 +60,8 @@ public class JoularEntityServiceImpl implements JoularEntityService {
     }
 
     @Override
-    public List<JoularEntity> findByCommitShaAndAstElement(String sha, String className, String methodSignature) {
-        return joularEntityRepository.findByCommitShaAndMeasurableElementClassNameAndMeasurableElementMethodSignature(sha, className, methodSignature);
+    public List<JoularEntity> findByCommitShaAndAstElement(String sha, String className, String classMethodSignature) {
+        return joularEntityRepository.findByCommitShaAndMeasurableElementClassNameAndMeasurableElementClassMethodSignature(sha, className, classMethodSignature);
     }
 
     @Override
@@ -77,59 +78,84 @@ public class JoularEntityServiceImpl implements JoularEntityService {
     }
 
     @Override
-    public JoularEntityListDTO createJoularEntityDTOList(CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO, CommitCompleteDTO commitCompleteDTO, String iterationPath) {
+    public JoularEntityListDTO createJoularEntityDTOList(CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO, CommitCompleteDTO commitCompleteDTO, String iterationPath, FileListProvider fileListProvider) {
         log.info("Request to create JoularEntityDTO list for {}", iterationPath);
         JoularEntityListDTO joularEntityDTOList = new JoularEntityListDTO();
-        Set<Path> fileList = Util.getFileList(iterationPath);
+        Set<Path> fileList = fileListProvider.getFileList(iterationPath);
+        log.debug("ckAggregateLineHashMapDTO size : {}", ckAggregateLineHashMapDTO.size());
         for (Path filePath: fileList) {
-            JoularEntityListDTO iterationJoularDTOList = createJoularEntityDTOListForOneIteration(filePath, ckAggregateLineHashMapDTO, commitCompleteDTO);
+            JoularEntityListDTO iterationJoularDTOList = createJoularEntityDTOListForOneIteration(filePath, ckAggregateLineHashMapDTO, commitCompleteDTO, fileListProvider);
             joularEntityDTOList.concat(joularEntityDTOList, iterationJoularDTOList);
         }
         return joularEntityDTOList;
     }
 
-    private JoularEntityListDTO createJoularEntityDTOListForOneIteration(Path iterationDirPath, CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO, CommitCompleteDTO commitCompleteDTO) {
+    public JoularEntityListDTO createJoularEntityDTOListForOneIteration(Path iterationDirPath, CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO, CommitCompleteDTO commitCompleteDTO, FileListProvider fileListProvider) {
         JoularEntityListDTO joularEntityDTOList = new JoularEntityListDTO();
         MethodElementSetDTO methodElementSetDTO = new MethodElementSetDTO();
 
         String csvPathFileName = iterationDirPath.getFileName().toString();
         IterationDTO iterationDTO = createIterationDTOFromCsvFileName(csvPathFileName);
-        Path csvPath = Util.getFileList(iterationDirPath + "/app/total/methods/").iterator().next();
+        Path csvPath = fileListProvider.getFileList(iterationDirPath + "/app/total/methods/").iterator().next();
         try {
             List<JSONObject> allLines = Util.readCsvWithoutHeaderToJson(csvPath.toString());
+            int nbAfterPatternMatching = 0;
+            int nbAfterClassMethodLine = 0;
+            int nbAfterMatchedCkJoular = 0;
             for (JSONObject line: allLines) {
-                String metric = line.keySet().iterator().next();
+                String nextLine = line.keySet().iterator().next();
+                //log.debug("nextLine : {}", nextLine);
                 String regex = "^([+-]?\\d*\\.?\\d*)$";
-                if (Pattern.matches(regex, line.getString(metric))) {
-                    Float value = line.getFloat(metric);
-                    JSONObject classMethodLine = getClassMethodLine(metric);
+                if (Pattern.matches(regex, line.getString(nextLine))) {
+                    nbAfterPatternMatching += 1;
+                    Float value = line.getFloat(nextLine);
+                    JSONObject classMethodLine = getClassMethodLine(nextLine);
+                    //log.debug(String.valueOf(classMethodLine));
                     if (classMethodLine != null) {
+                        nbAfterClassMethodLine += 1;
                         CkAggregateLineDTO matchedCkJoular = getMatchCkJoular(classMethodLine, ckAggregateLineHashMapDTO);
                         if (matchedCkJoular != null) {
+                            nbAfterMatchedCkJoular += 1;
+                            String classMethodSignature = getClassMethodSignature(nextLine);
                             CommitSimpleDTO commitSimpleDTO = Util.createCommitSimpleFromCommitCompleteDTO(commitCompleteDTO);
-                            JoularEntityDTO joularEntityDTO = new JoularEntityDTO();
-                            MeasurableElementDTO methodElementDTO = getMeasurableElement("method", matchedCkJoular);
-
-                            if (methodElementSetDTO.has(methodElementDTO)){
-                                joularEntityDTOList.update(methodElementDTO, value);
-                            } else {
-                                methodElementSetDTO.add(methodElementDTO);
-                                joularEntityDTO.setIterationDTO(iterationDTO);
-                                joularEntityDTO.setCommitSimpleDTO(commitSimpleDTO);
-                                joularEntityDTO.setScope("app");
-                                joularEntityDTO.setMonitoringType("total");
-                                joularEntityDTO.setValue(value);
-                                joularEntityDTO.setMethodElementDTO(methodElementDTO);
-                                joularEntityDTOList.add(joularEntityDTO);
-                            }
+                            MeasurableElementDTO methodElementDTO = getMeasurableElementForJoular(matchedCkJoular, classMethodSignature);
+                            addOrUpdateJoularEntityListDTO(methodElementDTO, commitSimpleDTO, methodElementSetDTO, joularEntityDTOList, value, iterationDTO);
                         }
                     }
                 }
             }
+            log.debug("---------------------------------------");
+            log.debug("size of allLines : {}", allLines.size());
+            log.debug("nbAfterPatternMatching : {}", nbAfterPatternMatching);
+            log.debug("nbAfterClassMethodLine : {}", nbAfterClassMethodLine);
+            log.debug("nbAfterMatchedCkJoular : {}", nbAfterMatchedCkJoular);
+            log.debug("---------------------------------------");
+            //log.debug(String.valueOf(joularEntityDTOList.size()));
         } catch (IOException e) {
             throw new NoCsvLineFoundException(e);
         }
         return joularEntityDTOList;
+    }
+
+    public String getClassMethodSignature(String line) {
+        return line.substring(0, line.lastIndexOf(" "));
+    }
+
+    public void addOrUpdateJoularEntityListDTO(MeasurableElementDTO methodElementDTO, CommitSimpleDTO commitSimpleDTO, MethodElementSetDTO methodElementSetDTO, JoularEntityListDTO joularEntityDTOList, Float value, IterationDTO iterationDTO) {
+        JoularEntityDTO joularEntityDTO = new JoularEntityDTO();
+        if (methodElementSetDTO.has(methodElementDTO)){
+            joularEntityDTOList.update(methodElementDTO, value);
+        } else {
+            methodElementSetDTO.add(methodElementDTO);
+            joularEntityDTO.setIterationDTO(iterationDTO);
+            joularEntityDTO.setCommitSimpleDTO(commitSimpleDTO);
+            joularEntityDTO.setScope("app");
+            joularEntityDTO.setMonitoringType("total");
+            joularEntityDTO.setValue(value);
+            joularEntityDTO.setMethodElementDTO(methodElementDTO);
+            //log.debug("New : {}", joularEntityDTO.getMethodElementDTO().getClassMethodSignature());
+            joularEntityDTOList.add(joularEntityDTO);
+        }
     }
 
     public CkAggregateLineDTO getMatchCkJoular(JSONObject classMethodLine, CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO) {
@@ -138,10 +164,12 @@ public class JoularEntityServiceImpl implements JoularEntityService {
         int numberLine = classMethodLine.getInt(LINE_NUMBER);
         if (numberLine > 0) {
             List<CkAggregateLineDTO> allOccurrences = ckAggregateLineHashMapDTO.getAllOccurrences(className, methodName);
+            //log.debug("allOccurrences : {}", allOccurrences);
             if (!allOccurrences.isEmpty()) {
                 for (CkAggregateLineDTO occ : allOccurrences) {
+                    //log.debug("{} <= {} && ({} + {}) >= {} ?", occ.getLine(), numberLine, occ.getLine(), occ.getLoc(), numberLine);
                     if (occ.getLine() <= numberLine && (occ.getLine() + occ.getLoc()) >= numberLine) {
-                        //log.info("Occurrence returned for \"{}.{}\" at line {}", className, methodName, numberLine);
+                        //log.debug("Occurrence returned for \"{}.{}\" at line {}", className, methodName, numberLine);
                         return occ;
                     }
                 }
@@ -161,7 +189,7 @@ public class JoularEntityServiceImpl implements JoularEntityService {
         return new IterationDTO(iterationId, pid, startTimestamp);
     }
 
-    private JSONObject getClassMethodLine(String metric) {
+    public JSONObject getClassMethodLine(String metric) {
         String className = metric.substring(0, metric.lastIndexOf('.'));
         String[] spaceSplit = metric.substring(metric.lastIndexOf('.') + 1).split(" ");
         if (spaceSplit.length < 3) {

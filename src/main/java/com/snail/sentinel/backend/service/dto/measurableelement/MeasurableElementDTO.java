@@ -16,7 +16,9 @@ public class MeasurableElementDTO {
     @Indexed
     private String className;
 
-    private String methodSignature;
+    private String methodName;
+
+    private String classMethodSignature;
 
     private String variableName;
 
@@ -46,12 +48,20 @@ public class MeasurableElementDTO {
         this.className = className;
     }
 
-    public String getMethodSignature() {
-        return methodSignature;
+    public String getMethodName() {
+        return methodName;
     }
 
-    public void setMethodSignature(String methodSignature) {
-        this.methodSignature = methodSignature;
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
+    }
+
+    public String getClassMethodSignature() {
+        return classMethodSignature;
+    }
+
+    public void setClassMethodSignature(String classMethodSignature) {
+        this.classMethodSignature = classMethodSignature;
     }
 
     public String getVariableName() {
@@ -75,12 +85,12 @@ public class MeasurableElementDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MeasurableElementDTO that = (MeasurableElementDTO) o;
-        return Objects.equals(astElem, that.astElem) && Objects.equals(filePath, that.filePath) && Objects.equals(className, that.className) && Objects.equals(methodSignature, that.methodSignature) && Objects.equals(variableName, that.variableName) && Objects.equals(classType, that.classType);
+        return Objects.equals(astElem, that.astElem) && Objects.equals(filePath, that.filePath) && Objects.equals(className, that.className) && Objects.equals(methodName, that.methodName) && Objects.equals(classMethodSignature, that.classMethodSignature) && Objects.equals(variableName, that.variableName) && Objects.equals(classType, that.classType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(astElem, filePath, className, methodSignature, variableName, classType);
+        return Objects.hash(astElem, filePath, className, methodName, classMethodSignature, variableName, classType);
     }
 
     @Override
@@ -89,7 +99,8 @@ public class MeasurableElementDTO {
             "astElem='" + astElem + '\'' +
             ", filePath='" + filePath + '\'' +
             ", className='" + className + '\'' +
-            ", methodSignature='" + methodSignature + '\'' +
+            ", methodName='" + methodName + '\'' +
+            ", classMethodSignature='" + classMethodSignature + '\'' +
             ", variableName='" + variableName + '\'' +
             ", classType='" + classType + '\'' +
             '}';

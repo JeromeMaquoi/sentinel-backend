@@ -26,12 +26,11 @@ public class JoularEntityRepositoryAggregationImpl implements JoularEntityReposi
 
     @Override
     public List<JoularAggregateDTO> aggregateAll() {
-        MatchOperation matchOperation = getAllValues();
         GroupOperation groupOperation = groupAllValues();
-        MatchOperation matchOperation30Values = getAllMethodsHaving30Values();
+        MatchOperation matchOperation30Values = getAllMethodsHavingAtLeast25Values();
         ProjectionOperation projectionOperation = addFields();
 
-        Aggregation aggregation = newAggregation(matchOperation, groupOperation, matchOperation30Values, projectionOperation);
+        Aggregation aggregation = newAggregation(groupOperation, matchOperation30Values, projectionOperation);
         AggregationResults<JoularAggregateDTO> output = mongoTemplate.aggregate(aggregation, JoularEntity.class, JoularAggregateDTO.class);
         return output.getMappedResults();
     }
@@ -40,7 +39,7 @@ public class JoularEntityRepositoryAggregationImpl implements JoularEntityReposi
     public List<JoularAggregateDTO> aggregateAllByCommit(String sha) {
         MatchOperation matchOperation = getAllValues();
         GroupOperation groupOperation = groupAllValues();
-        MatchOperation matchOperation30Values = getAllMethodsHaving30Values();
+        MatchOperation matchOperation30Values = getAllMethodsHavingAtLeast25Values();
         ProjectionOperation projectionOperation = addFields();
         MatchOperation matchCommitSha = matchCommitSha(sha);
 
@@ -59,7 +58,8 @@ public class JoularEntityRepositoryAggregationImpl implements JoularEntityReposi
             Fields.field("repoName", "$commit.repository.name"),
             Fields.field("sha", "$commit.sha"),
             Fields.field("className", "$measurableElement.className"),
-            Fields.field("methodSignature", "$measurableElement.methodSignature"),
+            Fields.field("methodName", "$measurableElement.methodName"),
+            Fields.field("classMethodSignature", "$measurableElement.classMethodSignature"),
             Fields.field("owner", "$commit.repository.owner"),
             Fields.field("astElem", "$measurableElement.astElem"),
             Fields.field("filePath", "$measurableElement.filePath")
@@ -69,8 +69,8 @@ public class JoularEntityRepositoryAggregationImpl implements JoularEntityReposi
             .count().as("size");
     }
 
-    private MatchOperation getAllMethodsHaving30Values() {
-        Criteria criteria = where("size").is(30);
+    private MatchOperation getAllMethodsHavingAtLeast25Values() {
+        Criteria criteria = where("size").gte(25);
         return Aggregation.match(criteria);
     }
 
@@ -82,7 +82,8 @@ public class JoularEntityRepositoryAggregationImpl implements JoularEntityReposi
             .andExpression("$_id.astElem").as("measurableElement.astElem")
             .andExpression("$_id.filePath").as("measurableElement.filePath")
             .andExpression("$_id.className").as("measurableElement.className")
-            .andExpression("$_id.methodSignature").as("measurableElement.methodSignature");
+            .andExpression("$_id.methodName").as("measurableElement.methodName")
+            .andExpression("$_id.classMethodSignature").as("measurableElement.classMethodSignature");
     }
 
     private MatchOperation matchCommitSha(String sha) {
