@@ -17,16 +17,30 @@ log_title_output() {
     echo "$bar_line" >> $LOGFILE
 }
 
+log_output_without_date() {
+    echo "$1" >> $LOGFILE
+}
+
+log_configuration() {
+    log_output_without_date "+++++++++++++++++++"
+    log_output_without_date "Execution ars:"
+    log_output_without_date "REPO_DIRECTORY : $REPO_DIRECTORY"
+    log_output_without_date "PLUGINS_DIRECTORY : $PLUGINS_DIRECTORY"
+    log_output_without_date "BATCH_SIZE : $BATCH_SIZE"
+    log_output_without_date "NB_ITERATION : $NB_ITERATION"
+    log_output_without_date "REMOVE_REPO : $REMOVE_REPO"
+    log_output_without_date "CLONE : $CLONE"
+    log_output_without_date "CK : $CK"
+    log_output_without_date "JOULAR : $JOULAR"
+    log_output_without_date "+++++++++++++++++++"
+}
+
 log_iteration_output() {
     echo -e "        => "`date "+%Y/%m/%d %H:%M:%S"`" - Test for iteration $1 done!\n\n"
     echo "        => "`date "+%Y/%m/%d %H:%M:%S"`" - Test for iteration $1 done!" >> $LOGFILE
 }
 
-:'log_output_without_date() {
-    echo "$1" >> $LOGFILE
-}
-
-parse_and_log_test_results() {
+:'parse_and_log_test_results() {
     local log_file="$1"
     local project_type="$2"
     if [ "$project_type" == "gradle" ]; then
