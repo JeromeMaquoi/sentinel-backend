@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export $(grep -v '^#' ../src/main/docker/.env | xargs -d '\n')
+
 source ./logs.sh
 
 log_title_output "START CK-JOULAR WORKFLOW"
