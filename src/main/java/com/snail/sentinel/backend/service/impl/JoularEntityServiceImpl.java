@@ -3,6 +3,7 @@ package com.snail.sentinel.backend.service.impl;
 import com.snail.sentinel.backend.commons.FileListProvider;
 import com.snail.sentinel.backend.commons.Util;
 import com.snail.sentinel.backend.domain.JoularEntity;
+import com.snail.sentinel.backend.repository.CkEntityRepositoryAggregation;
 import com.snail.sentinel.backend.repository.JoularEntityRepository;
 import com.snail.sentinel.backend.service.JoularEntityService;
 import com.snail.sentinel.backend.service.dto.measurableelement.MeasurableElementDTO;
@@ -38,15 +39,25 @@ public class JoularEntityServiceImpl implements JoularEntityService {
 
     private final JoularEntityMapper joularEntityMapper;
 
+    private final CkEntityRepositoryAggregation ckEntityRepositoryAggregation;
+
+    private CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO;
+
     private static final String CLASS_NAME = "className";
 
     private static final String METHOD_NAME = "methodName";
 
     private static final String LINE_NUMBER = "lineNumber";
 
-    public JoularEntityServiceImpl(JoularEntityRepository joularEntityRepository, JoularEntityMapper joularEntityMapper) {
+    public JoularEntityServiceImpl(JoularEntityRepository joularEntityRepository, JoularEntityMapper joularEntityMapper, CkEntityRepositoryAggregation ckEntityRepositoryAggregation) {
         this.joularEntityRepository = joularEntityRepository;
         this.joularEntityMapper = joularEntityMapper;
+        this.ckEntityRepositoryAggregation = ckEntityRepositoryAggregation;
+    }
+
+    @Override
+    public void setCkAggregateLineHashMapDTO(String repoName) {
+        this.ckAggregateLineHashMapDTO = ckEntityRepositoryAggregation.aggregate(repoName);
     }
 
     @Override
@@ -78,19 +89,22 @@ public class JoularEntityServiceImpl implements JoularEntityService {
     }
 
     @Override
-    public JoularEntityListDTO createJoularEntityDTOList(CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO, CommitCompleteDTO commitCompleteDTO, String iterationPath, FileListProvider fileListProvider) {
+    public JoularEntityListDTO createJoularEntityDTOList(CommitCompleteDTO commitCompleteDTO, String iterationPath, FileListProvider fileListProvider) {
         log.info("Request to create JoularEntityDTO list for {}", iterationPath);
+        if (ckAggregateLineHashMapDTO == null) {
+            throw new IllegalStateException("ckAggregateLineHashMapDTO must be set before using createJoularEntityDTOList");
+        }
         JoularEntityListDTO joularEntityDTOList = new JoularEntityListDTO();
         Set<Path> fileList = fileListProvider.getFileList(iterationPath);
         log.debug("ckAggregateLineHashMapDTO size : {}", ckAggregateLineHashMapDTO.size());
         for (Path filePath: fileList) {
-            JoularEntityListDTO iterationJoularDTOList = createJoularEntityDTOListForOneIteration(filePath, ckAggregateLineHashMapDTO, commitCompleteDTO, fileListProvider);
+            JoularEntityListDTO iterationJoularDTOList = createJoularEntityDTOListForOneIteration(filePath, commitCompleteDTO, fileListProvider);
             joularEntityDTOList.concat(joularEntityDTOList, iterationJoularDTOList);
         }
         return joularEntityDTOList;
     }
 
-    public JoularEntityListDTO createJoularEntityDTOListForOneIteration(Path iterationDirPath, CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO, CommitCompleteDTO commitCompleteDTO, FileListProvider fileListProvider) {
+    public JoularEntityListDTO createJoularEntityDTOListForOneIteration(Path iterationDirPath, CommitCompleteDTO commitCompleteDTO, FileListProvider fileListProvider) {
         JoularEntityListDTO joularEntityDTOList = new JoularEntityListDTO();
         MethodElementSetDTO methodElementSetDTO = new MethodElementSetDTO();
 
@@ -113,7 +127,7 @@ public class JoularEntityServiceImpl implements JoularEntityService {
                     //log.debug(String.valueOf(classMethodLine));
                     if (classMethodLine != null) {
                         nbAfterClassMethodLine += 1;
-                        CkAggregateLineDTO matchedCkJoular = getMatchCkJoular(classMethodLine, ckAggregateLineHashMapDTO);
+                        CkAggregateLineDTO matchedCkJoular = getMatchCkJoular(classMethodLine);
                         if (matchedCkJoular != null) {
                             nbAfterMatchedCkJoular += 1;
                             String classMethodSignature = getClassMethodSignature(nextLine);
@@ -158,7 +172,7 @@ public class JoularEntityServiceImpl implements JoularEntityService {
         }
     }
 
-    public CkAggregateLineDTO getMatchCkJoular(JSONObject classMethodLine, CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO) {
+    public CkAggregateLineDTO getMatchCkJoular(JSONObject classMethodLine) {
         String className = Util.classNameParser(classMethodLine.getString(CLASS_NAME));
         String methodName = Util.methodNameParser(className, classMethodLine.getString(METHOD_NAME));
         int numberLine = classMethodLine.getInt(LINE_NUMBER);
@@ -174,7 +188,7 @@ public class JoularEntityServiceImpl implements JoularEntityService {
                     }
                 }
             } else if (!methodName.contains("access$")) {
-                log.debug("No occurrence for {} {} at line {}", className, methodName, numberLine);
+                //log.debug("No occurrence for {} {} at line {}", className, methodName, numberLine);
             }
         } /*else {
             log.warn("The number of line is negative for \"{}.{}\"", className, methodName);

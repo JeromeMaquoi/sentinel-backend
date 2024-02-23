@@ -7,7 +7,6 @@ import com.snail.sentinel.backend.repository.CkEntityRepositoryAggregation;
 import com.snail.sentinel.backend.service.CkEntityService;
 import com.snail.sentinel.backend.service.CommitEntityService;
 import com.snail.sentinel.backend.service.JoularEntityService;
-import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineHashMapDTO;
 import com.snail.sentinel.backend.service.dto.joular.JoularEntityListDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitCompleteDTO;
 import org.json.JSONObject;
@@ -66,14 +65,14 @@ public class CkJoularResource {
             ckEntityService.insertBatchCkEntityDTO(commitCompleteDTO, csvPath, Integer.parseInt(System.getenv("BATCH_SIZE")));
 
             // Insertion of Joular data
-            CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO = ckEntityRepositoryAggregation.aggregate(repoItem.get(Util.NAME));
+            joularEntityService.setCkAggregateLineHashMapDTO(repoItem.get(Util.NAME));
             List<File> iterationPaths = Util.searchDirectories("joularjx-result", new File(System.getenv("REPO_DIRECTORY") + repoItem.get(Util.NAME)));
 
             FileListProvider fileListProvider = new ProductionFileListProvider();
 
             for (File iterationFilePath : iterationPaths) {
                 String iterationPath = iterationFilePath.getAbsolutePath();
-                JoularEntityListDTO joularEntityDTOList = joularEntityService.createJoularEntityDTOList(ckAggregateLineHashMapDTO, commitCompleteDTO, iterationPath, fileListProvider);
+                JoularEntityListDTO joularEntityDTOList = joularEntityService.createJoularEntityDTOList(commitCompleteDTO, iterationPath, fileListProvider);
                 insertJoularData(joularEntityDTOList);
             }
 
@@ -112,11 +111,11 @@ public class CkJoularResource {
         spoon.put(Util.NAME, "spoon");
         spoon.put(Util.SHA, "066f4cf207359e06d30911a553dedd054aef595c");
 
-        this.repoData.add(commonsConfiguration);
-        this.repoData.add(springBoot);
-        this.repoData.add(hibernate);
+        //this.repoData.add(commonsConfiguration);
+        //this.repoData.add(springBoot);
+        //this.repoData.add(hibernate);
         this.repoData.add(jabref);
-        this.repoData.add(spoon);
+        //this.repoData.add(spoon);
     }
 
     public void insertCommits(List<CommitCompleteDTO> listCommits) {

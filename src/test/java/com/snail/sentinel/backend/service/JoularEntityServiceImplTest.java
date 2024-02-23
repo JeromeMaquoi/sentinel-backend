@@ -38,6 +38,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
 
 class JoularEntityServiceImplTest {
@@ -64,6 +65,9 @@ class JoularEntityServiceImplTest {
 
     @Mock
     private JoularEntityMapper joularEntityMapper;
+
+    @Mock
+    private CkEntityRepositoryAggregation ckEntityRepositoryAggregation;
 
     @InjectMocks
     private JoularEntityServiceImpl joularService;
@@ -100,7 +104,11 @@ class JoularEntityServiceImplTest {
         ckService = new CkEntityServiceImpl(ckEntityRepository, ckEntityMapper);
 
         joularEntityRepository = Mockito.mock(JoularEntityRepository.class);
-        joularService = new JoularEntityServiceImpl(joularEntityRepository, joularEntityMapper);
+        ckEntityRepositoryAggregation = Mockito.mock(CkEntityRepositoryAggregation.class);
+        joularService = new JoularEntityServiceImpl(joularEntityRepository, joularEntityMapper, ckEntityRepositoryAggregation);
+
+        when(ckEntityRepositoryAggregation.aggregate("commons-configuration")).thenReturn(ckAggregateLineHashMapDTO);
+        joularService.setCkAggregateLineHashMapDTO("commons-configuration");
 
         commitEntityRepository = Mockito.mock(CommitEntityRepository.class);
         commitEntityServiceImpl = new CommitEntityServiceImpl(commitEntityRepository);
@@ -135,7 +143,7 @@ class JoularEntityServiceImplTest {
 
         FileListProvider fileListProvider = new TestingFileListProvider();
 
-        JoularEntityListDTO maybeJoularEntityListDTO = joularService.createJoularEntityDTOListForOneIteration(iterationDirPath, ckAggregateLineHashMapDTO, commitCompleteDTO, fileListProvider);
+        JoularEntityListDTO maybeJoularEntityListDTO = joularService.createJoularEntityDTOListForOneIteration(iterationDirPath, commitCompleteDTO, fileListProvider);
 
 
         MeasurableElementDTO methodElementDTO = new MeasurableElementDTO();
@@ -210,7 +218,7 @@ class JoularEntityServiceImplTest {
     @Test
     void simpleGetMatchCkJoularTest() {
         JSONObject classMethodLine = joularService.getClassMethodLine("org.springframework.boot.context.config.ConfigDataLocationRuntimeHints.getFileNames 67");
-        CkAggregateLineDTO maybeCkAggregateLineDTO = joularService.getMatchCkJoular(classMethodLine, ckAggregateLineHashMapDTO);
+        CkAggregateLineDTO maybeCkAggregateLineDTO = joularService.getMatchCkJoular(classMethodLine);
 
         CkAggregateLineDTO ckAggregateLineDTO = new CkAggregateLineDTO();
         ckAggregateLineDTO.setClassName("org.springframework.boot.context.config.ConfigDataLocationRuntimeHints");
@@ -225,7 +233,7 @@ class JoularEntityServiceImplTest {
     @Test
     void complexGetMatchCkJoularTest() {
         JSONObject classMethodLine = joularService.getClassMethodLine("org.apache.commons.configuration2.tree.DefaultConfigurationKey$KeyIterator.nextDelimiterPos 662");
-        CkAggregateLineDTO maybeCkAggregateLineDTO = joularService.getMatchCkJoular(classMethodLine, ckAggregateLineHashMapDTO);
+        CkAggregateLineDTO maybeCkAggregateLineDTO = joularService.getMatchCkJoular(classMethodLine);
 
         CkAggregateLineDTO ckAggregateLineDTO = new CkAggregateLineDTO();
         ckAggregateLineDTO.setClassName("org.apache.commons.configuration2.tree.DefaultConfigurationKey");
@@ -243,7 +251,7 @@ class JoularEntityServiceImplTest {
         String line = "org.apache.commons.configuration2.tree.DefaultConfigurationKey$KeyIterator.nextDelimiterPos 662";
         JSONObject classMethodLine = joularService.getClassMethodLine(line);
         String classMethodSignature = joularService.getClassMethodSignature(line);
-        CkAggregateLineDTO matchedCkJoular = joularService.getMatchCkJoular(classMethodLine, ckAggregateLineHashMapDTO);
+        CkAggregateLineDTO matchedCkJoular = joularService.getMatchCkJoular(classMethodLine);
         MeasurableElementDTO methodElementDTO = Util.getMeasurableElementForJoular(matchedCkJoular, classMethodSignature);
 
         CommitSimpleDTO commitSimpleDTO = new CommitSimpleDTO();
@@ -286,7 +294,7 @@ class JoularEntityServiceImplTest {
         String line = "org.apache.commons.configuration2.tree.DefaultConfigurationKey$KeyIterator.nextDelimiterPos 662";
         JSONObject classMethodLine = joularService.getClassMethodLine(line);
         String classMethodSignature = joularService.getClassMethodSignature(line);
-        CkAggregateLineDTO matchedCkJoular = joularService.getMatchCkJoular(classMethodLine, ckAggregateLineHashMapDTO);
+        CkAggregateLineDTO matchedCkJoular = joularService.getMatchCkJoular(classMethodLine);
         MeasurableElementDTO methodElementDTO = Util.getMeasurableElementForJoular(matchedCkJoular, classMethodSignature);
 
         CommitSimpleDTO commitSimpleDTO = new CommitSimpleDTO();

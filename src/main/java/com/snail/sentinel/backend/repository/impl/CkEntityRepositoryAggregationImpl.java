@@ -27,6 +27,7 @@ public class CkEntityRepositoryAggregationImpl implements CkEntityRepositoryAggr
 
     @Override
     public CkAggregateLineHashMapDTO aggregate(String repoName) {
+        log.info("Aggregation!!!!");
         MatchOperation matchOperation = getRepoNameMatchOperation(repoName);
         AddFieldsOperation addFieldsOperation = addLineLocFieldsOperation();
         GroupOperation groupOperation = groupOperation();
