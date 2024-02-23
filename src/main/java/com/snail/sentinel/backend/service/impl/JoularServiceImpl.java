@@ -5,7 +5,7 @@ import com.snail.sentinel.backend.commons.Util;
 import com.snail.sentinel.backend.domain.JoularEntity;
 import com.snail.sentinel.backend.repository.CkEntityRepositoryAggregation;
 import com.snail.sentinel.backend.repository.JoularEntityRepository;
-import com.snail.sentinel.backend.service.JoularEntityService;
+import com.snail.sentinel.backend.service.JoularService;
 import com.snail.sentinel.backend.service.dto.measurableelement.MeasurableElementDTO;
 import com.snail.sentinel.backend.service.exceptions.NoCsvLineFoundException;
 import com.snail.sentinel.backend.service.dto.IterationDTO;
@@ -32,8 +32,8 @@ import static java.lang.Integer.parseInt;
 import static java.lang.Long.parseLong;
 
 @Service
-public class JoularEntityServiceImpl implements JoularEntityService {
-    private final Logger log = LoggerFactory.getLogger(JoularEntityServiceImpl.class);
+public class JoularServiceImpl implements JoularService {
+    private final Logger log = LoggerFactory.getLogger(JoularServiceImpl.class);
 
     private final JoularEntityRepository joularEntityRepository;
 
@@ -49,7 +49,7 @@ public class JoularEntityServiceImpl implements JoularEntityService {
 
     private static final String LINE_NUMBER = "lineNumber";
 
-    public JoularEntityServiceImpl(JoularEntityRepository joularEntityRepository, JoularEntityMapper joularEntityMapper, CkEntityRepositoryAggregation ckEntityRepositoryAggregation) {
+    public JoularServiceImpl(JoularEntityRepository joularEntityRepository, JoularEntityMapper joularEntityMapper, CkEntityRepositoryAggregation ckEntityRepositoryAggregation) {
         this.joularEntityRepository = joularEntityRepository;
         this.joularEntityMapper = joularEntityMapper;
         this.ckEntityRepositoryAggregation = ckEntityRepositoryAggregation;

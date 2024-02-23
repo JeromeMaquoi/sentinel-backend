@@ -2,7 +2,7 @@ package com.snail.sentinel.backend.web.rest;
 
 import com.snail.sentinel.backend.domain.JoularEntity;
 import com.snail.sentinel.backend.repository.JoularEntityRepository;
-import com.snail.sentinel.backend.service.JoularEntityService;
+import com.snail.sentinel.backend.service.JoularService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,12 +21,12 @@ import java.util.List;
 public class JoularEntityResource {
     private final Logger log = LoggerFactory.getLogger(JoularEntityResource.class);
     private final JoularEntityRepository joularEntityRepository;
-    private final JoularEntityService joularService;
+    private final JoularService joularService;
     private static final String ENTITY_NAME = "joularEntity";
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
-    public JoularEntityResource(JoularEntityRepository joularEntityRepository, JoularEntityService joularService) {
+    public JoularEntityResource(JoularEntityRepository joularEntityRepository, JoularService joularService) {
         this.joularEntityRepository = joularEntityRepository;
         this.joularService = joularService;
     }

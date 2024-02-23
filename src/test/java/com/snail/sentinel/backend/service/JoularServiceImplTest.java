@@ -18,7 +18,7 @@ import com.snail.sentinel.backend.service.dto.repository.RepositoryCompleteDTO;
 import com.snail.sentinel.backend.service.dto.repository.RepositorySimpleDTO;
 import com.snail.sentinel.backend.service.impl.CkEntityServiceImpl;
 import com.snail.sentinel.backend.service.impl.CommitEntityServiceImpl;
-import com.snail.sentinel.backend.service.impl.JoularEntityServiceImpl;
+import com.snail.sentinel.backend.service.impl.JoularServiceImpl;
 import com.snail.sentinel.backend.service.mapper.CkEntityMapper;
 import com.snail.sentinel.backend.service.mapper.JoularEntityMapper;
 import org.json.JSONObject;
@@ -41,9 +41,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 
-class JoularEntityServiceImplTest {
+class JoularServiceImplTest {
 
-    private final Logger log = LoggerFactory.getLogger(JoularEntityServiceImplTest.class);
+    private final Logger log = LoggerFactory.getLogger(JoularServiceImplTest.class);
 
     @Mock
     private CkEntityRepository ckEntityRepository;
@@ -70,7 +70,7 @@ class JoularEntityServiceImplTest {
     private CkEntityRepositoryAggregation ckEntityRepositoryAggregation;
 
     @InjectMocks
-    private JoularEntityServiceImpl joularService;
+    private JoularServiceImpl joularService;
 
     private CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO;
 
@@ -105,7 +105,7 @@ class JoularEntityServiceImplTest {
 
         joularEntityRepository = Mockito.mock(JoularEntityRepository.class);
         ckEntityRepositoryAggregation = Mockito.mock(CkEntityRepositoryAggregation.class);
-        joularService = new JoularEntityServiceImpl(joularEntityRepository, joularEntityMapper, ckEntityRepositoryAggregation);
+        joularService = new JoularServiceImpl(joularEntityRepository, joularEntityMapper, ckEntityRepositoryAggregation);
 
         when(ckEntityRepositoryAggregation.aggregate("commons-configuration")).thenReturn(ckAggregateLineHashMapDTO);
         joularService.setCkAggregateLineHashMapDTO("commons-configuration");

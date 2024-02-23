@@ -8,7 +8,7 @@ import com.snail.sentinel.backend.service.dto.joular.JoularEntityListDTO;
 
 import java.util.List;
 
-public interface JoularEntityService {
+public interface JoularService {
     List<JoularEntityDTO> findAll();
 
     List<JoularEntityDTO> bulkAdd(List<JoularEntityDTO> listJoular);
