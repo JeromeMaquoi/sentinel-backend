@@ -1,0 +1,23 @@
+{
+  "annotations": {
+    "changelogDate": "20240223090022"
+  },
+  "dto": "mapstruct",
+  "entityTableName": "joular_node_entity",
+  "fields": [
+    {
+      "fieldName": "lineNumber",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "value",
+      "fieldType": "Float"
+    }
+  ],
+  "name": "JoularNodeEntity",
+  "pagination": "no",
+  "readOnly": false,
+  "relationships": [],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}

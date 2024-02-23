@@ -1,4 +1,7 @@
 {
+  "annotations": {
+    "changelogDate": "20230818130620"
+  },
   "changelogDate": "20230818130620",
   "entityTableName": "commit_entity",
   "fields": [
