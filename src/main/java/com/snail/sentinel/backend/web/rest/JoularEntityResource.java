@@ -2,7 +2,7 @@ package com.snail.sentinel.backend.web.rest;
 
 import com.snail.sentinel.backend.domain.JoularEntity;
 import com.snail.sentinel.backend.repository.JoularEntityRepository;
-import com.snail.sentinel.backend.service.JoularService;
+import com.snail.sentinel.backend.service.JoularEntityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,14 +21,14 @@ import java.util.List;
 public class JoularEntityResource {
     private final Logger log = LoggerFactory.getLogger(JoularEntityResource.class);
     private final JoularEntityRepository joularEntityRepository;
-    private final JoularService joularService;
+    private final JoularEntityService joularEntityService;
     private static final String ENTITY_NAME = "joularEntity";
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
-    public JoularEntityResource(JoularEntityRepository joularEntityRepository, JoularService joularService) {
+    public JoularEntityResource(JoularEntityRepository joularEntityRepository, JoularEntityService joularEntityService) {
         this.joularEntityRepository = joularEntityRepository;
-        this.joularService = joularService;
+        this.joularEntityService = joularEntityService;
     }
 
     @GetMapping("/entities")
@@ -48,7 +48,7 @@ public class JoularEntityResource {
         @RequestParam(defaultValue = "100") int size
     ) {
         log.debug("REST request to get all joular data from commit : {}", sha);
-        List<JoularEntity> joularEntities = joularService.findByCommitSha(sha);
+        List<JoularEntity> joularEntities = joularEntityService.findByCommitSha(sha);
         return getPageResponseEntity(page, size, joularEntities);
     }
 
@@ -61,7 +61,7 @@ public class JoularEntityResource {
         @RequestParam String classMethodSignature
     ) {
         log.debug("REST request to get all joular entities data from commit {} and astElem {}", sha, classMethodSignature);
-        List<JoularEntity> joularEntities = joularService.findByCommitShaAndAstElement(sha, className, classMethodSignature);
+        List<JoularEntity> joularEntities = joularEntityService.findByCommitShaAndAstElement(sha, className, classMethodSignature);
         return getPageResponseEntity(page, size, joularEntities);
     }
 
