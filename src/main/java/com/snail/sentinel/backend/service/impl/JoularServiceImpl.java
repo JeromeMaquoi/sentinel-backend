@@ -3,9 +3,14 @@ package com.snail.sentinel.backend.service.impl;
 import com.snail.sentinel.backend.commons.FileListProvider;
 import com.snail.sentinel.backend.commons.Util;
 import com.snail.sentinel.backend.repository.CkEntityRepositoryAggregation;
+import com.snail.sentinel.backend.service.CommitEntityService;
+import com.snail.sentinel.backend.service.JoularEntityService;
 import com.snail.sentinel.backend.service.JoularService;
 import com.snail.sentinel.backend.service.dto.IterationDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineHashMapDTO;
+import com.snail.sentinel.backend.service.dto.commit.CommitCompleteDTO;
+import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -27,16 +32,19 @@ public class JoularServiceImpl implements JoularService {
 
     private final FileListProvider fileListProvider;
 
+    private final JoularEntityService joularEntityService;
+
+    private final CommitEntityService commitEntityService;
+
     private CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO;
 
-    public JoularServiceImpl(CkEntityRepositoryAggregation ckEntityRepositoryAggregation, FileListProvider fileListProvider) {
+    private CommitSimpleDTO commitSimpleDTO;
+
+    public JoularServiceImpl(CkEntityRepositoryAggregation ckEntityRepositoryAggregation, FileListProvider fileListProvider, JoularEntityService joularEntityService, CommitEntityService commitEntityService) {
         this.ckEntityRepositoryAggregation = ckEntityRepositoryAggregation;
         this.fileListProvider = fileListProvider;
-    }
-
-    @Override
-    public void setCkAggregateLineHashMapDTO(String repoName) {
-        this.ckAggregateLineHashMapDTO = ckEntityRepositoryAggregation.aggregate(repoName);
+        this.joularEntityService = joularEntityService;
+        this.commitEntityService = commitEntityService;
     }
     @Override
     public void insertBatchJoularData(HashMap<String, String> repoItem) {
@@ -45,6 +53,16 @@ public class JoularServiceImpl implements JoularService {
         for (File iterationFilePath : iterationPaths) {
             handleOneProject(iterationFilePath.getAbsolutePath());
         }
+    }
+
+    @Override
+    public void setCommitSimpleDTO(HashMap<String, String> repoItem, JSONObject commitData) {
+        CommitCompleteDTO commitCompleteDTO = commitEntityService.createCommitEntityDTO(repoItem, commitData);
+        this.commitSimpleDTO = Util.createCommitSimpleFromCommitCompleteDTO(commitCompleteDTO);
+    }
+
+    public void setCkAggregateLineHashMapDTO(String repoName) {
+        this.ckAggregateLineHashMapDTO = ckEntityRepositoryAggregation.aggregate(repoName);
     }
 
     public void handleOneProject(String iterationPath) {
@@ -61,7 +79,8 @@ public class JoularServiceImpl implements JoularService {
     public void handleOneIterationOfOneProject(Path iterationFilePath) {
         String csvPathFileName = iterationFilePath.getFileName().toString();
         IterationDTO iterationDTO = createIterationDTOFromCsvFileName(csvPathFileName);
-        
+        joularEntityService.handleJoularEntityCreationForOneIteration(iterationFilePath, commitSimpleDTO, iterationDTO, fileListProvider, ckAggregateLineHashMapDTO);
+        // TODO call joularNodeEntityService to handle one iteration data
     }
 
     public IterationDTO createIterationDTOFromCsvFileName(String fileName) {

@@ -2,10 +2,12 @@ package com.snail.sentinel.backend.service;
 
 import com.snail.sentinel.backend.commons.FileListProvider;
 import com.snail.sentinel.backend.domain.JoularEntity;
-import com.snail.sentinel.backend.service.dto.commit.CommitCompleteDTO;
+import com.snail.sentinel.backend.service.dto.IterationDTO;
+import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineHashMapDTO;
+import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
 import com.snail.sentinel.backend.service.dto.joular.JoularEntityDTO;
-import com.snail.sentinel.backend.service.dto.joular.JoularEntityListDTO;
 
+import java.nio.file.Path;
 import java.util.List;
 
 public interface JoularEntityService {
@@ -19,7 +21,5 @@ public interface JoularEntityService {
 
     List<JoularEntity> findByCommitShaAndAstElement(String sha, String className, String methodSignature);
 
-    void setCkAggregateLineHashMapDTO(String repoName);
-
-    JoularEntityListDTO createJoularEntityDTOList(CommitCompleteDTO commitCompleteDTO, String iterationPath, FileListProvider fileListProvider);
+    void handleJoularEntityCreationForOneIteration(Path iterationFilePath, CommitSimpleDTO commitSimpleDTO, IterationDTO iterationDTO, FileListProvider fileListProvider, CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO);
 }
