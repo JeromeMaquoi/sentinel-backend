@@ -1,20 +1,15 @@
 package com.snail.sentinel.backend;
 
-import com.snail.sentinel.backend.commons.FileListProvider;
 import com.snail.sentinel.backend.commons.ProductionFileListProvider;
 import com.snail.sentinel.backend.commons.Util;
 import com.snail.sentinel.backend.repository.CkEntityRepositoryAggregation;
-import com.snail.sentinel.backend.service.CkEntityService;
-import com.snail.sentinel.backend.service.CommitEntityService;
-import com.snail.sentinel.backend.service.JoularService;
-import com.snail.sentinel.backend.service.dto.joular.JoularEntityListDTO;
+import com.snail.sentinel.backend.service.*;
 import com.snail.sentinel.backend.service.dto.commit.CommitCompleteDTO;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,14 +26,20 @@ public class CkJoularResource {
 
     private final JoularService joularService;
 
+    private final JoularEntityService joularEntityService;
+
+    private final JoularResourceService joularResourceService;
+
     private final CkEntityRepositoryAggregation ckEntityRepositoryAggregation;
 
     private long startTime;
 
-    public CkJoularResource(CkEntityService ckEntityService, CommitEntityService commitEntityService, JoularService joularService, CkEntityRepositoryAggregation ckEntityRepositoryAggregation) {
+    public CkJoularResource(CkEntityService ckEntityService, CommitEntityService commitEntityService, JoularService joularService, JoularEntityService joularEntityService, JoularResourceService joularResourceService, CkEntityRepositoryAggregation ckEntityRepositoryAggregation) {
         this.ckEntityService = ckEntityService;
         this.commitEntityService = commitEntityService;
         this.joularService = joularService;
+        this.joularEntityService = joularEntityService;
+        this.joularResourceService = joularResourceService;
         this.ckEntityRepositoryAggregation = ckEntityRepositoryAggregation;
         this.repoData = new ArrayList<>();
     }
@@ -46,8 +47,8 @@ public class CkJoularResource {
     public void insertAllData() throws Exception {
         startTime = System.currentTimeMillis();
 
-        ckEntityService.deleteAll();
-        joularService.deleteAll();
+        //ckEntityService.deleteAll();
+        joularEntityService.deleteAll();
         setRepoData();
         List<CommitCompleteDTO> listCommits = new ArrayList<>();
         // For each repository
@@ -62,19 +63,21 @@ public class CkJoularResource {
 
             // Insertion of CK data
             String csvPath = System.getenv("REPO_DIRECTORY") + repoItem.get(Util.NAME) + "/output-ck/";
-            ckEntityService.insertBatchCkEntityDTO(commitCompleteDTO, csvPath, Integer.parseInt(System.getenv("BATCH_SIZE")));
+            //ckEntityService.insertBatchCkEntityDTO(commitCompleteDTO, csvPath, Integer.parseInt(System.getenv("BATCH_SIZE")));
 
             // Insertion of Joular data
-            joularService.setCkAggregateLineHashMapDTO(repoItem.get(Util.NAME));
+            joularResourceService.setFileListProvider(new ProductionFileListProvider());
+            joularService.insertBatchJoularData(repoItem, commitData);
+            /*joularService.setCkAggregateLineHashMapDTO(repoItem.get(Util.NAME));
             List<File> iterationPaths = Util.searchDirectories("joularjx-result", new File(System.getenv("REPO_DIRECTORY") + repoItem.get(Util.NAME)));
 
             FileListProvider fileListProvider = new ProductionFileListProvider();
 
             for (File iterationFilePath : iterationPaths) {
                 String iterationPath = iterationFilePath.getAbsolutePath();
-                JoularEntityListDTO joularEntityDTOList = joularService.createJoularEntityDTOList(commitCompleteDTO, iterationPath, fileListProvider);
-                insertJoularData(joularEntityDTOList);
-            }
+                JoularEntityListDTO joularEntityDTOList = joularService.OLDcreateJoularEntityDTOList(commitCompleteDTO, iterationPath, fileListProvider);
+                //insertJoularData(joularEntityDTOList);
+            }*/
 
             log.info("Ending for the repository: {}", repoItem.get(Util.NAME));
         }
@@ -124,8 +127,8 @@ public class CkJoularResource {
         log.info("Created information for the list of CommitEntity");
     }
 
-    public void insertJoularData(JoularEntityListDTO joularEntityListDTO) {
+    /*public void insertJoularData(JoularEntityListDTO joularEntityListDTO) {
         joularService.bulkAdd(joularEntityListDTO.getList());
         log.info("List of JoularEntity inserted to the database");
-    }
+    }*/
 }

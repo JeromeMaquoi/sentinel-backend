@@ -3,8 +3,12 @@ package com.snail.sentinel.backend.service.impl;
 import com.snail.sentinel.backend.domain.JoularNodeEntity;
 import com.snail.sentinel.backend.repository.JoularNodeEntityRepository;
 import com.snail.sentinel.backend.service.JoularNodeEntityService;
+import com.snail.sentinel.backend.service.dto.IterationDTO;
 import com.snail.sentinel.backend.service.dto.JoularNodeEntityDTO;
+import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
 import com.snail.sentinel.backend.service.mapper.JoularNodeEntityMapper;
+
+import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -84,5 +88,11 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
     public void delete(String id) {
         log.debug("Request to delete JoularNodeEntity : {}", id);
         joularNodeEntityRepository.deleteById(id);
+    }
+
+    @Override
+    public void handleJoularNodeEntityCreationForOneIteration(Path iterationFilePath, CommitSimpleDTO commitSimpleDTO, IterationDTO iterationDTO) {
+        log.info("Request to handle JoularNodeEntity for iteration {}", iterationFilePath);
+
     }
 }

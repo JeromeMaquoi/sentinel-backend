@@ -29,6 +29,12 @@ public class JoularNodeEntity implements Serializable {
     @Field("value")
     private Float value;
 
+    @Field("scope")
+    private String scope;
+
+    @Field("monitoringType")
+    private String monitoringType;
+
     @Field("measurableElement")
     private transient MeasurableElementDTO measurableElement;
 
@@ -85,6 +91,22 @@ public class JoularNodeEntity implements Serializable {
         this.value = value;
     }
 
+    public String getScope() {
+        return scope;
+    }
+
+    public void setScope(String scope) {
+        this.scope = scope;
+    }
+
+    public String getMonitoringType() {
+        return monitoringType;
+    }
+
+    public void setMonitoringType(String monitoringType) {
+        this.monitoringType = monitoringType;
+    }
+
     public MeasurableElementDTO getMeasurableElement() {
         return measurableElement;
     }
@@ -125,19 +147,17 @@ public class JoularNodeEntity implements Serializable {
         this.parent = parent;
     }
 
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         JoularNodeEntity that = (JoularNodeEntity) o;
-        return Objects.equals(id, that.id) && Objects.equals(lineNumber, that.lineNumber) && Objects.equals(value, that.value) && Objects.equals(measurableElement, that.measurableElement) && Objects.equals(iteration, that.iteration) && Objects.equals(commit, that.commit) && Objects.equals(ancestors, that.ancestors) && Objects.equals(parent, that.parent);
+        return Objects.equals(id, that.id) && Objects.equals(lineNumber, that.lineNumber) && Objects.equals(value, that.value) && Objects.equals(scope, that.scope) && Objects.equals(monitoringType, that.monitoringType) && Objects.equals(measurableElement, that.measurableElement) && Objects.equals(iteration, that.iteration) && Objects.equals(commit, that.commit) && Objects.equals(ancestors, that.ancestors) && Objects.equals(parent, that.parent);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, lineNumber, value, measurableElement, iteration, commit, ancestors, parent);
+        return Objects.hash(id, lineNumber, value, scope, monitoringType, measurableElement, iteration, commit, ancestors, parent);
     }
 
     @Override
@@ -146,6 +166,8 @@ public class JoularNodeEntity implements Serializable {
             "id='" + id + '\'' +
             ", lineNumber=" + lineNumber +
             ", value=" + value +
+            ", scope='" + scope + '\'' +
+            ", monitoringType='" + monitoringType + '\'' +
             ", measurableElement=" + measurableElement +
             ", iteration=" + iteration +
             ", commit=" + commit +
@@ -153,4 +175,8 @@ public class JoularNodeEntity implements Serializable {
             ", parent='" + parent + '\'' +
             '}';
     }
+
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
+
+
 }

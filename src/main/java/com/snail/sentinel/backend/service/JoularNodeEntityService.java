@@ -1,6 +1,10 @@
 package com.snail.sentinel.backend.service;
 
+import com.snail.sentinel.backend.service.dto.IterationDTO;
 import com.snail.sentinel.backend.service.dto.JoularNodeEntityDTO;
+import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
+
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,4 +57,6 @@ public interface JoularNodeEntityService {
      * @param id the id of the entity.
      */
     void delete(String id);
+
+    void handleJoularNodeEntityCreationForOneIteration(Path iterationFilePath, CommitSimpleDTO commitSimpleDTO, IterationDTO iterationDTO);
 }
