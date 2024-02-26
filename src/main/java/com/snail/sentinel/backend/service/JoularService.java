@@ -6,6 +6,5 @@ import java.util.HashMap;
 
 
 public interface JoularService {
-    void insertBatchJoularData(HashMap<String, String> repoItem);
-    void setCommitSimpleDTO(HashMap<String, String> repoItem, JSONObject commitData);
+    void insertBatchJoularData(HashMap<String, String> repoItem, JSONObject commitData);
 }

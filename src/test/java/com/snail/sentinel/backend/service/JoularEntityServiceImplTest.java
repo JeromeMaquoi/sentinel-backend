@@ -19,6 +19,7 @@ import com.snail.sentinel.backend.service.dto.repository.RepositorySimpleDTO;
 import com.snail.sentinel.backend.service.impl.CkEntityServiceImpl;
 import com.snail.sentinel.backend.service.impl.CommitEntityServiceImpl;
 import com.snail.sentinel.backend.service.impl.JoularEntityServiceImpl;
+import com.snail.sentinel.backend.service.impl.JoularResourceServiceImpl;
 import com.snail.sentinel.backend.service.mapper.CkEntityMapper;
 import com.snail.sentinel.backend.service.mapper.JoularEntityMapper;
 import org.jetbrains.annotations.NotNull;
@@ -70,8 +71,13 @@ class JoularEntityServiceImplTest {
     @Mock
     private CkEntityRepositoryAggregation ckEntityRepositoryAggregation;
 
+    @Mock
+    private CommitEntityService commitEntityService;
+
     @InjectMocks
     private JoularEntityServiceImpl joularEntityService;
+
+    private JoularResourceService joularResourceService;
 
     private CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO;
 
@@ -106,8 +112,10 @@ class JoularEntityServiceImplTest {
 
         joularEntityRepository = Mockito.mock(JoularEntityRepository.class);
         ckEntityRepositoryAggregation = Mockito.mock(CkEntityRepositoryAggregation.class);
-        joularEntityService = new JoularEntityServiceImpl(joularEntityRepository, joularEntityMapper, ckEntityRepositoryAggregation);
-        joularEntityService.setCkAggregateLineHashMapDTO(ckAggregateLineHashMapDTO);
+        commitEntityService = Mockito.mock(CommitEntityService.class);
+        joularResourceService = new JoularResourceServiceImpl(commitEntityService, ckEntityRepositoryAggregation);
+        joularResourceService.setCkAggregateLineHashMapDTO(ckAggregateLineHashMapDTO);
+        joularEntityService = new JoularEntityServiceImpl(joularEntityRepository, joularEntityMapper, joularResourceService);
 
         when(ckEntityRepositoryAggregation.aggregate("commons-configuration")).thenReturn(ckAggregateLineHashMapDTO);
         //joularEntityService.setCkAggregateLineHashMapDTO("commons-configuration");
@@ -258,13 +266,13 @@ class JoularEntityServiceImplTest {
         repositorySimpleDTO.setName("commons-configuration");
         repositorySimpleDTO.setOwner("apache");
         commitSimpleDTO.setRepository(repositorySimpleDTO);
-        joularEntityService.setCommitSimpleDTO(commitSimpleDTO);
+        joularResourceService.setCommitSimpleDTO(commitSimpleDTO);
 
         FileListProvider fileListProvider = new TestingFileListProvider();
-        joularEntityService.setFileListProvider(fileListProvider);
+        joularResourceService.setFileListProvider(fileListProvider);
 
         IterationDTO iterationDTO = joularEntityService.createIterationDTOFromCsvFileName("1-1326858-1701080339565");
-        joularEntityService.setIterationDTO(iterationDTO);
+        joularResourceService.setIterationDTO(iterationDTO);
 
         JoularEntityListDTO maybeJoularEntityListDTO = joularEntityService.createJoularEntityDTOList(iterationFilePath);
 
@@ -323,21 +331,21 @@ class JoularEntityServiceImplTest {
         repositorySimpleDTO.setName("commons-configuration");
         repositorySimpleDTO.setOwner("apache");
         commitSimpleDTO.setRepository(repositorySimpleDTO);
-        joularEntityService.setCommitSimpleDTO(commitSimpleDTO);
+        joularResourceService.setCommitSimpleDTO(commitSimpleDTO);
 
         MethodElementSetDTO methodElementSetDTO = new MethodElementSetDTO();
-        joularEntityService.setMethodElementSetDTO(methodElementSetDTO);
+        joularResourceService.setMethodElementSetDTO(methodElementSetDTO);
 
         FileListProvider fileListProvider = new TestingFileListProvider();
-        joularEntityService.setFileListProvider(fileListProvider);
+        joularResourceService.setFileListProvider(fileListProvider);
 
         Float value = 2.3391F;
 
         IterationDTO iterationDTO = joularEntityService.createIterationDTOFromCsvFileName("1-1326858-1701080339565");
-        joularEntityService.setIterationDTO(iterationDTO);
+        joularResourceService.setIterationDTO(iterationDTO);
 
         JoularEntityListDTO maybeJoularEntityListDTO = new JoularEntityListDTO();
-        joularEntityService.setJoularEntityListDTO(maybeJoularEntityListDTO);
+        joularResourceService.setJoularEntityListDTO(maybeJoularEntityListDTO);
 
         // Act
         joularEntityService.addOrUpdateJoularEntityListDTO(methodElementDTO, value);
@@ -372,17 +380,17 @@ class JoularEntityServiceImplTest {
         repositorySimpleDTO.setName("commons-configuration");
         repositorySimpleDTO.setOwner("apache");
         commitSimpleDTO.setRepository(repositorySimpleDTO);
-        joularEntityService.setCommitSimpleDTO(commitSimpleDTO);
+        joularResourceService.setCommitSimpleDTO(commitSimpleDTO);
 
         MethodElementSetDTO methodElementSetDTO = new MethodElementSetDTO();
         methodElementSetDTO.add(methodElementDTO);
-        joularEntityService.setMethodElementSetDTO(methodElementSetDTO);
+        joularResourceService.setMethodElementSetDTO(methodElementSetDTO);
 
         Float firstValue = 2.3391F;
         Float addedValue = 10F;
 
         IterationDTO iterationDTO = joularEntityService.createIterationDTOFromCsvFileName("1-1326858-1701080339565");
-        joularEntityService.setIterationDTO(iterationDTO);
+        joularResourceService.setIterationDTO(iterationDTO);
 
         JoularEntityListDTO maybeJoularEntityListDTO = new JoularEntityListDTO();
         JoularEntityDTO maybeJoularEntityDTO = new JoularEntityDTO();
@@ -393,7 +401,7 @@ class JoularEntityServiceImplTest {
         maybeJoularEntityDTO.setValue(firstValue);
         maybeJoularEntityDTO.setMethodElementDTO(methodElementDTO);
         maybeJoularEntityListDTO.add(maybeJoularEntityDTO);
-        joularEntityService.setJoularEntityListDTO(maybeJoularEntityListDTO);
+        joularResourceService.setJoularEntityListDTO(maybeJoularEntityListDTO);
 
         // Act
         joularEntityService.addOrUpdateJoularEntityListDTO(methodElementDTO,addedValue);
