@@ -10,11 +10,13 @@ import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineHashMapDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitCompleteDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
 import com.snail.sentinel.backend.service.dto.joular.JoularEntityListDTO;
+import com.snail.sentinel.backend.service.dto.joular.JoularNodeEntityListDTO;
 import com.snail.sentinel.backend.service.dto.measurableelement.MethodElementSetDTO;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 
 @Service
 public class JoularResourceServiceImpl implements JoularResourceService {
@@ -30,9 +32,13 @@ public class JoularResourceServiceImpl implements JoularResourceService {
 
     private JoularEntityListDTO joularEntityListDTO;
 
+    private JoularNodeEntityListDTO joularNodeEntityListDTO;
+
     private FileListProvider fileListProvider;
 
     private MethodElementSetDTO methodElementSetDTO;
+
+    private List<String> ancestors;
 
     public JoularResourceServiceImpl(CommitEntityService commitEntityService, CkEntityRepositoryAggregation ckEntityRepositoryAggregation) {
         this.commitEntityService = commitEntityService;
@@ -108,5 +114,25 @@ public class JoularResourceServiceImpl implements JoularResourceService {
     @Override
     public JoularEntityListDTO getJoularEntityListDTO() {
         return this.joularEntityListDTO;
+    }
+
+    @Override
+    public void setJoularNodeEntityListDTO(JoularNodeEntityListDTO joularNodeEntityListDTO) {
+        this.joularNodeEntityListDTO = joularNodeEntityListDTO;
+    }
+
+    @Override
+    public JoularNodeEntityListDTO getJoularNodeEntityListDTO() {
+        return this.joularNodeEntityListDTO;
+    }
+
+    @Override
+    public void setAncestors(List<String> ancestors) {
+        this.ancestors = ancestors;
+    }
+
+    @Override
+    public List<String> getAncestors() {
+        return this.ancestors;
     }
 }

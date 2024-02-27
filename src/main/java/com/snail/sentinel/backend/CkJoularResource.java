@@ -48,7 +48,7 @@ public class CkJoularResource {
         startTime = System.currentTimeMillis();
 
         //ckEntityService.deleteAll();
-        joularEntityService.deleteAll();
+        //joularEntityService.deleteAll();
         setRepoData();
         List<CommitCompleteDTO> listCommits = new ArrayList<>();
         // For each repository

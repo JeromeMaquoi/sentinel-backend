@@ -5,10 +5,12 @@ import com.snail.sentinel.backend.service.dto.IterationDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineHashMapDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
 import com.snail.sentinel.backend.service.dto.joular.JoularEntityListDTO;
+import com.snail.sentinel.backend.service.dto.joular.JoularNodeEntityListDTO;
 import com.snail.sentinel.backend.service.dto.measurableelement.MethodElementSetDTO;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.List;
 
 public interface JoularResourceService {
     void setCommitSimpleDTO(HashMap<String, String> repoItem, JSONObject commitData);
@@ -25,4 +27,8 @@ public interface JoularResourceService {
     MethodElementSetDTO getMethodElementSetDTO();
     void setJoularEntityListDTO(JoularEntityListDTO joularEntityListDTO);
     JoularEntityListDTO getJoularEntityListDTO();
+    void setJoularNodeEntityListDTO(JoularNodeEntityListDTO joularNodeEntityListDTO);
+    JoularNodeEntityListDTO getJoularNodeEntityListDTO();
+    void setAncestors(List<String> ancestors);
+    List<String> getAncestors();
 }

@@ -68,6 +68,11 @@ public class JoularEntityServiceImpl implements JoularEntityService {
     }
 
     @Override
+    public JoularEntity findByCommitShaAndIterationAndMeasurableElementClassMethodSignature(String sha, IterationDTO iterationDTO, String classMethodSignature) {
+        return joularEntityRepository.findByCommitShaAndIterationAndMeasurableElementClassMethodSignature(sha, iterationDTO, classMethodSignature);
+    }
+
+    @Override
     public List<JoularEntityDTO> bulkAdd(List<JoularEntityDTO> listJoular) {
         List<JoularEntity> listEntity = joularEntityMapper.toEntity(listJoular);
         listEntity = joularEntityRepository.insert(listEntity);
@@ -84,7 +89,7 @@ public class JoularEntityServiceImpl implements JoularEntityService {
     public void handleJoularEntityCreationForOneIteration(Path iterationFilePath) {
         log.info("Request to handle JoularEntity for iteration {}", iterationFilePath);
         JoularEntityListDTO joularEntityListDTO = createJoularEntityDTOList(iterationFilePath);
-        insertJoularData(joularEntityListDTO);
+        insertJoularEntityListData(joularEntityListDTO);
     }
 
     public JoularEntityListDTO createJoularEntityDTOList(Path iterationFilePath) {
@@ -145,7 +150,7 @@ public class JoularEntityServiceImpl implements JoularEntityService {
         }
     }
 
-    public void insertJoularData(JoularEntityListDTO joularEntityListDTO) {
+    public void insertJoularEntityListData(JoularEntityListDTO joularEntityListDTO) {
         bulkAdd(joularEntityListDTO.getList());
         log.info("List of JoularEntity inserted to the database");
     }
@@ -153,6 +158,7 @@ public class JoularEntityServiceImpl implements JoularEntityService {
     public String getClassMethodSignature(String line) {
         return line.substring(0, line.lastIndexOf(" "));
     }
+
 
     public CkAggregateLineDTO getMatchCkJoular(JSONObject classMethodLine) {
         String className = Util.classNameParser(classMethodLine.getString(CLASS_NAME));

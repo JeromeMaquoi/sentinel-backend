@@ -1,6 +1,7 @@
 package com.snail.sentinel.backend.repository;
 
 import com.snail.sentinel.backend.domain.JoularEntity;
+import com.snail.sentinel.backend.service.dto.IterationDTO;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,6 +12,8 @@ public interface JoularEntityRepository extends MongoRepository<JoularEntity, St
     List<JoularEntity> findByCommitSha(String sha);
 
     List<JoularEntity> findByCommitShaAndMeasurableElementClassNameAndMeasurableElementClassMethodSignature(String sha, String className, String classMethodSignature);
+
+    JoularEntity findByCommitShaAndIterationAndMeasurableElementClassMethodSignature(String sha, IterationDTO iterationDTO, String classMethodSignature);
 
     void deleteJoularEntitiesByCommit_Repository_Name(String repoName);
 }

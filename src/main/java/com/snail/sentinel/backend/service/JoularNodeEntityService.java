@@ -1,9 +1,11 @@
 package com.snail.sentinel.backend.service;
 
+import com.snail.sentinel.backend.domain.JoularNodeEntity;
 import com.snail.sentinel.backend.service.dto.IterationDTO;
 import com.snail.sentinel.backend.service.dto.JoularNodeEntityDTO;
-import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
+import com.snail.sentinel.backend.service.dto.measurableelement.MeasurableElementDTO;
 
+import javax.swing.text.html.Option;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +21,8 @@ public interface JoularNodeEntityService {
      * @return the persisted entity.
      */
     JoularNodeEntityDTO save(JoularNodeEntityDTO joularNodeEntityDTO);
+
+    List<JoularNodeEntityDTO> bulkAdd(List<JoularNodeEntityDTO> joularNodeEntityDTOList);
 
     /**
      * Updates a joularNodeEntity.

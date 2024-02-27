@@ -1,6 +1,7 @@
 package com.snail.sentinel.backend.service;
 
 import com.snail.sentinel.backend.domain.JoularEntity;
+import com.snail.sentinel.backend.service.dto.IterationDTO;
 import com.snail.sentinel.backend.service.dto.joular.JoularEntityDTO;
 
 import java.nio.file.Path;
@@ -16,6 +17,8 @@ public interface JoularEntityService {
     List<JoularEntity> findByCommitSha(String sha);
 
     List<JoularEntity> findByCommitShaAndAstElement(String sha, String className, String methodSignature);
+
+    JoularEntity findByCommitShaAndIterationAndMeasurableElementClassMethodSignature(String sha, IterationDTO iterationDTO, String classMethodSignature);
 
     void handleJoularEntityCreationForOneIteration(Path iterationFilePath);
 }
