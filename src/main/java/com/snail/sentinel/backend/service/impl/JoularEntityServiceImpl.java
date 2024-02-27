@@ -1,6 +1,5 @@
 package com.snail.sentinel.backend.service.impl;
 
-import com.snail.sentinel.backend.commons.FileListProvider;
 import com.snail.sentinel.backend.commons.Util;
 import com.snail.sentinel.backend.domain.JoularEntity;
 import com.snail.sentinel.backend.repository.JoularEntityRepository;
@@ -12,10 +11,8 @@ import com.snail.sentinel.backend.service.exceptions.FileListProviderNotSetExcep
 import com.snail.sentinel.backend.service.exceptions.IterationDTONotSetException;
 import com.snail.sentinel.backend.service.exceptions.NoCsvLineFoundException;
 import com.snail.sentinel.backend.service.dto.IterationDTO;
-import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
 import com.snail.sentinel.backend.service.dto.joular.JoularEntityDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineDTO;
-import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineHashMapDTO;
 import com.snail.sentinel.backend.service.dto.joular.JoularEntityListDTO;
 import com.snail.sentinel.backend.service.dto.measurableelement.MethodElementSetDTO;
 import com.snail.sentinel.backend.service.mapper.JoularEntityMapper;
@@ -84,14 +81,9 @@ public class JoularEntityServiceImpl implements JoularEntityService {
     }
 
     @Override
-    public void handleJoularEntityCreationForOneIteration(Path iterationFilePath, CommitSimpleDTO commitSimpleDTO, IterationDTO iterationDTO, FileListProvider fileListProvider, CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO) {
+    public void handleJoularEntityCreationForOneIteration(Path iterationFilePath) {
         log.info("Request to handle JoularEntity for iteration {}", iterationFilePath);
-        joularResourceService.setCommitSimpleDTO(commitSimpleDTO);
-        joularResourceService.setIterationDTO(iterationDTO);
-        joularResourceService.setFileListProvider(fileListProvider);
-        joularResourceService.setCkAggregateLineHashMapDTO(ckAggregateLineHashMapDTO);
         JoularEntityListDTO joularEntityListDTO = createJoularEntityDTOList(iterationFilePath);
-        log.info("joularEntityListDTO created!");
         insertJoularData(joularEntityListDTO);
     }
 

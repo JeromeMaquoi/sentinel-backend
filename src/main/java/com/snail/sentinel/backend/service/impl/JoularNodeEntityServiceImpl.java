@@ -3,6 +3,7 @@ package com.snail.sentinel.backend.service.impl;
 import com.snail.sentinel.backend.domain.JoularNodeEntity;
 import com.snail.sentinel.backend.repository.JoularNodeEntityRepository;
 import com.snail.sentinel.backend.service.JoularNodeEntityService;
+import com.snail.sentinel.backend.service.JoularResourceService;
 import com.snail.sentinel.backend.service.dto.IterationDTO;
 import com.snail.sentinel.backend.service.dto.JoularNodeEntityDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
@@ -29,12 +30,16 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
 
     private final JoularNodeEntityMapper joularNodeEntityMapper;
 
+    private final JoularResourceService joularResourceService;
+
     public JoularNodeEntityServiceImpl(
-        JoularNodeEntityRepository joularNodeEntityRepository,
-        JoularNodeEntityMapper joularNodeEntityMapper
+            JoularNodeEntityRepository joularNodeEntityRepository,
+            JoularNodeEntityMapper joularNodeEntityMapper,
+            JoularResourceService joularResourceService
     ) {
         this.joularNodeEntityRepository = joularNodeEntityRepository;
         this.joularNodeEntityMapper = joularNodeEntityMapper;
+        this.joularResourceService = joularResourceService;
     }
 
     @Override
@@ -91,7 +96,7 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
     }
 
     @Override
-    public void handleJoularNodeEntityCreationForOneIteration(Path iterationFilePath, CommitSimpleDTO commitSimpleDTO, IterationDTO iterationDTO) {
+    public void handleJoularNodeEntityCreationForOneIteration(Path iterationFilePath) {
         log.info("Request to handle JoularNodeEntity for iteration {}", iterationFilePath);
 
     }

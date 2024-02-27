@@ -58,5 +58,5 @@ public interface JoularNodeEntityService {
      */
     void delete(String id);
 
-    void handleJoularNodeEntityCreationForOneIteration(Path iterationFilePath, CommitSimpleDTO commitSimpleDTO, IterationDTO iterationDTO);
+    void handleJoularNodeEntityCreationForOneIteration(Path iterationFilePath);
 }

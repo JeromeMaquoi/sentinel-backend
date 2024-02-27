@@ -1,11 +1,8 @@
 package com.snail.sentinel.backend.service.impl;
 
-import com.snail.sentinel.backend.commons.FileListProvider;
 import com.snail.sentinel.backend.commons.Util;
 import com.snail.sentinel.backend.service.*;
 import com.snail.sentinel.backend.service.dto.IterationDTO;
-import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineHashMapDTO;
-import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,14 +56,10 @@ public class JoularServiceImpl implements JoularService {
     public void handleOneIterationOfOneProject(Path iterationFilePath) {
         String csvPathFileName = iterationFilePath.getFileName().toString();
         IterationDTO iterationDTO = createIterationDTOFromCsvFileName(csvPathFileName);
-        CommitSimpleDTO commitSimpleDTO = joularResourceService.getCommitSimpleDTO();
-        FileListProvider fileListProvider = joularResourceService.getFileListProvider();
-        CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO = joularResourceService.getCkAggregateLineHashMapDTO();
+        joularResourceService.setIterationDTO(iterationDTO);
 
-        joularEntityService.handleJoularEntityCreationForOneIteration(iterationFilePath, commitSimpleDTO, iterationDTO, fileListProvider, ckAggregateLineHashMapDTO);
-        //joularNodeEntityService.handleJoularNodeEntityCreationForOneIteration(iterationFilePath, commitSimpleDTO, iterationDTO);
-
-        // TODO call joularNodeEntityService to handle one iteration data
+        //joularEntityService.handleJoularEntityCreationForOneIteration(iterationFilePath);
+        joularNodeEntityService.handleJoularNodeEntityCreationForOneIteration(iterationFilePath);
     }
 
     public IterationDTO createIterationDTOFromCsvFileName(String fileName) {
