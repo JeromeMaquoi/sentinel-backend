@@ -121,8 +121,9 @@ public class JoularEntityServiceImpl implements JoularEntityService {
         String regex = "^([+-]?\\d*\\.?\\d*)$";
         if (Pattern.matches(regex, line.getString(nextLine))) {
             Float value = line.getFloat(nextLine);
-            CkAggregateLineDTO matchedCkJoular = joularResourceService.getMatchCkJoular(nextLine);
-            if (matchedCkJoular != null) {
+            Optional<CkAggregateLineDTO> optionalResult = joularResourceService.getMatchCkJoular(nextLine);
+            if (optionalResult.isPresent()) {
+                CkAggregateLineDTO matchedCkJoular = optionalResult.get();
                 String classMethodSignature = getClassMethodSignature(nextLine);
                 MeasurableElementDTO methodElementDTO = getMeasurableElementForJoular(matchedCkJoular, classMethodSignature);
                 addOrUpdateJoularEntityListDTO(methodElementDTO, value);

@@ -91,7 +91,7 @@ public class JoularResourceServiceImpl implements JoularResourceService {
     }
 
     @Override
-    public CkAggregateLineDTO getMatchCkJoular(String classMethodLineString) {
+    public Optional<CkAggregateLineDTO> getMatchCkJoular(String classMethodLineString) {
         Optional<JSONObject> optionalResult = getClassMethodLine(classMethodLineString);
         if (optionalResult.isPresent()) {
             JSONObject classMethodLine = optionalResult.get();
@@ -103,7 +103,7 @@ public class JoularResourceServiceImpl implements JoularResourceService {
                 if (!allOccurrences.isEmpty()) {
                     for (CkAggregateLineDTO occ : allOccurrences) {
                         if (occ.getLine() <= numberLine && (occ.getLine() + occ.getLoc()) >= numberLine) {
-                            return occ;
+                            return Optional.of(occ);
                         }
                     }
                 } else if (!methodName.contains("access$")) {
@@ -113,7 +113,7 @@ public class JoularResourceServiceImpl implements JoularResourceService {
             log.warn("The number of line is negative for \"{}.{}\"", className, methodName);
         }*/
         }
-        return null;
+        return Optional.empty();
     }
 
     public Optional<JSONObject> getClassMethodLine(String metric) {

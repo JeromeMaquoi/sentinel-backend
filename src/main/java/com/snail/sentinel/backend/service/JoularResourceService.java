@@ -12,6 +12,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 public interface JoularResourceService {
     void setCommitSimpleDTO(HashMap<String, String> repoItem, JSONObject commitData);
@@ -19,7 +20,7 @@ public interface JoularResourceService {
     CommitSimpleDTO getCommitSimpleDTO();
     void setCkAggregateLineHashMapDTO(String repoName);
     void setCkAggregateLineHashMapDTO(CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO);
-    CkAggregateLineDTO getMatchCkJoular(String classMethodLineString);
+    Optional<CkAggregateLineDTO> getMatchCkJoular(String classMethodLineString);
     CkAggregateLineHashMapDTO getCkAggregateLineHashMapDTO();
     void setIterationDTO(IterationDTO iterationDTO);
     IterationDTO getIterationDTO();
