@@ -14,13 +14,20 @@ import com.snail.sentinel.backend.service.dto.joular.JoularEntityListDTO;
 import com.snail.sentinel.backend.service.dto.joular.JoularNodeEntityListDTO;
 import com.snail.sentinel.backend.service.dto.measurableelement.MethodElementSetDTO;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
+
+import static java.lang.Integer.parseInt;
 
 @Service
 public class JoularResourceServiceImpl implements JoularResourceService {
+    private final Logger log = LoggerFactory.getLogger(JoularServiceImpl.class);
+
     private final CommitEntityService commitEntityService;
 
     private final CkEntityRepositoryAggregation ckEntityRepositoryAggregation;
@@ -84,28 +91,44 @@ public class JoularResourceServiceImpl implements JoularResourceService {
     }
 
     @Override
-    public CkAggregateLineDTO getMatchCkJoular(JSONObject classMethodLine) {
-        String className = Util.classNameParser(classMethodLine.getString(CLASS_NAME));
-        String methodName = Util.methodNameParser(className, classMethodLine.getString(METHOD_NAME));
-        int numberLine = classMethodLine.getInt(LINE_NUMBER);
-        if (numberLine > 0) {
-            List<CkAggregateLineDTO> allOccurrences = getCkAggregateLineHashMapDTO().getAllOccurrences(className, methodName);
-            //log.debug("allOccurrences : {}", allOccurrences);
-            if (!allOccurrences.isEmpty()) {
-                for (CkAggregateLineDTO occ : allOccurrences) {
-                    //log.debug("{} <= {} && ({} + {}) >= {} ?", occ.getLine(), numberLine, occ.getLine(), occ.getLoc(), numberLine);
-                    if (occ.getLine() <= numberLine && (occ.getLine() + occ.getLoc()) >= numberLine) {
-                        //log.debug("Occurrence returned for \"{}.{}\" at line {}", className, methodName, numberLine);
-                        return occ;
+    public CkAggregateLineDTO getMatchCkJoular(String classMethodLineString) {
+        Optional<JSONObject> optionalResult = getClassMethodLine(classMethodLineString);
+        if (optionalResult.isPresent()) {
+            JSONObject classMethodLine = optionalResult.get();
+            String className = Util.classNameParser(classMethodLine.getString(CLASS_NAME));
+            String methodName = Util.methodNameParser(className, classMethodLine.getString(METHOD_NAME));
+            int numberLine = classMethodLine.getInt(LINE_NUMBER);
+            if (numberLine > 0) {
+                List<CkAggregateLineDTO> allOccurrences = getCkAggregateLineHashMapDTO().getAllOccurrences(className, methodName);
+                if (!allOccurrences.isEmpty()) {
+                    for (CkAggregateLineDTO occ : allOccurrences) {
+                        if (occ.getLine() <= numberLine && (occ.getLine() + occ.getLoc()) >= numberLine) {
+                            return occ;
+                        }
                     }
+                } else if (!methodName.contains("access$")) {
+                    //log.debug("No occurrence for {} {} at line {}", className, methodName, numberLine);
                 }
-            } else if (!methodName.contains("access$")) {
-                //log.debug("No occurrence for {} {} at line {}", className, methodName, numberLine);
-            }
-        } /*else {
+            } /*else {
             log.warn("The number of line is negative for \"{}.{}\"", className, methodName);
         }*/
+        }
         return null;
+    }
+
+    public Optional<JSONObject> getClassMethodLine(String metric) {
+        String className = metric.substring(0, metric.lastIndexOf('.'));
+        String[] spaceSplit = metric.substring(metric.lastIndexOf('.') + 1).split(" ");
+        if (spaceSplit.length < 3) {
+            String methodName = spaceSplit[0];
+            int numberLine = parseInt(spaceSplit[1]);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put(CLASS_NAME, className);
+            jsonObject.put(METHOD_NAME, methodName);
+            jsonObject.put(LINE_NUMBER, numberLine);
+            return Optional.of(jsonObject);
+        }
+        return Optional.empty();
     }
 
     @Override

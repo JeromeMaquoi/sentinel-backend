@@ -121,14 +121,11 @@ public class JoularEntityServiceImpl implements JoularEntityService {
         String regex = "^([+-]?\\d*\\.?\\d*)$";
         if (Pattern.matches(regex, line.getString(nextLine))) {
             Float value = line.getFloat(nextLine);
-            JSONObject classMethodLine = getClassMethodLine(nextLine);
-            if (classMethodLine != null) {
-                CkAggregateLineDTO matchedCkJoular = joularResourceService.getMatchCkJoular(classMethodLine);
-                if (matchedCkJoular != null) {
-                    String classMethodSignature = getClassMethodSignature(nextLine);
-                    MeasurableElementDTO methodElementDTO = getMeasurableElementForJoular(matchedCkJoular, classMethodSignature);
-                    addOrUpdateJoularEntityListDTO(methodElementDTO, value);
-                }
+            CkAggregateLineDTO matchedCkJoular = joularResourceService.getMatchCkJoular(nextLine);
+            if (matchedCkJoular != null) {
+                String classMethodSignature = getClassMethodSignature(nextLine);
+                MeasurableElementDTO methodElementDTO = getMeasurableElementForJoular(matchedCkJoular, classMethodSignature);
+                addOrUpdateJoularEntityListDTO(methodElementDTO, value);
             }
         }
     }
@@ -164,20 +161,5 @@ public class JoularEntityServiceImpl implements JoularEntityService {
         Integer pid = parseInt(fileName.split("-")[1]);
         long startTimestamp = parseLong(fileName.split("-")[2]);
         return new IterationDTO(iterationId, pid, startTimestamp);
-    }
-
-    public JSONObject getClassMethodLine(String metric) {
-        String className = metric.substring(0, metric.lastIndexOf('.'));
-        String[] spaceSplit = metric.substring(metric.lastIndexOf('.') + 1).split(" ");
-        if (spaceSplit.length < 3) {
-            String methodName = spaceSplit[0];
-            int numberLine = parseInt(spaceSplit[1]);
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put(CLASS_NAME, className);
-            jsonObject.put(METHOD_NAME, methodName);
-            jsonObject.put(LINE_NUMBER, numberLine);
-            return jsonObject;
-        }
-        return null;
     }
 }

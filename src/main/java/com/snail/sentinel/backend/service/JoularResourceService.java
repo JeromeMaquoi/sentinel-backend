@@ -19,7 +19,7 @@ public interface JoularResourceService {
     CommitSimpleDTO getCommitSimpleDTO();
     void setCkAggregateLineHashMapDTO(String repoName);
     void setCkAggregateLineHashMapDTO(CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO);
-    CkAggregateLineDTO getMatchCkJoular(JSONObject classMethodLine);
+    CkAggregateLineDTO getMatchCkJoular(String classMethodLineString);
     CkAggregateLineHashMapDTO getCkAggregateLineHashMapDTO();
     void setIterationDTO(IterationDTO iterationDTO);
     IterationDTO getIterationDTO();
