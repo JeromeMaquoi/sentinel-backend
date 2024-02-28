@@ -1,15 +1,14 @@
 package com.snail.sentinel.backend.service.impl;
 
 import com.snail.sentinel.backend.commons.Util;
-import com.snail.sentinel.backend.domain.JoularEntity;
 import com.snail.sentinel.backend.domain.JoularNodeEntity;
 import com.snail.sentinel.backend.repository.JoularNodeEntityRepository;
-import com.snail.sentinel.backend.service.JoularEntityService;
 import com.snail.sentinel.backend.service.JoularNodeEntityService;
 import com.snail.sentinel.backend.service.JoularResourceService;
 import com.snail.sentinel.backend.service.dto.JoularNodeEntityDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineDTO;
 import com.snail.sentinel.backend.service.dto.joular.JoularNodeEntityListDTO;
+import com.snail.sentinel.backend.service.dto.measurableelement.MeasurableElementDTO;
 import com.snail.sentinel.backend.service.exceptions.NoCsvLineFoundException;
 import com.snail.sentinel.backend.service.mapper.JoularNodeEntityMapper;
 
@@ -37,20 +36,16 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
 
     private final JoularResourceService joularResourceService;
 
-    private final JoularEntityService joularEntityService;
-
     private JoularNodeEntity joularNodeEntity;
 
     public JoularNodeEntityServiceImpl(
             JoularNodeEntityRepository joularNodeEntityRepository,
             JoularNodeEntityMapper joularNodeEntityMapper,
-            JoularResourceService joularResourceService,
-            JoularEntityService joularEntityService
+            JoularResourceService joularResourceService
     ) {
         this.joularNodeEntityRepository = joularNodeEntityRepository;
         this.joularNodeEntityMapper = joularNodeEntityMapper;
         this.joularResourceService = joularResourceService;
-        this.joularEntityService = joularEntityService;
     }
 
     @Override
@@ -138,12 +133,9 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
     }
 
     public void handleOneNodeCsvLine(JSONObject line) {
-        log.debug(String.valueOf(line));
         String nextLine = line.keySet().iterator().next();
         Float value = line.getFloat(nextLine);
-        log.debug(String.valueOf(value));
         String[] allLineNodes = getEachNodeFromStringLine(nextLine);
-        log.debug(Arrays.toString(allLineNodes));
 
         // List of all ancestors of one method of the line
         joularResourceService.setAncestors(new ArrayList<>());
@@ -153,17 +145,16 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
     }
 
     public void handleOneMethod(String methodNameAndLine) {
-        String classMethodSignature = methodNameAndLine.split(" ")[0];
+        log.debug("handleOneMethod with {}", methodNameAndLine);
         Integer lineNumber = Integer.valueOf(methodNameAndLine.split(" ")[1]);
         createBaseJoularNodeEntity(lineNumber);
-        JoularEntity joularEntity = joularEntityService.findByCommitShaAndIterationAndMeasurableElementClassMethodSignature(joularResourceService.getCommitSimpleDTO().getSha(), joularResourceService.getIterationDTO(), classMethodSignature);
-
-        updateJoularNodeEntityMeasurableElement(joularEntity);
+        updateJoularNodeEntityMeasurableElement(methodNameAndLine);
         joularResourceService.getAncestors().add(joularNodeEntity.getId());
     }
 
     public void createBaseJoularNodeEntity(Integer lineNumber) {
         joularNodeEntity = new JoularNodeEntity();
+        joularNodeEntity.setId(UUID.randomUUID().toString());
         joularNodeEntity.setLineNumber(lineNumber);
         joularNodeEntity.setScope("app");
         joularNodeEntity.setMonitoringType("calltrees");
@@ -172,16 +163,16 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
         joularNodeEntity.setAncestors(joularResourceService.getAncestors());
     }
 
-    public void updateJoularNodeEntityMeasurableElement(JoularEntity joularEntity) {
-        if (joularEntity != null) {
-            joularNodeEntity.setMeasurableElement(joularEntity.getMeasurableElement());
-        } else {
-            //CkAggregateLineDTO ckAggregateLineDTO =
+    public void updateJoularNodeEntityMeasurableElement(String classMethodLineString) {
+        Optional<CkAggregateLineDTO> optionalMatchedCkJoular = joularResourceService.getMatchCkJoular(classMethodLineString);
+        if (optionalMatchedCkJoular.isPresent()) {
+            CkAggregateLineDTO matchedCkJoular = optionalMatchedCkJoular.get();
+            String classMethodSignature = classMethodLineString.substring(0, classMethodLineString.lastIndexOf(" "));
+            MeasurableElementDTO methodElementDTO = Util.getMeasurableElementForJoular(matchedCkJoular, classMethodSignature);
+            joularNodeEntity.setMeasurableElement(methodElementDTO);
         }
-    }
-
-    public CkAggregateLineDTO getMatchCkJoular(String methodNameAndLine) {
-        return null;
+        //TODO add parent field!!!
+        log.info("joularNodeEntity : {}", joularNodeEntity);
     }
 
     public String[] getEachNodeFromStringLine(String line) {

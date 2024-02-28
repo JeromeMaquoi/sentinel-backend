@@ -68,11 +68,6 @@ public class JoularEntityServiceImpl implements JoularEntityService {
     }
 
     @Override
-    public JoularEntity findByCommitShaAndIterationAndMeasurableElementClassMethodSignature(String sha, IterationDTO iterationDTO, String classMethodSignature) {
-        return joularEntityRepository.findByCommitShaAndIterationAndMeasurableElementClassMethodSignature(sha, iterationDTO, classMethodSignature);
-    }
-
-    @Override
     public List<JoularEntityDTO> bulkAdd(List<JoularEntityDTO> listJoular) {
         List<JoularEntity> listEntity = joularEntityMapper.toEntity(listJoular);
         listEntity = joularEntityRepository.insert(listEntity);
