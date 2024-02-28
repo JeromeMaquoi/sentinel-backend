@@ -2,6 +2,7 @@ package com.snail.sentinel.backend.service;
 
 import com.snail.sentinel.backend.commons.FileListProvider;
 import com.snail.sentinel.backend.service.dto.IterationDTO;
+import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineHashMapDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
 import com.snail.sentinel.backend.service.dto.joular.JoularEntityListDTO;
@@ -18,6 +19,7 @@ public interface JoularResourceService {
     CommitSimpleDTO getCommitSimpleDTO();
     void setCkAggregateLineHashMapDTO(String repoName);
     void setCkAggregateLineHashMapDTO(CkAggregateLineHashMapDTO ckAggregateLineHashMapDTO);
+    CkAggregateLineDTO getMatchCkJoular(JSONObject classMethodLine);
     CkAggregateLineHashMapDTO getCkAggregateLineHashMapDTO();
     void setIterationDTO(IterationDTO iterationDTO);
     IterationDTO getIterationDTO();

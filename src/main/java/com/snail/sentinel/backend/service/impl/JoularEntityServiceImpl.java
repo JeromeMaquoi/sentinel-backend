@@ -123,7 +123,7 @@ public class JoularEntityServiceImpl implements JoularEntityService {
             Float value = line.getFloat(nextLine);
             JSONObject classMethodLine = getClassMethodLine(nextLine);
             if (classMethodLine != null) {
-                CkAggregateLineDTO matchedCkJoular = getMatchCkJoular(classMethodLine);
+                CkAggregateLineDTO matchedCkJoular = joularResourceService.getMatchCkJoular(classMethodLine);
                 if (matchedCkJoular != null) {
                     String classMethodSignature = getClassMethodSignature(nextLine);
                     MeasurableElementDTO methodElementDTO = getMeasurableElementForJoular(matchedCkJoular, classMethodSignature);
@@ -157,31 +157,6 @@ public class JoularEntityServiceImpl implements JoularEntityService {
 
     public String getClassMethodSignature(String line) {
         return line.substring(0, line.lastIndexOf(" "));
-    }
-
-
-    public CkAggregateLineDTO getMatchCkJoular(JSONObject classMethodLine) {
-        String className = Util.classNameParser(classMethodLine.getString(CLASS_NAME));
-        String methodName = Util.methodNameParser(className, classMethodLine.getString(METHOD_NAME));
-        int numberLine = classMethodLine.getInt(LINE_NUMBER);
-        if (numberLine > 0) {
-            List<CkAggregateLineDTO> allOccurrences = joularResourceService.getCkAggregateLineHashMapDTO().getAllOccurrences(className, methodName);
-            //log.debug("allOccurrences : {}", allOccurrences);
-            if (!allOccurrences.isEmpty()) {
-                for (CkAggregateLineDTO occ : allOccurrences) {
-                    //log.debug("{} <= {} && ({} + {}) >= {} ?", occ.getLine(), numberLine, occ.getLine(), occ.getLoc(), numberLine);
-                    if (occ.getLine() <= numberLine && (occ.getLine() + occ.getLoc()) >= numberLine) {
-                        //log.debug("Occurrence returned for \"{}.{}\" at line {}", className, methodName, numberLine);
-                        return occ;
-                    }
-                }
-            } else if (!methodName.contains("access$")) {
-                //log.debug("No occurrence for {} {} at line {}", className, methodName, numberLine);
-            }
-        } /*else {
-            log.warn("The number of line is negative for \"{}.{}\"", className, methodName);
-        }*/
-        return null;
     }
 
     public IterationDTO createIterationDTOFromCsvFileName(String fileName) {

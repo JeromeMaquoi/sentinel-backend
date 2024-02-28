@@ -176,12 +176,12 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
         if (joularEntity != null) {
             joularNodeEntity.setMeasurableElement(joularEntity.getMeasurableElement());
         } else {
-            CkAggregateLineDTO ckAggregateLineDTO =
+            //CkAggregateLineDTO ckAggregateLineDTO =
         }
     }
 
     public CkAggregateLineDTO getMatchCkJoular(String methodNameAndLine) {
-        
+        return null;
     }
 
     public String[] getEachNodeFromStringLine(String line) {

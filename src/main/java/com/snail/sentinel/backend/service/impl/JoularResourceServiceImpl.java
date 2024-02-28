@@ -6,6 +6,7 @@ import com.snail.sentinel.backend.repository.CkEntityRepositoryAggregation;
 import com.snail.sentinel.backend.service.CommitEntityService;
 import com.snail.sentinel.backend.service.JoularResourceService;
 import com.snail.sentinel.backend.service.dto.IterationDTO;
+import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineHashMapDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitCompleteDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
@@ -39,6 +40,12 @@ public class JoularResourceServiceImpl implements JoularResourceService {
     private MethodElementSetDTO methodElementSetDTO;
 
     private List<String> ancestors;
+
+    private static final String CLASS_NAME = "className";
+
+    private static final String METHOD_NAME = "methodName";
+
+    private static final String LINE_NUMBER = "lineNumber";
 
     public JoularResourceServiceImpl(CommitEntityService commitEntityService, CkEntityRepositoryAggregation ckEntityRepositoryAggregation) {
         this.commitEntityService = commitEntityService;
@@ -74,6 +81,31 @@ public class JoularResourceServiceImpl implements JoularResourceService {
     @Override
     public CkAggregateLineHashMapDTO getCkAggregateLineHashMapDTO() {
         return this.ckAggregateLineHashMapDTO;
+    }
+
+    @Override
+    public CkAggregateLineDTO getMatchCkJoular(JSONObject classMethodLine) {
+        String className = Util.classNameParser(classMethodLine.getString(CLASS_NAME));
+        String methodName = Util.methodNameParser(className, classMethodLine.getString(METHOD_NAME));
+        int numberLine = classMethodLine.getInt(LINE_NUMBER);
+        if (numberLine > 0) {
+            List<CkAggregateLineDTO> allOccurrences = getCkAggregateLineHashMapDTO().getAllOccurrences(className, methodName);
+            //log.debug("allOccurrences : {}", allOccurrences);
+            if (!allOccurrences.isEmpty()) {
+                for (CkAggregateLineDTO occ : allOccurrences) {
+                    //log.debug("{} <= {} && ({} + {}) >= {} ?", occ.getLine(), numberLine, occ.getLine(), occ.getLoc(), numberLine);
+                    if (occ.getLine() <= numberLine && (occ.getLine() + occ.getLoc()) >= numberLine) {
+                        //log.debug("Occurrence returned for \"{}.{}\" at line {}", className, methodName, numberLine);
+                        return occ;
+                    }
+                }
+            } else if (!methodName.contains("access$")) {
+                //log.debug("No occurrence for {} {} at line {}", className, methodName, numberLine);
+            }
+        } /*else {
+            log.warn("The number of line is negative for \"{}.{}\"", className, methodName);
+        }*/
+        return null;
     }
 
     @Override
