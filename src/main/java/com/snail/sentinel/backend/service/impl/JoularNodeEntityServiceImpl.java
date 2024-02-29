@@ -36,7 +36,9 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
 
     private final JoularResourceService joularResourceService;
 
-    private JoularNodeEntity joularNodeEntity;
+    private JoularNodeEntityDTO joularNodeEntityDTO;
+
+    private boolean isLastElement;
 
     public JoularNodeEntityServiceImpl(
             JoularNodeEntityRepository joularNodeEntityRepository,
@@ -123,7 +125,7 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
         try {
             List<JSONObject> allLines = Util.readCsvWithoutHeaderToJson(csvpath.toString());
             for (JSONObject line : allLines) {
-                handleOneNodeCsvLine(line);
+                handleOneCsvLine(line);
             }
         } catch (IOException e) {
             throw new NoCsvLineFoundException(e);
@@ -132,50 +134,66 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
         return null;
     }
 
-    public void handleOneNodeCsvLine(JSONObject line) {
+    public void handleOneCsvLine(JSONObject line) {
         String nextLine = line.keySet().iterator().next();
         Float value = line.getFloat(nextLine);
-        String[] allLineNodes = getEachNodeFromStringLine(nextLine);
-
+        List<String> allLineNodes = getEachNodeFromStringLine(nextLine);
         // List of all ancestors of one method of the line
         joularResourceService.setAncestors(new ArrayList<>());
+        // Check if last element of array
         for (String methodNameAndLine : allLineNodes) {
-            handleOneMethod(methodNameAndLine);
+            if (allLineNodes.indexOf(methodNameAndLine) == allLineNodes.size() - 1) {
+                isLastElement = true;
+            }
+            handleOneMethod(methodNameAndLine, value);
         }
     }
 
-    public void handleOneMethod(String methodNameAndLine) {
+    public void handleOneMethod(String methodNameAndLine, Float value) {
         log.debug("handleOneMethod with {}", methodNameAndLine);
-        Integer lineNumber = Integer.valueOf(methodNameAndLine.split(" ")[1]);
-        createBaseJoularNodeEntity(lineNumber);
-        updateJoularNodeEntityMeasurableElement(methodNameAndLine);
+        JoularNodeEntityDTO joularNodeEntity = createJoularNodeEntityDTO(methodNameAndLine, value);
         joularResourceService.getAncestors().add(joularNodeEntity.getId());
+        joularResourceService.getJoularNodeEntityListDTO().add(joularNodeEntity);
     }
 
-    public void createBaseJoularNodeEntity(Integer lineNumber) {
-        joularNodeEntity = new JoularNodeEntity();
-        joularNodeEntity.setId(UUID.randomUUID().toString());
-        joularNodeEntity.setLineNumber(lineNumber);
-        joularNodeEntity.setScope("app");
-        joularNodeEntity.setMonitoringType("calltrees");
-        joularNodeEntity.setIteration(joularResourceService.getIterationDTO());
-        joularNodeEntity.setCommit(joularResourceService.getCommitSimpleDTO());
-        joularNodeEntity.setAncestors(joularResourceService.getAncestors());
+    public JoularNodeEntityDTO createJoularNodeEntityDTO(String classMethodLineString, Float value) {
+        Integer lineNumber = Integer.valueOf(classMethodLineString.split(" ")[1]);
+        joularNodeEntityDTO = new JoularNodeEntityDTO();
+        joularNodeEntityDTO.setId(UUID.randomUUID().toString());
+        joularNodeEntityDTO.setLineNumber(lineNumber);
+        joularNodeEntityDTO.setScope("app");
+        joularNodeEntityDTO.setMonitoringType("calltrees");
+        joularNodeEntityDTO.setIteration(joularResourceService.getIterationDTO());
+        joularNodeEntityDTO.setCommit(joularResourceService.getCommitSimpleDTO());
+        joularNodeEntityDTO.setAncestors(joularResourceService.getAncestors());
+        joularNodeEntityDTO.setParent(getParentFromAncestors());
+        if (isLastElement) {
+            joularNodeEntityDTO.setValue(value);
+        }
+        Optional<MeasurableElementDTO> optionalMeasurableElementDTO = createJoularNodeEntityMeasurableElement(classMethodLineString);
+        optionalMeasurableElementDTO.ifPresent(measurableElementDTO -> joularNodeEntityDTO.setMeasurableElement(measurableElementDTO));
+        return joularNodeEntityDTO;
     }
 
-    public void updateJoularNodeEntityMeasurableElement(String classMethodLineString) {
+    public String getParentFromAncestors() {
+        if (!joularResourceService.getAncestors().isEmpty()) {
+            List<String> ancestors = joularResourceService.getAncestors();
+            return ancestors.get(ancestors.size()-1);
+        }
+        return null;
+    }
+
+    public Optional<MeasurableElementDTO> createJoularNodeEntityMeasurableElement(String classMethodLineString) {
         Optional<CkAggregateLineDTO> optionalMatchedCkJoular = joularResourceService.getMatchCkJoular(classMethodLineString);
         if (optionalMatchedCkJoular.isPresent()) {
             CkAggregateLineDTO matchedCkJoular = optionalMatchedCkJoular.get();
             String classMethodSignature = classMethodLineString.substring(0, classMethodLineString.lastIndexOf(" "));
-            MeasurableElementDTO methodElementDTO = Util.getMeasurableElementForJoular(matchedCkJoular, classMethodSignature);
-            joularNodeEntity.setMeasurableElement(methodElementDTO);
+            return Optional.of(Util.getMeasurableElementForJoular(matchedCkJoular, classMethodSignature));
         }
-        //TODO add parent field!!!
-        log.info("joularNodeEntity : {}", joularNodeEntity);
+        return Optional.empty();
     }
 
-    public String[] getEachNodeFromStringLine(String line) {
-        return line.split(";");
+    public List<String> getEachNodeFromStringLine(String line) {
+        return Arrays.stream(line.split(";")).toList();
     }
 }

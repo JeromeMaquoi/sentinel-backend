@@ -1,5 +1,6 @@
 package com.snail.sentinel.backend.domain;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
@@ -8,6 +9,7 @@ import com.snail.sentinel.backend.service.dto.IterationDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
 import com.snail.sentinel.backend.service.dto.measurableelement.MeasurableElementDTO;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -18,6 +20,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class JoularNodeEntity implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -45,6 +48,7 @@ public class JoularNodeEntity implements Serializable {
     private transient CommitSimpleDTO commit;
 
     @Field("ancestors")
+    @Indexed
     private List<String> ancestors;
 
     @Field("parent")
