@@ -98,7 +98,7 @@ class JoularEntityServiceImplTest {
         CkAggregateLineDTO ckAggregateLineDTO2 = new CkAggregateLineDTO();
         ckAggregateLineDTO2.setClassName("org.apache.commons.configuration2.tree.DefaultConfigurationKey");
         ckAggregateLineDTO2.setFilePath("filePath2");
-        ckAggregateLineDTO2.setMethodName("nextDelimiterPos/1");
+        ckAggregateLineDTO2.setMethodName("nextDelimiterPos/1[String]");
         ckAggregateLineDTO2.setLine(new ArrayList<>(){{add(660);}});
         ckAggregateLineDTO2.setLoc(new ArrayList<>(){{add(10);}});
 
@@ -226,7 +226,7 @@ class JoularEntityServiceImplTest {
 
         CkAggregateLineDTO ckAggregateLineDTO = new CkAggregateLineDTO();
         ckAggregateLineDTO.setClassName("org.apache.commons.configuration2.tree.DefaultConfigurationKey");
-        ckAggregateLineDTO.setMethodName("nextDelimiterPos/1");
+        ckAggregateLineDTO.setMethodName("nextDelimiterPos/1[String]");
         ckAggregateLineDTO.setFilePath("filePath2");
         ckAggregateLineDTO.setLine(new ArrayList<>(){{add(660);}});
         ckAggregateLineDTO.setLoc(new ArrayList<>(){{add(10);}});

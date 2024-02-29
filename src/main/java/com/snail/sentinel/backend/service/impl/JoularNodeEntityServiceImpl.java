@@ -143,7 +143,7 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
         // Check if last element of array
         for (String methodNameAndLine : allLineNodes) {
             if (allLineNodes.indexOf(methodNameAndLine) == allLineNodes.size() - 1) {
-                isLastElement = true;
+                setLastElement(true);
             }
             handleOneMethod(methodNameAndLine, value);
         }
@@ -167,7 +167,7 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
         joularNodeEntityDTO.setCommit(joularResourceService.getCommitSimpleDTO());
         joularNodeEntityDTO.setAncestors(joularResourceService.getAncestors());
         joularNodeEntityDTO.setParent(getParentFromAncestors());
-        if (isLastElement) {
+        if (isLastElement()) {
             joularNodeEntityDTO.setValue(value);
         }
         Optional<MeasurableElementDTO> optionalMeasurableElementDTO = createJoularNodeEntityMeasurableElement(classMethodLineString);
@@ -195,5 +195,13 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
 
     public List<String> getEachNodeFromStringLine(String line) {
         return Arrays.stream(line.split(";")).toList();
+    }
+
+    public boolean isLastElement() {
+        return isLastElement;
+    }
+
+    public void setLastElement(boolean lastElement) {
+        isLastElement = lastElement;
     }
 }
