@@ -6,10 +6,12 @@ import com.snail.sentinel.backend.service.dto.JoularNodeEntityDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineHashMapDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
+import com.snail.sentinel.backend.service.dto.joular.JoularNodeEntityListDTO;
 import com.snail.sentinel.backend.service.dto.measurableelement.MeasurableElementDTO;
 import com.snail.sentinel.backend.service.impl.JoularNodeEntityServiceImpl;
 import com.snail.sentinel.backend.service.impl.JoularResourceServiceImpl;
 import com.snail.sentinel.backend.service.mapper.JoularNodeEntityMapper;
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -108,8 +110,8 @@ public class JoularNodeEntityServiceImplTest {
 
     @Test
     void simpleCreateJoularNodeEntityMeasurableElementTest() {
-        when(joularResourceService.getMatchCkJoular("org.jabref.gui.fieldeditors.LinkedFileViewModelTest.setUp 75")).thenReturn(Optional.ofNullable(ckAggregateLineDTO1));
         String classMethodLineString = "org.jabref.gui.fieldeditors.LinkedFileViewModelTest.setUp 75";
+        when(joularResourceService.getMatchCkJoular(classMethodLineString)).thenReturn(Optional.ofNullable(ckAggregateLineDTO1));
         Optional<MeasurableElementDTO> optionalMeasurableElementDTO = joularNodeEntityService.createJoularNodeEntityMeasurableElement(classMethodLineString);
         assertTrue(optionalMeasurableElementDTO.isPresent());
         MeasurableElementDTO maybeMeasurableElementDTO = optionalMeasurableElementDTO.get();
@@ -160,5 +162,31 @@ public class JoularNodeEntityServiceImplTest {
         JoularNodeEntityDTO joularNodeEntityDTO = createJoularNodeEntityDTO(maybeJoularNodeEntityDTO.getId(), 111, value, measurableElementDTO, ancestors, parentId);
 
         assertEquals(joularNodeEntityDTO, maybeJoularNodeEntityDTO);
+    }
+
+    @Test
+    void oneNodeHandleOneCsvLineTest() {
+        String classMethodLineString = "org.jabref.gui.fieldeditors.LinkedFileViewModelTest.setUp 75";
+        JSONObject line = new JSONObject();
+        line.put(classMethodLineString, "1.2417");
+        List<String> ancestors = new ArrayList<>();
+        when(joularResourceService.getAncestors()).thenReturn(ancestors);
+        JoularNodeEntityListDTO joularNodeEntityListDTO = new JoularNodeEntityListDTO();
+        when(joularResourceService.getJoularNodeEntityListDTO()).thenReturn(joularNodeEntityListDTO);
+        joularNodeEntityService.setLastElement(true);
+        when(joularResourceService.getMatchCkJoular(classMethodLineString)).thenReturn(Optional.ofNullable(ckAggregateLineDTO1));
+
+        joularNodeEntityService.handleOneCsvLine(line);
+
+        MeasurableElementDTO measurableElementDTO = createMeasurableElementDTO("org.jabref.gui.fieldeditors.LinkedFileViewModelTest", "setUp/1[java.nio.file.Path]", "org.jabref.gui.fieldeditors.LinkedFileViewModelTest.setUp");
+        String id = joularNodeEntityListDTO.getList().get(0).getId();
+        JoularNodeEntityDTO joularNodeEntityDTO = createJoularNodeEntityDTO(id, 75, 1.2417F, measurableElementDTO, ancestors, null);
+
+        assertEquals(joularNodeEntityDTO, joularNodeEntityListDTO.getList().get(0));
+    }
+
+    @Test
+    void twoNodesHandleOneCsvLineTest() {
+        
     }
 }
