@@ -16,8 +16,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JoularNodeEntityServiceImplTest {
+    private final Logger log = LoggerFactory.getLogger(JoularNodeEntityServiceImplTest.class);
     @Mock
     private JoularResourceServiceImpl joularResourceService;
     @Mock
@@ -169,24 +173,52 @@ public class JoularNodeEntityServiceImplTest {
         String classMethodLineString = "org.jabref.gui.fieldeditors.LinkedFileViewModelTest.setUp 75";
         JSONObject line = new JSONObject();
         line.put(classMethodLineString, "1.2417");
-        List<String> ancestors = new ArrayList<>();
-        when(joularResourceService.getAncestors()).thenReturn(ancestors);
+        when(joularResourceService.getAncestors()).thenCallRealMethod();
+        doCallRealMethod().when(joularResourceService).setAncestors(new ArrayList<>());
         JoularNodeEntityListDTO joularNodeEntityListDTO = new JoularNodeEntityListDTO();
         when(joularResourceService.getJoularNodeEntityListDTO()).thenReturn(joularNodeEntityListDTO);
-        joularNodeEntityService.setLastElement(true);
         when(joularResourceService.getMatchCkJoular(classMethodLineString)).thenReturn(Optional.ofNullable(ckAggregateLineDTO1));
 
         joularNodeEntityService.handleOneCsvLine(line);
 
+        List<String> ancestors = new ArrayList<>();
         MeasurableElementDTO measurableElementDTO = createMeasurableElementDTO("org.jabref.gui.fieldeditors.LinkedFileViewModelTest", "setUp/1[java.nio.file.Path]", "org.jabref.gui.fieldeditors.LinkedFileViewModelTest.setUp");
-        String id = joularNodeEntityListDTO.getList().get(0).getId();
+        String id = joularNodeEntityListDTO.get(0).getId();
         JoularNodeEntityDTO joularNodeEntityDTO = createJoularNodeEntityDTO(id, 75, 1.2417F, measurableElementDTO, ancestors, null);
 
-        assertEquals(joularNodeEntityDTO, joularNodeEntityListDTO.getList().get(0));
+        assertEquals(joularNodeEntityDTO, joularNodeEntityListDTO.get(0));
     }
 
     @Test
     void twoNodesHandleOneCsvLineTest() {
-        
+        String classMethodLineString1 = "org.jabref.logic.formatter.bibtexfields.UnitsToLatexFormatterTest.formatExample 28";
+        when(joularResourceService.getMatchCkJoular(classMethodLineString1)).thenReturn(Optional.ofNullable(ckAggregateLineDTO2));
+        String classMethodLineString2 = "org.jabref.logic.formatter.bibtexfields.UnitsToLatexFormatter.format 111";
+        when(joularResourceService.getMatchCkJoular(classMethodLineString2)).thenReturn(Optional.ofNullable(ckAggregateLineDTO3));
+        String lineString = classMethodLineString1 + ";" + classMethodLineString2;
+        String value = "0.4679";
+        JSONObject line = new JSONObject();
+        line.put(lineString, value);
+        when(joularResourceService.getAncestors()).thenCallRealMethod();
+        doCallRealMethod().when(joularResourceService).setAncestors(new ArrayList<>());
+
+        JoularNodeEntityListDTO joularNodeEntityListDTO = new JoularNodeEntityListDTO();
+        when(joularResourceService.getJoularNodeEntityListDTO()).thenReturn(joularNodeEntityListDTO);
+
+        joularNodeEntityService.handleOneCsvLine(line);
+
+        List<String> actualAncestors1 = new ArrayList<>();
+        MeasurableElementDTO measurableElementDTO1 = createMeasurableElementDTO("org.jabref.logic.formatter.bibtexfields.UnitsToLatexFormatterTest", "formatExample/0", "org.jabref.logic.formatter.bibtexfields.UnitsToLatexFormatterTest.formatExample");
+        String id1 = joularNodeEntityListDTO.get(0).getId();
+
+        JoularNodeEntityDTO joularNodeEntityDTO1 = createJoularNodeEntityDTO(id1, 28, null, measurableElementDTO1, actualAncestors1, null);
+
+        List<String> actualAncestors2 = new ArrayList<>();
+        MeasurableElementDTO measurableElementDTO2 = createMeasurableElementDTO("org.jabref.logic.formatter.bibtexfields.UnitsToLatexFormatter", "format/1[java.lang.String]", "org.jabref.logic.formatter.bibtexfields.UnitsToLatexFormatter.format");
+        String id2 = joularNodeEntityListDTO.get(1).getId();
+        actualAncestors2.add(id1);
+        JoularNodeEntityDTO joularNodeEntityDTO2 = createJoularNodeEntityDTO(id2, 111, 0.4679F, measurableElementDTO2, actualAncestors2, id1);
+
+        assertThat(joularNodeEntityListDTO.getList()).containsExactly(joularNodeEntityDTO1, joularNodeEntityDTO2);
     }
 }

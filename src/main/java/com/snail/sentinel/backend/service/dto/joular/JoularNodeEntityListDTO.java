@@ -25,6 +25,14 @@ public class JoularNodeEntityListDTO {
         return this.joularNodeEntityDTOList;
     }
 
+    public JoularNodeEntityDTO get(int index) {
+        return this.joularNodeEntityDTOList.get(index);
+    }
+
+    public int size() {
+        return this.joularNodeEntityDTOList.size();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

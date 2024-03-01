@@ -165,7 +165,8 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
         joularNodeEntityDTO.setMonitoringType("calltrees");
         joularNodeEntityDTO.setIteration(joularResourceService.getIterationDTO());
         joularNodeEntityDTO.setCommit(joularResourceService.getCommitSimpleDTO());
-        joularNodeEntityDTO.setAncestors(joularResourceService.getAncestors());
+        List<String> ancestors = new ArrayList<>(joularResourceService.getAncestors());
+        joularNodeEntityDTO.setAncestors(ancestors);
         joularNodeEntityDTO.setParent(getParentFromAncestors());
         if (isLastElement()) {
             joularNodeEntityDTO.setValue(value);
