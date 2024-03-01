@@ -9,6 +9,7 @@ import com.snail.sentinel.backend.service.dto.JoularNodeEntityDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineDTO;
 import com.snail.sentinel.backend.service.dto.joular.JoularNodeEntityListDTO;
 import com.snail.sentinel.backend.service.dto.measurableelement.MeasurableElementDTO;
+import com.snail.sentinel.backend.service.exceptions.NoCsvFileFoundException;
 import com.snail.sentinel.backend.service.exceptions.NoCsvLineFoundException;
 import com.snail.sentinel.backend.service.mapper.JoularNodeEntityMapper;
 
@@ -114,11 +115,11 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
     @Override
     public void handleJoularNodeEntityCreationForOneIteration(Path iterationFilePath) {
         log.info("Request to handle JoularNodeEntity for iteration {}", iterationFilePath);
-        JoularNodeEntityListDTO joularNodeEntityListDTO = createJoularNodeEntityDTOList(iterationFilePath);
+        createJoularNodeEntityDTOList(iterationFilePath);
         //bulkAdd(joularNodeEntityListDTO.getList());
     }
 
-    public JoularNodeEntityListDTO createJoularNodeEntityDTOList(Path iterationFilePath) {
+    public void createJoularNodeEntityDTOList(Path iterationFilePath) {
         log.debug("iterationFilePath : {}", iterationFilePath);
         joularResourceService.setJoularNodeEntityListDTO(new JoularNodeEntityListDTO());
         Path csvpath = joularResourceService.getFileListProvider().getFileList(iterationFilePath + "/app/total/calltrees").iterator().next();
@@ -129,9 +130,9 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
             }
         } catch (IOException e) {
             throw new NoCsvLineFoundException(e);
+        } catch (NullPointerException e) {
+            throw new NoCsvFileFoundException(e);
         }
-
-        return null;
     }
 
     public void handleOneCsvLine(JSONObject line) {
@@ -142,9 +143,7 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
         joularResourceService.setAncestors(new ArrayList<>());
         // Check if last element of array
         for (String methodNameAndLine : allLineNodes) {
-            if (allLineNodes.indexOf(methodNameAndLine) == allLineNodes.size() - 1) {
-                setLastElement(true);
-            }
+            setLastElement(allLineNodes.indexOf(methodNameAndLine) == allLineNodes.size() - 1);
             handleOneMethod(methodNameAndLine, value);
         }
     }
