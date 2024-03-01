@@ -113,10 +113,15 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
     }
 
     @Override
+    public void deleteAll() {
+        joularNodeEntityRepository.deleteAll();
+    }
+
+    @Override
     public void handleJoularNodeEntityCreationForOneIteration(Path iterationFilePath) {
         log.info("Request to handle JoularNodeEntity for iteration {}", iterationFilePath);
         createJoularNodeEntityDTOList(iterationFilePath);
-        //bulkAdd(joularNodeEntityListDTO.getList());
+        bulkAdd(joularResourceService.getJoularNodeEntityListDTO().getList());
     }
 
     public void createJoularNodeEntityDTOList(Path iterationFilePath) {
@@ -149,7 +154,6 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
     }
 
     public void handleOneMethod(String methodNameAndLine, Float value) {
-        log.debug("handleOneMethod with {}", methodNameAndLine);
         JoularNodeEntityDTO joularNodeEntity = createJoularNodeEntityDTO(methodNameAndLine, value);
         joularResourceService.getAncestors().add(joularNodeEntity.getId());
         joularResourceService.getJoularNodeEntityListDTO().add(joularNodeEntity);

@@ -2,7 +2,6 @@ package com.snail.sentinel.backend;
 
 import com.snail.sentinel.backend.commons.ProductionFileListProvider;
 import com.snail.sentinel.backend.commons.Util;
-import com.snail.sentinel.backend.repository.CkEntityRepositoryAggregation;
 import com.snail.sentinel.backend.service.*;
 import com.snail.sentinel.backend.service.dto.commit.CommitCompleteDTO;
 import org.json.JSONObject;
@@ -28,19 +27,19 @@ public class CkJoularResource {
 
     private final JoularEntityService joularEntityService;
 
-    private final JoularResourceService joularResourceService;
+    private final JoularNodeEntityService joularNodeEntityService;
 
-    private final CkEntityRepositoryAggregation ckEntityRepositoryAggregation;
+    private final JoularResourceService joularResourceService;
 
     private long startTime;
 
-    public CkJoularResource(CkEntityService ckEntityService, CommitEntityService commitEntityService, JoularService joularService, JoularEntityService joularEntityService, JoularResourceService joularResourceService, CkEntityRepositoryAggregation ckEntityRepositoryAggregation) {
+    public CkJoularResource(CkEntityService ckEntityService, CommitEntityService commitEntityService, JoularService joularService, JoularEntityService joularEntityService, JoularNodeEntityService joularNodeEntityService, JoularResourceService joularResourceService) {
         this.ckEntityService = ckEntityService;
         this.commitEntityService = commitEntityService;
         this.joularService = joularService;
         this.joularEntityService = joularEntityService;
+        this.joularNodeEntityService = joularNodeEntityService;
         this.joularResourceService = joularResourceService;
-        this.ckEntityRepositoryAggregation = ckEntityRepositoryAggregation;
         this.repoData = new ArrayList<>();
     }
 
@@ -49,6 +48,7 @@ public class CkJoularResource {
 
         //ckEntityService.deleteAll();
         //joularEntityService.deleteAll();
+        joularNodeEntityService.deleteAll();
         setRepoData();
         List<CommitCompleteDTO> listCommits = new ArrayList<>();
         // For each repository
