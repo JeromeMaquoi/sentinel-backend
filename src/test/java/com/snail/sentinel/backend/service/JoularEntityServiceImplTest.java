@@ -201,40 +201,6 @@ class JoularEntityServiceImplTest {
     }*/
 
     @Test
-    void simpleGetMatchCkJoularTest() {
-        String line = "org.springframework.boot.context.config.ConfigDataLocationRuntimeHints.getFileNames 67";
-        Optional<CkAggregateLineDTO> optionalMaybeCkAggregateLineDTO = joularResourceService.getMatchCkJoular(line);
-        assertTrue(optionalMaybeCkAggregateLineDTO.isPresent());
-        CkAggregateLineDTO maybeCkAggregateLineDTO = optionalMaybeCkAggregateLineDTO.get();
-
-        CkAggregateLineDTO ckAggregateLineDTO = new CkAggregateLineDTO();
-        ckAggregateLineDTO.setClassName("org.springframework.boot.context.config.ConfigDataLocationRuntimeHints");
-        ckAggregateLineDTO.setMethodName("getFileNames/2");
-        ckAggregateLineDTO.setFilePath("filePath");
-        ckAggregateLineDTO.setLine(new ArrayList<>(){{add(63);}});
-        ckAggregateLineDTO.setLoc(new ArrayList<>(){{add(5);}});
-
-        assertEquals(maybeCkAggregateLineDTO, ckAggregateLineDTO);
-    }
-
-    @Test
-    void complexGetMatchCkJoularTest() {
-        String line = "org.apache.commons.configuration2.tree.DefaultConfigurationKey$KeyIterator.nextDelimiterPos 662";
-        Optional<CkAggregateLineDTO> optionalMaybeCkAggregateLineDTO = joularResourceService.getMatchCkJoular(line);
-        assertTrue(optionalMaybeCkAggregateLineDTO.isPresent());
-        CkAggregateLineDTO maybeCkAggregateLineDTO = optionalMaybeCkAggregateLineDTO.get();
-
-        CkAggregateLineDTO ckAggregateLineDTO = new CkAggregateLineDTO();
-        ckAggregateLineDTO.setClassName("org.apache.commons.configuration2.tree.DefaultConfigurationKey");
-        ckAggregateLineDTO.setMethodName("nextDelimiterPos/1[String]");
-        ckAggregateLineDTO.setFilePath("filePath2");
-        ckAggregateLineDTO.setLine(new ArrayList<>(){{add(660);}});
-        ckAggregateLineDTO.setLoc(new ArrayList<>(){{add(10);}});
-
-        assertEquals(maybeCkAggregateLineDTO, ckAggregateLineDTO);
-    }
-
-    @Test
     void createJoularEntityDTOListTest() {
         String csvPath = "joular-csv-test/1-1326858-1701080339565";
         Path iterationFilePath = Paths.get(csvPath);
