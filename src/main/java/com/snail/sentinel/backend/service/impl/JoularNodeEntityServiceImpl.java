@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+
 /**
  * Service Implementation for managing {@link com.snail.sentinel.backend.domain.JoularNodeEntity}.
  */
@@ -154,12 +155,15 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
     }
 
     public void handleOneMethod(String methodNameAndLine, Float value) {
-        JoularNodeEntityDTO joularNodeEntity = createJoularNodeEntityDTO(methodNameAndLine, value);
-        joularResourceService.getAncestors().add(joularNodeEntity.getId());
-        joularResourceService.getJoularNodeEntityListDTO().add(joularNodeEntity);
+        Optional<JoularNodeEntityDTO> optionalJoularNodeEntity = createJoularNodeEntityDTO(methodNameAndLine, value);
+        if (optionalJoularNodeEntity.isPresent()) {
+            JoularNodeEntityDTO joularNodeEntity = optionalJoularNodeEntity.get();
+            joularResourceService.getAncestors().add(joularNodeEntity.getId());
+            joularResourceService.getJoularNodeEntityListDTO().add(joularNodeEntity);
+        }
     }
 
-    public JoularNodeEntityDTO createJoularNodeEntityDTO(String classMethodLineString, Float value) {
+    public Optional<JoularNodeEntityDTO> createJoularNodeEntityDTO(String classMethodLineString, Float value) {
         Integer lineNumber = Integer.valueOf(classMethodLineString.split(" ")[1]);
         joularNodeEntityDTO = new JoularNodeEntityDTO();
         joularNodeEntityDTO.setId(UUID.randomUUID().toString());
@@ -175,8 +179,14 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
             joularNodeEntityDTO.setValue(value);
         }
         Optional<MeasurableElementDTO> optionalMeasurableElementDTO = createJoularNodeEntityMeasurableElement(classMethodLineString);
-        optionalMeasurableElementDTO.ifPresent(measurableElementDTO -> joularNodeEntityDTO.setMeasurableElement(measurableElementDTO));
-        return joularNodeEntityDTO;
+        if (optionalMeasurableElementDTO.isEmpty()) {
+            log.error("MeasurableElement not set for JoularNodeEntity with classMethodLine : {} for iteration {} of project {}", classMethodLineString, joularResourceService.getIterationDTO().getIterationId(), joularResourceService.getCommitSimpleDTO().getRepository().getName());
+            return Optional.empty();
+        }
+        return optionalMeasurableElementDTO.map(measurableElementDTO -> {
+            joularNodeEntityDTO.setMeasurableElement(measurableElementDTO);
+            return Optional.of(joularNodeEntityDTO);
+        }).orElse(Optional.empty());
     }
 
     public String getParentFromAncestors() {

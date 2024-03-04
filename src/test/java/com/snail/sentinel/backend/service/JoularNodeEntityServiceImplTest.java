@@ -142,7 +142,9 @@ class JoularNodeEntityServiceImplTest {
         when(joularResourceService.getMatchCkJoular(classMethodLineString)).thenReturn(Optional.ofNullable(ckAggregateLineDTO1));
         joularNodeEntityService.setLastElement(true);
 
-        JoularNodeEntityDTO maybeJoularNodeEntityDTO = joularNodeEntityService.createJoularNodeEntityDTO(classMethodLineString, value);
+        Optional<JoularNodeEntityDTO> optionalMaybeJoularNodeEntityDTO = joularNodeEntityService.createJoularNodeEntityDTO(classMethodLineString, value);
+        assertTrue(optionalMaybeJoularNodeEntityDTO.isPresent());
+        JoularNodeEntityDTO maybeJoularNodeEntityDTO = optionalMaybeJoularNodeEntityDTO.get();
 
         MeasurableElementDTO measurableElementDTO = createMeasurableElementDTO("org.jabref.gui.fieldeditors.LinkedFileViewModelTest", "setUp/1[java.nio.file.Path]", "org.jabref.gui.fieldeditors.LinkedFileViewModelTest.setUp");
         JoularNodeEntityDTO joularNodeEntityDTO = createJoularNodeEntityDTO(maybeJoularNodeEntityDTO.getId(), 75, value, measurableElementDTO, new ArrayList<>(), null);
@@ -161,7 +163,9 @@ class JoularNodeEntityServiceImplTest {
         when(joularResourceService.getMatchCkJoular(classMethodLineString)).thenReturn(Optional.ofNullable(ckAggregateLineDTO3));
         joularNodeEntityService.setLastElement(true);
 
-        JoularNodeEntityDTO maybeJoularNodeEntityDTO = joularNodeEntityService.createJoularNodeEntityDTO(classMethodLineString, value);
+        Optional<JoularNodeEntityDTO> optionalMaybeJoularNodeEntityDTO = joularNodeEntityService.createJoularNodeEntityDTO(classMethodLineString, value);
+        assertTrue(optionalMaybeJoularNodeEntityDTO.isPresent());
+        JoularNodeEntityDTO maybeJoularNodeEntityDTO = optionalMaybeJoularNodeEntityDTO.get();
 
         MeasurableElementDTO measurableElementDTO = createMeasurableElementDTO("org.jabref.logic.formatter.bibtexfields.UnitsToLatexFormatter", "format/1[java.lang.String]", "org.jabref.logic.formatter.bibtexfields.UnitsToLatexFormatter.format");
         JoularNodeEntityDTO joularNodeEntityDTO = createJoularNodeEntityDTO(maybeJoularNodeEntityDTO.getId(), 111, value, measurableElementDTO, ancestors, parentId);
