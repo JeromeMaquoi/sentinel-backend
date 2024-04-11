@@ -98,20 +98,23 @@ public class JoularResourceServiceImpl implements JoularResourceService {
             String className = Util.classNameParser(classMethodLine.getString(CLASS_NAME));
             String methodName = Util.methodNameParser(className, classMethodLine.getString(METHOD_NAME));
             int numberLine = classMethodLine.getInt(LINE_NUMBER);
+            //log.info("numberLine : {}", numberLine);
             if (numberLine > 0) {
                 List<CkAggregateLineDTO> allOccurrences = getCkAggregateLineHashMapDTO().getAllOccurrences(className, methodName);
+                //log.info("allOccurrences : {}", allOccurrences);
                 if (!allOccurrences.isEmpty()) {
                     for (CkAggregateLineDTO occ : allOccurrences) {
                         if (occ.getLine() <= numberLine && (occ.getLine() + occ.getLoc()) >= numberLine) {
                             return Optional.of(occ);
                         }
                     }
-                } else if (!methodName.contains("access$")) {
-                    //log.debug("No occurrence for {} {} at line {}", className, methodName, numberLine);
+                    log.warn("Occurrences found for {}.{} but no method has the good lines.", className, methodName);
+                } else {
+                    log.error("No occurrence found for {}.{}", className, methodName);
                 }
             } /*else {
-            log.warn("The number of line is negative for \"{}.{}\"", className, methodName);
-        }*/
+                log.warn("The number of line is negative for \"{}.{}\"", className, methodName);
+            }*/
         }
         return Optional.empty();
     }

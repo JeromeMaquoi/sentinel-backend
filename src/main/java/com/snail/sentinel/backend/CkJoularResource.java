@@ -68,17 +68,6 @@ public class CkJoularResource {
             // Insertion of Joular data
             joularResourceService.setFileListProvider(new ProductionFileListProvider());
             joularService.insertBatchJoularData(repoItem, commitData);
-            /*joularService.setCkAggregateLineHashMapDTO(repoItem.get(Util.NAME));
-            List<File> iterationPaths = Util.searchDirectories("joularjx-result", new File(System.getenv("REPO_DIRECTORY") + repoItem.get(Util.NAME)));
-
-            FileListProvider fileListProvider = new ProductionFileListProvider();
-
-            for (File iterationFilePath : iterationPaths) {
-                String iterationPath = iterationFilePath.getAbsolutePath();
-                JoularEntityListDTO joularEntityDTOList = joularService.OLDcreateJoularEntityDTOList(commitCompleteDTO, iterationPath, fileListProvider);
-                //insertJoularData(joularEntityDTOList);
-            }*/
-
             log.info("Ending for the repository: {}", repoItem.get(Util.NAME));
         }
         insertCommits(listCommits);

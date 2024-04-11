@@ -164,7 +164,7 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
     }
 
     public Optional<JoularNodeEntityDTO> createJoularNodeEntityDTO(String classMethodLineString, Float value) {
-        Integer lineNumber = Integer.valueOf(classMethodLineString.split(" ")[1]);
+        int lineNumber = Integer.parseInt(classMethodLineString.split(" ")[1]);
         joularNodeEntityDTO = new JoularNodeEntityDTO();
         joularNodeEntityDTO.setId(UUID.randomUUID().toString());
         joularNodeEntityDTO.setLineNumber(lineNumber);
@@ -180,7 +180,9 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
         }
         Optional<MeasurableElementDTO> optionalMeasurableElementDTO = createJoularNodeEntityMeasurableElement(classMethodLineString);
         if (optionalMeasurableElementDTO.isEmpty()) {
-            log.error("MeasurableElement not set for JoularNodeEntity with classMethodLine : {} for iteration {} of project {}", classMethodLineString, joularResourceService.getIterationDTO().getIterationId(), joularResourceService.getCommitSimpleDTO().getRepository().getName());
+            if (lineNumber > 0 && !classMethodLineString.contains("$$Lambda$") && !classMethodLineString.contains("<clinit>") && !classMethodLineString.contains("<init>")) {
+                log.error("MeasurableElement not set for JoularNodeEntity with classMethodLine : {} for iteration {} of project {}", classMethodLineString, joularResourceService.getIterationDTO().getIterationId(), joularResourceService.getCommitSimpleDTO().getRepository().getName());
+            }
             return Optional.empty();
         }
         return optionalMeasurableElementDTO.map(measurableElementDTO -> {
