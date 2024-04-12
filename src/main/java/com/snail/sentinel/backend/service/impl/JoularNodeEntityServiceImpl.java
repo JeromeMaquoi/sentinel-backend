@@ -9,7 +9,6 @@ import com.snail.sentinel.backend.service.dto.JoularNodeEntityDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineDTO;
 import com.snail.sentinel.backend.service.dto.joular.JoularNodeEntityListDTO;
 import com.snail.sentinel.backend.service.dto.measurableelement.MeasurableElementDTO;
-import com.snail.sentinel.backend.service.exceptions.NoCsvFileFoundException;
 import com.snail.sentinel.backend.service.exceptions.NoCsvLineFoundException;
 import com.snail.sentinel.backend.service.mapper.JoularNodeEntityMapper;
 
@@ -136,8 +135,6 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
             }
         } catch (IOException e) {
             throw new NoCsvLineFoundException(e);
-        } catch (NullPointerException e) {
-            throw new NoCsvFileFoundException(e);
         }
     }
 
