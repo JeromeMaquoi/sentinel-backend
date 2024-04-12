@@ -87,6 +87,17 @@ class JoularEntityServiceImplTest {
 
     @BeforeEach
     public void init() {
+        ckEntityRepository = Mockito.mock(CkEntityRepository.class);
+        ckService = new CkEntityServiceImpl(ckEntityRepository, ckEntityMapper);
+
+        joularEntityRepository = Mockito.mock(JoularEntityRepository.class);
+        ckEntityRepositoryAggregation = Mockito.mock(CkEntityRepositoryAggregation.class);
+        commitEntityService = Mockito.mock(CommitEntityService.class);
+        joularResourceService = new JoularResourceServiceImpl(commitEntityService, ckEntityRepositoryAggregation);
+
+        commitEntityRepository = Mockito.mock(CommitEntityRepository.class);
+        commitEntityServiceImpl = new CommitEntityServiceImpl(commitEntityRepository);
+
         ckAggregateLineHashMapDTO = new CkAggregateLineHashMapDTO();
         CkAggregateLineDTO ckAggregateLineDTO1 = new CkAggregateLineDTO();
         ckAggregateLineDTO1.setClassName("org.springframework.boot.context.config.ConfigDataLocationRuntimeHints");
@@ -95,6 +106,11 @@ class JoularEntityServiceImplTest {
         ckAggregateLineDTO1.setLine(new ArrayList<>(){{add(63);}});
         ckAggregateLineDTO1.setLoc(new ArrayList<>(){{add(5);}});
 
+        List<CkAggregateLineDTO> allOccurrences1 = new ArrayList<>();
+        allOccurrences1.add(ckAggregateLineDTO1);
+
+        when(ckEntityRepositoryAggregation.aggregateClassMethod("commons-configuration", "org.springframework.boot.context.config.ConfigDataLocationRuntimeHints", "getFileNames")).thenReturn(allOccurrences1);
+
         CkAggregateLineDTO ckAggregateLineDTO2 = new CkAggregateLineDTO();
         ckAggregateLineDTO2.setClassName("org.apache.commons.configuration2.tree.DefaultConfigurationKey");
         ckAggregateLineDTO2.setFilePath("filePath2");
@@ -102,26 +118,21 @@ class JoularEntityServiceImplTest {
         ckAggregateLineDTO2.setLine(new ArrayList<>(){{add(660);}});
         ckAggregateLineDTO2.setLoc(new ArrayList<>(){{add(10);}});
 
+        List<CkAggregateLineDTO> allOccurrences2 = new ArrayList<>();
+        allOccurrences2.add(ckAggregateLineDTO2);
+        when(ckEntityRepositoryAggregation.aggregateClassMethod("commons-configuration", "org.apache.commons.configuration2.tree.DefaultConfigurationKey", "nextDelimiterPos")).thenReturn(allOccurrences2);
+
         ckAggregateLineHashMapDTO.insertOne(ckAggregateLineDTO1);
         ckAggregateLineHashMapDTO.insertOne(ckAggregateLineDTO2);
 
         createCompleteCommitDTO();
 
-        ckEntityRepository = Mockito.mock(CkEntityRepository.class);
-        ckService = new CkEntityServiceImpl(ckEntityRepository, ckEntityMapper);
-
-        joularEntityRepository = Mockito.mock(JoularEntityRepository.class);
-        ckEntityRepositoryAggregation = Mockito.mock(CkEntityRepositoryAggregation.class);
-        commitEntityService = Mockito.mock(CommitEntityService.class);
-        joularResourceService = new JoularResourceServiceImpl(commitEntityService, ckEntityRepositoryAggregation);
         joularResourceService.setCkAggregateLineHashMapDTO(ckAggregateLineHashMapDTO);
+        joularResourceService.setRepoName("commons-configuration");
         joularEntityService = new JoularEntityServiceImpl(joularEntityRepository, joularEntityMapper, joularResourceService);
 
         when(ckEntityRepositoryAggregation.aggregate("commons-configuration")).thenReturn(ckAggregateLineHashMapDTO);
         //joularEntityService.setCkAggregateLineHashMapDTO("commons-configuration");
-
-        commitEntityRepository = Mockito.mock(CommitEntityRepository.class);
-        commitEntityServiceImpl = new CommitEntityServiceImpl(commitEntityRepository);
     }
 
     private void createCompleteCommitDTO() {
@@ -233,7 +244,7 @@ class JoularEntityServiceImplTest {
         JoularEntityListDTO joularEntityListDTO = new JoularEntityListDTO();
         joularEntityListDTO.add(joularEntityDTO);
 
-        assertEquals(maybeJoularEntityListDTO, joularEntityListDTO);
+        assertEquals(joularEntityListDTO, maybeJoularEntityListDTO);
     }
 
     @NotNull
@@ -308,7 +319,7 @@ class JoularEntityServiceImplTest {
         joularEntityListDTO.add(joularEntityDTO);
 
         // Assert
-        assertEquals(maybeJoularEntityListDTO, joularEntityListDTO);
+        assertEquals(joularEntityListDTO, maybeJoularEntityListDTO);
     }
 
     @Test
@@ -365,6 +376,6 @@ class JoularEntityServiceImplTest {
         joularEntityListDTO.add(joularEntityDTO);
 
         // Assert
-        assertEquals(maybeJoularEntityListDTO, joularEntityListDTO);
+        assertEquals(joularEntityListDTO, maybeJoularEntityListDTO);
     }
 }

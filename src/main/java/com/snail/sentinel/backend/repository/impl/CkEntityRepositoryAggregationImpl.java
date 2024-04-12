@@ -12,6 +12,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
 
+import java.util.List;
+
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.group;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
@@ -38,6 +40,23 @@ public class CkEntityRepositoryAggregationImpl implements CkEntityRepositoryAggr
         result.setCkAggregateLineHashMapDTO(output.getMappedResults());
         return result;
 
+    }
+
+    @Override
+    public List<CkAggregateLineDTO> aggregateClassMethod(String repoName, String className, String methodName) {
+        MatchOperation matchOperation = getRepoNameMatchOperation(repoName);
+        AddFieldsOperation addFieldsOperation = addLineLocFieldsOperation();
+        GroupOperation groupOperation = groupOperation();
+        MatchOperation classMethodMatchOperation = getClassNameAndMethodNameMatchOperation(className, methodName);
+
+        Aggregation aggregation = newAggregation(matchOperation, addFieldsOperation, groupOperation, classMethodMatchOperation);
+        AggregationResults<CkAggregateLineDTO> output = mongoTemplate.aggregate(aggregation, CkEntity.class, CkAggregateLineDTO.class);
+        log.info("Aggregate {} {} {}", repoName, className, methodName);
+        return output.getMappedResults();
+    }
+
+    private MatchOperation getClassNameAndMethodNameMatchOperation(String className, String methodName) {
+        return Aggregation.match(where("className").is(className).and("methodName").is(methodName));
     }
 
     private MatchOperation getRepoNameMatchOperation(String repoName) {

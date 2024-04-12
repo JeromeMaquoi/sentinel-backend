@@ -12,10 +12,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
 class JoularResourceServiceImplTest {
     @Mock
@@ -41,6 +43,11 @@ class JoularResourceServiceImplTest {
         ckAggregateLineDTO1.setLine(new ArrayList<>(){{add(63);}});
         ckAggregateLineDTO1.setLoc(new ArrayList<>(){{add(5);}});
 
+        List<CkAggregateLineDTO> allOccurrencesSimple = new ArrayList<>();
+        allOccurrencesSimple.add(ckAggregateLineDTO1);
+
+        when(ckEntityRepositoryAggregation.aggregateClassMethod("commons-configuration", "org.springframework.boot.context.config.ConfigDataLocationRuntimeHints", "getFileNames")).thenReturn(allOccurrencesSimple);
+
         CkAggregateLineDTO ckAggregateLineDTO2 = new CkAggregateLineDTO();
         ckAggregateLineDTO2.setClassName("org.apache.commons.configuration2.tree.DefaultConfigurationKey");
         ckAggregateLineDTO2.setFilePath("filePath2");
@@ -48,9 +55,15 @@ class JoularResourceServiceImplTest {
         ckAggregateLineDTO2.setLine(new ArrayList<>(){{add(660);}});
         ckAggregateLineDTO2.setLoc(new ArrayList<>(){{add(10);}});
 
+        List<CkAggregateLineDTO> allOccurrencesComplex = new ArrayList<>();
+        allOccurrencesComplex.add(ckAggregateLineDTO2);
+
+        when(ckEntityRepositoryAggregation.aggregateClassMethod("commons-configuration", "org.apache.commons.configuration2.tree.DefaultConfigurationKey", "nextDelimiterPos")).thenReturn(allOccurrencesComplex);
+
         ckAggregateLineHashMapDTO.insertOne(ckAggregateLineDTO1);
         ckAggregateLineHashMapDTO.insertOne(ckAggregateLineDTO2);
         joularResourceService.setCkAggregateLineHashMapDTO(ckAggregateLineHashMapDTO);
+        joularResourceService.setRepoName("commons-configuration");
     }
 
     @Test

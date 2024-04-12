@@ -26,7 +26,7 @@ import static java.lang.Integer.parseInt;
 
 @Service
 public class JoularResourceServiceImpl implements JoularResourceService {
-    private final Logger log = LoggerFactory.getLogger(JoularServiceImpl.class);
+    private final Logger log = LoggerFactory.getLogger(JoularResourceServiceImpl.class);
 
     private final CommitEntityService commitEntityService;
 
@@ -47,6 +47,8 @@ public class JoularResourceServiceImpl implements JoularResourceService {
     private MethodElementSetDTO methodElementSetDTO;
 
     private List<String> ancestors;
+
+    private String repoName;
 
     private static final String CLASS_NAME = "className";
 
@@ -92,6 +94,7 @@ public class JoularResourceServiceImpl implements JoularResourceService {
 
     @Override
     public Optional<CkAggregateLineDTO> getMatchCkJoular(String classMethodLineString) {
+        assert repoName != null : "repoName is null";
         Optional<JSONObject> optionalResult = getClassMethodLine(classMethodLineString);
         if (optionalResult.isPresent()) {
             JSONObject classMethodLine = optionalResult.get();
@@ -109,9 +112,9 @@ public class JoularResourceServiceImpl implements JoularResourceService {
                         }
                     }
                     log.warn("Occurrences found for {}.{} but no method has the good lines.", className, methodName);
-                } else {
-                    log.error("No occurrence found for {}.{}", className, methodName);
-                }
+                } /*else {
+                    log.warn("No occurrence found for {}.{}", className, methodName);
+                }*/
             } /*else {
                 log.warn("The number of line is negative for \"{}.{}\"", className, methodName);
             }*/
@@ -192,5 +195,15 @@ public class JoularResourceServiceImpl implements JoularResourceService {
     @Override
     public List<String> getAncestors() {
         return this.ancestors;
+    }
+
+    @Override
+    public void setRepoName(String repoName) {
+        this.repoName = repoName;
+    }
+
+    @Override
+    public String getRepoName() {
+        return this.repoName;
     }
 }

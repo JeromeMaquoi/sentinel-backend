@@ -35,7 +35,8 @@ public class JoularServiceImpl implements JoularService {
     @Override
     public void insertBatchJoularData(HashMap<String, String> repoItem, JSONObject commitData) {
         joularResourceService.setCommitSimpleDTO(repoItem, commitData);
-        joularResourceService.setCkAggregateLineHashMapDTO(repoItem.get(Util.NAME));
+        //joularResourceService.setCkAggregateLineHashMapDTO(repoItem.get(Util.NAME));
+        joularResourceService.setRepoName(repoItem.get(Util.NAME));
         List<File> iterationPaths = Util.searchDirectories("joularjx-result", new File(System.getenv("REPO_DIRECTORY") + repoItem.get(Util.NAME)));
         for (File iterationFilePath : iterationPaths) {
             handleOneProject(iterationFilePath.getAbsolutePath());
@@ -44,9 +45,7 @@ public class JoularServiceImpl implements JoularService {
 
     public void handleOneProject(String iterationPath) {
         log.info("Request to create JoularEntityDTO and JoularNodeEntityDTO for {}", iterationPath);
-        if (joularResourceService.getCkAggregateLineHashMapDTO() == null) {
-            throw new IllegalStateException("ckAggregateLineHashMapDTO must be set before using handleOneJoularIteration method");
-        }
+        assert joularResourceService.getCkAggregateLineHashMapDTO() != null : "ckAggregateLineHashMapDTO must be set before using handleOneJoularIteration method";
         Set<Path> fileList = joularResourceService.getFileListProvider().getFileList(iterationPath);
         for (Path iterationFilePath : fileList) {
             handleOneIterationOfOneProject(iterationFilePath);

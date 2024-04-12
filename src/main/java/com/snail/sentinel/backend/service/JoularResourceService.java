@@ -34,4 +34,6 @@ public interface JoularResourceService {
     JoularNodeEntityListDTO getJoularNodeEntityListDTO();
     void setAncestors(List<String> ancestors);
     List<String> getAncestors();
+    void setRepoName(String repoName);
+    String getRepoName();
 }
