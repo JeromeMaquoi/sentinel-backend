@@ -1,9 +1,11 @@
 #!/bin/bash
 
-start=$(date +%s)
+source ./logs.sh
+
+log_title_output "Start server configuration"
 
 sudo apt-get update && apt-get install -y openjdk-19-jdk openjdk-17-jdk maven docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-sudo apt install docker-compose xmlstarlet
+sudo apt install docker-compose xmlstarlet xvfb
 
 # TODO update to JDK 15
 # Install jdk 15
@@ -20,9 +22,4 @@ else
     echo "OpenJDK15 already installed !"
 fi
 
-echo "Configuration done ! Writing total execution time to file..."
-end=$(date +%s)
-diff=$((end-start))
-cd "$PLUGINS_DIRECTORY" || exit
-echo "TOTAL EXECUTION TIME" > ./totalTime.txt
-echo "Server configuration: $diff seconds." >> ./totalTime.txt
+log_and_print_output_with_date "Server configuration done !"

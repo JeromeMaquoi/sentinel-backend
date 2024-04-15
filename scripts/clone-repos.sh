@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source ./logs.sh
+
 # Clone repositories
 cd "$REPO_DIRECTORY" || exit
 
@@ -9,9 +11,9 @@ cd "$REPO_DIRECTORY" || exit
 # -----------
 if [ ! -d "spring-boot" ]; then
     git clone https://github.com/spring-projects/spring-boot "$REPO_DIRECTORY/spring-boot"
-    echo "Repository spring-boot cloned successfully!"
+    log_and_print_output_with_date "Repository spring-boot cloned successfully!"
 else
-    echo "Repository spring-boot already there!"
+    log_and_print_output_with_date "Repository spring-boot already there!"
 fi
 sudo chmod -R 777 "$REPO_DIRECTORY/spring-boot/"
 cd "$REPO_DIRECTORY/spring-boot" || exit
@@ -25,9 +27,9 @@ echo -e "\n\n"
 # ---------------------
 if [ ! -d "commons-configuration" ]; then
     git clone https://github.com/apache/commons-configuration "$REPO_DIRECTORY/commons-configuration"
-    echo "Repository commons-configuration cloned successfully!"
+    log_and_print_output_with_date "Repository commons-configuration cloned successfully!"
 else
-    echo "Repository commons-configuration already cloned !"
+    log_and_print_output_with_date "Repository commons-configuration already cloned !"
 fi
 sudo chmod -R 777 "$REPO_DIRECTORY/commons-configuration/"
 cd "$REPO_DIRECTORY/commons-configuration" || exit
@@ -40,9 +42,9 @@ echo -e "\n\n"
 # ------
 if [ ! -d "jabref" ]; then
     git clone https://github.com/JabRef/jabref "$REPO_DIRECTORY/jabref"
-    echo "Repository jabref cloned successfully!"
+    log_and_print_output_with_date "Repository jabref cloned successfully!"
 else
-    echo "Repository jabref already cloned !"
+    log_and_print_output_with_date "Repository jabref already cloned !"
 fi
 sudo chmod -R 777 "$REPO_DIRECTORY/jabref/"
 cd "$REPO_DIRECTORY/jabref" || exit
@@ -55,9 +57,9 @@ echo -e "\n\n"
 # -------------
 if [ ! -d "hibernate-orm" ]; then
     git clone https://github.com/hibernate/hibernate-orm.git "$REPO_DIRECTORY/hibernate-orm"
-    echo "Repository hibernate-orm cloned successfully !"
+    log_and_print_output_with_date "Repository hibernate-orm cloned successfully !"
 else
-    echo "Repository hibernate-orm already cloned !"
+    log_and_print_output_with_date "Repository hibernate-orm already cloned !"
 fi
 sudo chmod -R 777 "$REPO_DIRECTORY/hibernate-orm"
 cd "$REPO_DIRECTORY/hibernate-orm" || exit
@@ -70,9 +72,9 @@ echo -e "\n\n"
 # -----
 if [ ! -d "spoon" ]; then
     git clone https://github.com/INRIA/spoon.git "$REPO_DIRECTORY/spoon"
-    echo "Repository spoon cloned successfully !"
+    log_and_print_output_with_date "Repository spoon cloned successfully !"
 else
-    echo "Repository spoon already cloned !"
+    log_and_print_output_with_date "Repository spoon already cloned !"
 fi
 
 sudo chmod -R 777 "$REPO_DIRECTORY/spoon"

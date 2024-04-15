@@ -1,9 +1,8 @@
 #!/bin/bash
 
-#LOG_FILE="docker-sentinel.log"
-#exec &> >(tee -a "$LOG_FILE")
+source ./logs.sh
 
-start=$(date +%s)
+log_title_output "Start docker-sentinel workflow"
 
 docker stop sentinelbackend_app_1 sentinelbackend_mongodb_1
 docker rm sentinelbackend_app_1 sentinelbackend_mongodb_1
@@ -15,13 +14,6 @@ export COMPOSE_PROJECT_NAME=sentinelbackend
 sudo ./mvnw clean
 ./mvnw package -Pprod jib:dockerBuild
 
-echo "Clean and package done ! Writing total execution time to file..."
-end=$(date +%s)
-diff=$((end-start))
-chmod 777 ./plugins/totalTime.txt
-echo "Clean and package: $diff seconds." >> ./plugins/totalTime.txt
+log_and_print_output_with_date "Clean and package done ! Starting docker build..."
 
 docker-compose -f src/main/docker/app.yml up --build
-
-#exec &> /dev/tty
-#chmod 777 "$LOG_FILE"
