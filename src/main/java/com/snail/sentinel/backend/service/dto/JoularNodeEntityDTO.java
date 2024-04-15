@@ -33,6 +33,10 @@ public class JoularNodeEntityDTO implements Serializable {
 
     private String parent;
 
+    public String getLabel() {
+        return this.measurableElement.getClassMethodSignature() + " " + this.lineNumber;
+    }
+
     public String getId() {
         return id;
     }

@@ -8,6 +8,7 @@ import com.snail.sentinel.backend.service.JoularResourceService;
 import com.snail.sentinel.backend.service.dto.JoularNodeEntityDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineDTO;
 import com.snail.sentinel.backend.service.dto.joular.JoularNodeEntityListDTO;
+import com.snail.sentinel.backend.service.dto.joularNode.JoularNodeHashMapDTO;
 import com.snail.sentinel.backend.service.dto.measurableelement.MeasurableElementDTO;
 import com.snail.sentinel.backend.service.exceptions.NoCsvLineFoundException;
 import com.snail.sentinel.backend.service.mapper.JoularNodeEntityMapper;
@@ -40,6 +41,8 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
     private JoularNodeEntityDTO joularNodeEntityDTO;
 
     private boolean isLastElement;
+
+    private JoularNodeHashMapDTO joularNodeHashMapDTO;
 
     public JoularNodeEntityServiceImpl(
             JoularNodeEntityRepository joularNodeEntityRepository,
@@ -120,6 +123,7 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
     @Override
     public void handleJoularNodeEntityCreationForOneIteration(Path iterationFilePath) {
         log.info("Request to handle JoularNodeEntity for iteration {}", iterationFilePath);
+        this.joularNodeHashMapDTO = new JoularNodeHashMapDTO();
         createJoularNodeEntityDTOList(iterationFilePath);
         bulkAdd(joularResourceService.getJoularNodeEntityListDTO().getList());
     }
@@ -147,11 +151,11 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
         // Check if last element of array
         for (String methodNameAndLine : allLineNodes) {
             setLastElement(allLineNodes.indexOf(methodNameAndLine) == allLineNodes.size() - 1);
-            handleOneMethod(methodNameAndLine, value);
+            handleOneMethodFromOneCsvLine(methodNameAndLine, value);
         }
     }
 
-    public void handleOneMethod(String methodNameAndLine, Float value) {
+    public void handleOneMethodFromOneCsvLine(String methodNameAndLine, Float value) {
         Optional<JoularNodeEntityDTO> optionalJoularNodeEntity = createJoularNodeEntityDTO(methodNameAndLine, value);
         if (optionalJoularNodeEntity.isPresent()) {
             JoularNodeEntityDTO joularNodeEntity = optionalJoularNodeEntity.get();
@@ -162,19 +166,35 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
 
     public Optional<JoularNodeEntityDTO> createJoularNodeEntityDTO(String classMethodLineString, Float value) {
         int lineNumber = Integer.parseInt(classMethodLineString.split(" ")[1]);
-        joularNodeEntityDTO = new JoularNodeEntityDTO();
-        joularNodeEntityDTO.setId(UUID.randomUUID().toString());
-        joularNodeEntityDTO.setLineNumber(lineNumber);
-        joularNodeEntityDTO.setScope("app");
-        joularNodeEntityDTO.setMonitoringType("calltrees");
-        joularNodeEntityDTO.setIteration(joularResourceService.getIterationDTO());
-        joularNodeEntityDTO.setCommit(joularResourceService.getCommitSimpleDTO());
-        List<String> ancestors = new ArrayList<>(joularResourceService.getAncestors());
-        joularNodeEntityDTO.setAncestors(ancestors);
-        joularNodeEntityDTO.setParent(getParentFromAncestors());
-        if (isLastElement()) {
-            joularNodeEntityDTO.setValue(value);
+        assert this.joularNodeHashMapDTO != null : "joularNodeHashMapDTO is null";
+        if (this.joularNodeHashMapDTO.isJoularNodeEntityDTOInMap(classMethodLineString)) {
+            joularNodeEntityDTO = this.joularNodeHashMapDTO.getJoularNodeEntityDTO(classMethodLineString);
+        } else {
+            Optional<MeasurableElementDTO> optionalMeasurableElementDTO = getMeasurableElementDTO(classMethodLineString, lineNumber);
+            if (optionalMeasurableElementDTO.isPresent()) {
+                joularNodeEntityDTO = new JoularNodeEntityDTO();
+                joularNodeEntityDTO.setMeasurableElement(optionalMeasurableElementDTO.get());
+                joularNodeEntityDTO.setId(UUID.randomUUID().toString());
+                joularNodeEntityDTO.setLineNumber(lineNumber);
+                joularNodeEntityDTO.setScope("app");
+                joularNodeEntityDTO.setMonitoringType("calltrees");
+                joularNodeEntityDTO.setIteration(joularResourceService.getIterationDTO());
+                joularNodeEntityDTO.setCommit(joularResourceService.getCommitSimpleDTO());
+                List<String> ancestors = new ArrayList<>(joularResourceService.getAncestors());
+                joularNodeEntityDTO.setAncestors(ancestors);
+                joularNodeEntityDTO.setParent(getParentFromAncestors());
+                if (isLastElement()) {
+                    joularNodeEntityDTO.setValue(value);
+                }
+                this.joularNodeHashMapDTO.insertOne(joularNodeEntityDTO);
+            } else {
+                return Optional.empty();
+            }
         }
+        return Optional.of(joularNodeEntityDTO);
+    }
+
+    public Optional<MeasurableElementDTO> getMeasurableElementDTO(String classMethodLineString, int lineNumber) {
         Optional<MeasurableElementDTO> optionalMeasurableElementDTO = createJoularNodeEntityMeasurableElement(classMethodLineString);
         if (optionalMeasurableElementDTO.isEmpty()) {
             if (lineNumber > 0 && !classMethodLineString.contains("$$Lambda$") && !classMethodLineString.contains("<clinit>") && !classMethodLineString.contains("<init>")) {
@@ -182,10 +202,7 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
             }
             return Optional.empty();
         }
-        return optionalMeasurableElementDTO.map(measurableElementDTO -> {
-            joularNodeEntityDTO.setMeasurableElement(measurableElementDTO);
-            return Optional.of(joularNodeEntityDTO);
-        }).orElse(Optional.empty());
+        return optionalMeasurableElementDTO;
     }
 
     public String getParentFromAncestors() {
@@ -216,5 +233,9 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
 
     public void setLastElement(boolean lastElement) {
         isLastElement = lastElement;
+    }
+
+    public void setJoularNodeHashMapDTO(JoularNodeHashMapDTO joularNodeHashMapDTO) {
+        this.joularNodeHashMapDTO = joularNodeHashMapDTO;
     }
 }

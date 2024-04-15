@@ -12,6 +12,7 @@ import com.snail.sentinel.backend.service.dto.commit.CommitCompleteDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
 import com.snail.sentinel.backend.service.dto.joular.JoularEntityListDTO;
 import com.snail.sentinel.backend.service.dto.joular.JoularNodeEntityListDTO;
+import com.snail.sentinel.backend.service.dto.joularNode.JoularNodeHashMapDTO;
 import com.snail.sentinel.backend.service.dto.measurableelement.MethodElementSetDTO;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -26,7 +27,7 @@ import static java.lang.Integer.parseInt;
 
 @Service
 public class JoularResourceServiceImpl implements JoularResourceService {
-    private final Logger log = LoggerFactory.getLogger(JoularServiceImpl.class);
+    private final Logger log = LoggerFactory.getLogger(JoularResourceServiceImpl.class);
 
     private final CommitEntityService commitEntityService;
 
@@ -53,6 +54,8 @@ public class JoularResourceServiceImpl implements JoularResourceService {
     private static final String METHOD_NAME = "methodName";
 
     private static final String LINE_NUMBER = "lineNumber";
+
+    private JoularNodeHashMapDTO joularNodeEntityDTOHashMap;
 
     public JoularResourceServiceImpl(CommitEntityService commitEntityService, CkEntityRepositoryAggregation ckEntityRepositoryAggregation) {
         this.commitEntityService = commitEntityService;
@@ -221,5 +224,10 @@ public class JoularResourceServiceImpl implements JoularResourceService {
     @Override
     public List<String> getAncestors() {
         return this.ancestors;
+    }
+
+    @Override
+    public void setJoularNodeEntityServiceImpl(JoularNodeHashMapDTO joularNodeHashMapDTO) {
+        this.joularNodeEntityDTOHashMap = joularNodeHashMapDTO;
     }
 }

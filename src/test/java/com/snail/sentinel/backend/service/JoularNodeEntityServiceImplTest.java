@@ -9,6 +9,7 @@ import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineHashMapDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
 import com.snail.sentinel.backend.service.dto.joular.JoularNodeEntityListDTO;
+import com.snail.sentinel.backend.service.dto.joularNode.JoularNodeHashMapDTO;
 import com.snail.sentinel.backend.service.dto.measurableelement.MeasurableElementDTO;
 import com.snail.sentinel.backend.service.impl.JoularNodeEntityServiceImpl;
 import com.snail.sentinel.backend.service.impl.JoularResourceServiceImpl;
@@ -75,6 +76,7 @@ class JoularNodeEntityServiceImplTest {
         ckAggregateLineHashMapDTO.insertOne(ckAggregateLineDTO3);
 
         joularResourceService.setCkAggregateLineHashMapDTO(ckAggregateLineHashMapDTO);
+        joularNodeEntityService.setJoularNodeHashMapDTO(new JoularNodeHashMapDTO());
     }
 
     public CkAggregateLineDTO createCkAggregateLineDTO(String className, String methodName, int line, int loc) {
