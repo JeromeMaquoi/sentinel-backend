@@ -120,28 +120,32 @@ public class JoularResourceServiceImpl implements JoularResourceService {
             log.debug("Only one occurrence for {}.{}", className, methodName);
             return Optional.of(allOccurrences.get(0));
         } else {
-            log.debug("Multiple occurrences for {}.{}", className, methodName);
-            CkAggregateLineDTO closestCkAggregateLineDTO = null;
-            int lineGap = 100;
-            for (CkAggregateLineDTO occ : allOccurrences) {
-                if (occ.getLine() <= numberLine && (occ.getLine() + occ.getLoc()) >= numberLine) {
-                    log.debug("Occurrence found with the good lines.");
-                    return Optional.of(occ);
-                }
-                int lastMethodLine = occ.getLine() + occ.getLoc();
-                if (lastMethodLine < numberLine && numberLine - lastMethodLine < lineGap) {
-                    closestCkAggregateLineDTO = occ;
-                    lineGap = numberLine - lastMethodLine;
-                    log.debug("New closest occurrence {}.{} with line gap of {}.", closestCkAggregateLineDTO.getClassName(), closestCkAggregateLineDTO.getMethodName(), lineGap);
-                }
-            }
-            if (closestCkAggregateLineDTO == null) {
-                log.error("No method has the good lines for {}.{} {}", className, methodName, numberLine);
-                return Optional.empty();
-            }
-            log.debug("Good occurrence : {}.{}", closestCkAggregateLineDTO.getClassName(), closestCkAggregateLineDTO.getMethodName());
-            return Optional.of(closestCkAggregateLineDTO);
+            return findOccFromMultipleOcc(allOccurrences, className, methodName, numberLine);
         }
+    }
+
+    public Optional<CkAggregateLineDTO> findOccFromMultipleOcc(List<CkAggregateLineDTO> allOccurrences, String className, String methodName, int numberLine) {
+        log.debug("Multiple occurrences for {}.{}", className, methodName);
+        CkAggregateLineDTO closestCkAggregateLineDTO = null;
+        int lineGap = 100;
+        for (CkAggregateLineDTO occ : allOccurrences) {
+            if (occ.getLine() <= numberLine && (occ.getLine() + occ.getLoc()) >= numberLine) {
+                log.debug("Occurrence found with the good lines.");
+                return Optional.of(occ);
+            }
+            int lastMethodLine = occ.getLine() + occ.getLoc();
+            if (lastMethodLine < numberLine && numberLine - lastMethodLine < lineGap) {
+                closestCkAggregateLineDTO = occ;
+                lineGap = numberLine - lastMethodLine;
+                log.debug("New closest occurrence {}.{} with line gap of {}.", closestCkAggregateLineDTO.getClassName(), closestCkAggregateLineDTO.getMethodName(), lineGap);
+            }
+        }
+        if (closestCkAggregateLineDTO == null) {
+            log.error("No method has the good lines for {}.{} {}", className, methodName, numberLine);
+            return Optional.empty();
+        }
+        log.debug("Good occurrence : {}.{}", closestCkAggregateLineDTO.getClassName(), closestCkAggregateLineDTO.getMethodName());
+        return Optional.of(closestCkAggregateLineDTO);
     }
 
     public Optional<JSONObject> getClassMethodLine(String metric) {
