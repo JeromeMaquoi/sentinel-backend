@@ -12,7 +12,7 @@ import com.snail.sentinel.backend.service.dto.commit.CommitCompleteDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
 import com.snail.sentinel.backend.service.dto.joular.JoularEntityListDTO;
 import com.snail.sentinel.backend.service.dto.joular.JoularNodeEntityListDTO;
-import com.snail.sentinel.backend.service.dto.joularNode.JoularNodeHashMapDTO;
+import com.snail.sentinel.backend.service.dto.joularnode.JoularNodeHashMapDTO;
 import com.snail.sentinel.backend.service.dto.measurableelement.MethodElementSetDTO;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -110,6 +110,7 @@ public class JoularResourceServiceImpl implements JoularResourceService {
                 log.warn("The number of line is negative for \"{}.{}\"", className, methodName);
             }*/
         }
+        log.debug("getMatchCkJoular empty for {}", classMethodLineString);
         return Optional.empty();
     }
 
@@ -163,6 +164,7 @@ public class JoularResourceServiceImpl implements JoularResourceService {
             jsonObject.put(LINE_NUMBER, numberLine);
             return Optional.of(jsonObject);
         }
+        log.debug("getClassMethodLine empty for {}", metric);
         return Optional.empty();
     }
 

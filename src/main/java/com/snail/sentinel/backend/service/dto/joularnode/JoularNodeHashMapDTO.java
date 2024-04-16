@@ -1,4 +1,4 @@
-package com.snail.sentinel.backend.service.dto.joularNode;
+package com.snail.sentinel.backend.service.dto.joularnode;
 
 import com.snail.sentinel.backend.service.dto.JoularNodeEntityDTO;
 

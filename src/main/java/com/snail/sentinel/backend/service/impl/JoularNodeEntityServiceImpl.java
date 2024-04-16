@@ -8,7 +8,7 @@ import com.snail.sentinel.backend.service.JoularResourceService;
 import com.snail.sentinel.backend.service.dto.JoularNodeEntityDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineDTO;
 import com.snail.sentinel.backend.service.dto.joular.JoularNodeEntityListDTO;
-import com.snail.sentinel.backend.service.dto.joularNode.JoularNodeHashMapDTO;
+import com.snail.sentinel.backend.service.dto.joularnode.JoularNodeHashMapDTO;
 import com.snail.sentinel.backend.service.dto.measurableelement.MeasurableElementDTO;
 import com.snail.sentinel.backend.service.exceptions.NoCsvLineFoundException;
 import com.snail.sentinel.backend.service.mapper.JoularNodeEntityMapper;
@@ -170,39 +170,37 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
         if (this.joularNodeHashMapDTO.isJoularNodeEntityDTOInMap(classMethodLineString)) {
             joularNodeEntityDTO = this.joularNodeHashMapDTO.getJoularNodeEntityDTO(classMethodLineString);
         } else {
-            Optional<MeasurableElementDTO> optionalMeasurableElementDTO = getMeasurableElementDTO(classMethodLineString, lineNumber);
-            if (optionalMeasurableElementDTO.isPresent()) {
-                joularNodeEntityDTO = new JoularNodeEntityDTO();
-                joularNodeEntityDTO.setMeasurableElement(optionalMeasurableElementDTO.get());
-                joularNodeEntityDTO.setId(UUID.randomUUID().toString());
-                joularNodeEntityDTO.setLineNumber(lineNumber);
-                joularNodeEntityDTO.setScope("app");
-                joularNodeEntityDTO.setMonitoringType("calltrees");
-                joularNodeEntityDTO.setIteration(joularResourceService.getIterationDTO());
-                joularNodeEntityDTO.setCommit(joularResourceService.getCommitSimpleDTO());
-                List<String> ancestors = new ArrayList<>(joularResourceService.getAncestors());
-                joularNodeEntityDTO.setAncestors(ancestors);
-                joularNodeEntityDTO.setParent(getParentFromAncestors());
-                if (isLastElement()) {
-                    joularNodeEntityDTO.setValue(value);
-                }
+            Optional<MeasurableElementDTO> optionalMeasurableElementDTO = createJoularNodeEntityMeasurableElement(classMethodLineString);
+            if (optionalMeasurableElementDTO.isPresent() && lineNumber > 0) {
+                MeasurableElementDTO measurableElementDTO = optionalMeasurableElementDTO.get();
+                joularNodeEntityDTO = populateJoularNodeEntityDTO(measurableElementDTO, lineNumber, value);
                 this.joularNodeHashMapDTO.insertOne(joularNodeEntityDTO);
             } else {
+                if (!classMethodLineString.contains("$$Lambda$") && !classMethodLineString.contains("<clinit>") && !classMethodLineString.contains("<init>")){
+                    log.error("MeasurableElement not set for JoularNodeEntity with classMethodLine : {} for iteration {} of project {}", classMethodLineString, joularResourceService.getIterationDTO().getIterationId(), joularResourceService.getCommitSimpleDTO().getRepository().getName());
+                }
                 return Optional.empty();
             }
         }
         return Optional.of(joularNodeEntityDTO);
     }
 
-    public Optional<MeasurableElementDTO> getMeasurableElementDTO(String classMethodLineString, int lineNumber) {
-        Optional<MeasurableElementDTO> optionalMeasurableElementDTO = createJoularNodeEntityMeasurableElement(classMethodLineString);
-        if (optionalMeasurableElementDTO.isEmpty()) {
-            if (lineNumber > 0 && !classMethodLineString.contains("$$Lambda$") && !classMethodLineString.contains("<clinit>") && !classMethodLineString.contains("<init>")) {
-                log.error("MeasurableElement not set for JoularNodeEntity with classMethodLine : {} for iteration {} of project {}", classMethodLineString, joularResourceService.getIterationDTO().getIterationId(), joularResourceService.getCommitSimpleDTO().getRepository().getName());
-            }
-            return Optional.empty();
+    public JoularNodeEntityDTO populateJoularNodeEntityDTO(MeasurableElementDTO measurableElementDTO, int lineNumber, Float value) {
+        JoularNodeEntityDTO localJoularNodeEntityDTO = new JoularNodeEntityDTO();
+        localJoularNodeEntityDTO.setMeasurableElement(measurableElementDTO);
+        localJoularNodeEntityDTO.setId(UUID.randomUUID().toString());
+        localJoularNodeEntityDTO.setLineNumber(lineNumber);
+        localJoularNodeEntityDTO.setScope("app");
+        localJoularNodeEntityDTO.setMonitoringType("calltrees");
+        localJoularNodeEntityDTO.setIteration(joularResourceService.getIterationDTO());
+        localJoularNodeEntityDTO.setCommit(joularResourceService.getCommitSimpleDTO());
+        List<String> ancestors = new ArrayList<>(joularResourceService.getAncestors());
+        localJoularNodeEntityDTO.setAncestors(ancestors);
+        localJoularNodeEntityDTO.setParent(getParentFromAncestors());
+        if (isLastElement()) {
+            localJoularNodeEntityDTO.setValue(value);
         }
-        return optionalMeasurableElementDTO;
+        return localJoularNodeEntityDTO;
     }
 
     public String getParentFromAncestors() {
@@ -220,6 +218,7 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
             String classMethodSignature = classMethodLineString.substring(0, classMethodLineString.lastIndexOf(" "));
             return Optional.of(Util.getMeasurableElementForJoular(matchedCkJoular, classMethodSignature));
         }
+        log.debug("createJoularNodeEntityMeasurableElement empty for {}", classMethodLineString);
         return Optional.empty();
     }
 

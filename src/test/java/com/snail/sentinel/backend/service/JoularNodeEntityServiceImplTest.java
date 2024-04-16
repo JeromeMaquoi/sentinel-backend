@@ -9,8 +9,9 @@ import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineHashMapDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
 import com.snail.sentinel.backend.service.dto.joular.JoularNodeEntityListDTO;
-import com.snail.sentinel.backend.service.dto.joularNode.JoularNodeHashMapDTO;
+import com.snail.sentinel.backend.service.dto.joularnode.JoularNodeHashMapDTO;
 import com.snail.sentinel.backend.service.dto.measurableelement.MeasurableElementDTO;
+import com.snail.sentinel.backend.service.dto.repository.RepositorySimpleDTO;
 import com.snail.sentinel.backend.service.impl.JoularNodeEntityServiceImpl;
 import com.snail.sentinel.backend.service.impl.JoularResourceServiceImpl;
 import com.snail.sentinel.backend.service.mapper.JoularNodeEntityMapper;
@@ -155,6 +156,23 @@ class JoularNodeEntityServiceImplTest {
     }
 
     @Test
+    void emptyCreateJoularNodeEntityDTOTest() {
+        String classMethodLineString = "org.jabref.gui.fieldeditors.LinkedFileViewModelTest.setUp 75 75 75";
+        Float value = 1.2417F;
+
+        CommitSimpleDTO commitSimpleDTO = mock(CommitSimpleDTO.class);
+        RepositorySimpleDTO repositorySimpleDTO = mock(RepositorySimpleDTO.class);
+        IterationDTO iterationDTO = mock(IterationDTO.class);
+        when(joularResourceService.getIterationDTO()).thenReturn(iterationDTO);
+        when(joularResourceService.getCommitSimpleDTO()).thenReturn(commitSimpleDTO);
+        when(commitSimpleDTO.getRepository()).thenReturn(repositorySimpleDTO);
+        when(repositorySimpleDTO.getName()).thenReturn("jabref");
+
+        Optional<JoularNodeEntityDTO> optionalMaybeJoularNodeEntityDTO = joularNodeEntityService.createJoularNodeEntityDTO(classMethodLineString, value);
+        assertTrue(optionalMaybeJoularNodeEntityDTO.isEmpty());
+    }
+
+    @Test
     void childCreateJoularNodeEntityDTOTest() {
         String parentId = "1234";
         String classMethodLineString = "org.jabref.logic.formatter.bibtexfields.UnitsToLatexFormatter.format 111";
@@ -171,6 +189,24 @@ class JoularNodeEntityServiceImplTest {
 
         MeasurableElementDTO measurableElementDTO = createMeasurableElementDTO("org.jabref.logic.formatter.bibtexfields.UnitsToLatexFormatter", "format/1[java.lang.String]", "org.jabref.logic.formatter.bibtexfields.UnitsToLatexFormatter.format");
         JoularNodeEntityDTO joularNodeEntityDTO = createJoularNodeEntityDTO(maybeJoularNodeEntityDTO.getId(), 111, value, measurableElementDTO, ancestors, parentId);
+
+        assertEquals(joularNodeEntityDTO, maybeJoularNodeEntityDTO);
+    }
+
+    @Test
+    void joularNodeEntityDTOInMapCreateJoularNodeEntityDTOTest() {
+        String classMethodLineString = "org.jabref.gui.fieldeditors.LinkedFileViewModelTest.setUp 75";
+        Float value = 1.2417F;
+
+        MeasurableElementDTO measurableElementDTO = createMeasurableElementDTO("org.jabref.gui.fieldeditors.LinkedFileViewModelTest", "setUp/1[java.nio.file.Path]", "org.jabref.gui.fieldeditors.LinkedFileViewModelTest.setUp");
+        JoularNodeEntityDTO joularNodeEntityDTO = createJoularNodeEntityDTO("1234", 75, value, measurableElementDTO, new ArrayList<>(), null);
+        JoularNodeHashMapDTO joularNodeHashMapDTO = new JoularNodeHashMapDTO();
+        joularNodeHashMapDTO.insertOne(joularNodeEntityDTO);
+        joularNodeEntityService.setJoularNodeHashMapDTO(joularNodeHashMapDTO);
+
+        Optional<JoularNodeEntityDTO> optionalMaybeJoularNodeEntityDTO = joularNodeEntityService.createJoularNodeEntityDTO(classMethodLineString, value);
+        assertTrue(optionalMaybeJoularNodeEntityDTO.isPresent());
+        JoularNodeEntityDTO maybeJoularNodeEntityDTO = optionalMaybeJoularNodeEntityDTO.get();
 
         assertEquals(joularNodeEntityDTO, maybeJoularNodeEntityDTO);
     }
