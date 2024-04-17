@@ -109,6 +109,12 @@ class JoularResourceServiceImplTest {
     }
 
     @Test
+    void emptyGetClassMethodLineTest() {
+        Optional<JSONObject> optionalResult = joularResourceService.getClassMethodLine("org.springframework.boot.context.config.ConfigDataLocationRuntimeHints.getFileNames 60 59 46");
+        assertTrue(optionalResult.isEmpty());
+    }
+
+    @Test
     void simpleGetMatchCkJoularTest() {
         String line = "org.springframework.boot.context.config.ConfigDataLocationRuntimeHints.getFileNames 67";
         Optional<CkAggregateLineDTO> optionalMaybeCkAggregateLineDTO = joularResourceService.getMatchCkJoular(line);

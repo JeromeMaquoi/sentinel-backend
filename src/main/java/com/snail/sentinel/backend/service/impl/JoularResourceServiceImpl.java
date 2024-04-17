@@ -26,7 +26,7 @@ import static java.lang.Integer.parseInt;
 
 @Service
 public class JoularResourceServiceImpl implements JoularResourceService {
-    private final Logger log = LoggerFactory.getLogger(JoularServiceImpl.class);
+    private final Logger log = LoggerFactory.getLogger(JoularResourceServiceImpl.class);
 
     private final CommitEntityService commitEntityService;
 
@@ -107,6 +107,7 @@ public class JoularResourceServiceImpl implements JoularResourceService {
                 log.warn("The number of line is negative for \"{}.{}\"", className, methodName);
             }*/
         }
+        log.debug("getMatchCkJoular empty for {}", classMethodLineString);
         return Optional.empty();
     }
 
@@ -160,6 +161,7 @@ public class JoularResourceServiceImpl implements JoularResourceService {
             jsonObject.put(LINE_NUMBER, numberLine);
             return Optional.of(jsonObject);
         }
+        log.debug("getClassMethodLine empty for {}", metric);
         return Optional.empty();
     }
 
