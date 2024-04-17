@@ -7,7 +7,6 @@ import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineHashMapDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
 import com.snail.sentinel.backend.service.dto.joular.JoularEntityListDTO;
 import com.snail.sentinel.backend.service.dto.joular.JoularNodeEntityListDTO;
-import com.snail.sentinel.backend.service.dto.joularnode.JoularNodeHashMapDTO;
 import com.snail.sentinel.backend.service.dto.measurableelement.MethodElementSetDTO;
 import org.json.JSONObject;
 
@@ -35,5 +34,4 @@ public interface JoularResourceService {
     JoularNodeEntityListDTO getJoularNodeEntityListDTO();
     void setAncestors(List<String> ancestors);
     List<String> getAncestors();
-    void setJoularNodeEntityServiceImpl(JoularNodeHashMapDTO joularNodeHashMapDTO);
 }
