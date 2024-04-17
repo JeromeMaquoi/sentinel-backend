@@ -143,11 +143,14 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
     }
 
     public void handleOneCsvLine(JSONObject line) {
+        log.debug("--------");
+        log.debug("New line:");
         String nextLine = line.keySet().iterator().next();
         Float value = line.getFloat(nextLine);
         List<String> allLineNodes = getEachNodeFromStringLine(nextLine);
         // List of all ancestors of one method of the line
         joularResourceService.setAncestors(new ArrayList<>());
+        log.debug("ancestors list reset");
         // Check if last element of array
         for (String methodNameAndLine : allLineNodes) {
             setLastElement(allLineNodes.indexOf(methodNameAndLine) == allLineNodes.size() - 1);
@@ -166,15 +169,20 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
             if (optionalMeasurableElementDTO.isPresent() && lineNumber > 0) {
                 MeasurableElementDTO measurableElementDTO = optionalMeasurableElementDTO.get();
                 joularNodeEntityDTO = populateJoularNodeEntityDTO(measurableElementDTO, lineNumber, value);
+                log.debug("ancestors for {} : {}", joularNodeEntityDTO.getMeasurableElement().getMethodName(), joularNodeEntityDTO.getAncestors());
                 this.joularNodeHashMapDTO.insertOne(joularNodeEntityDTO);
                 joularResourceService.getAncestors().add(joularNodeEntityDTO.getId());
+                log.debug("ancestors for next cell : {}", joularResourceService.getAncestors());
                 joularResourceService.getJoularNodeEntityListDTO().add(joularNodeEntityDTO);
 
             } else if (!classMethodLineString.contains("$$Lambda$") && !classMethodLineString.contains("<clinit>") && !classMethodLineString.contains("<init>")){
                 log.error("MeasurableElement not set for JoularNodeEntity with classMethodLine : {} for iteration {} of project {}", classMethodLineString, joularResourceService.getIterationDTO().getIterationId(), joularResourceService.getCommitSimpleDTO().getRepository().getName());
             }
+        } else {
+            log.debug("JoularNodeEntityDTO {} already in map. Adding its id to the ancestors list", classMethodLineString);
+            String id = this.joularNodeHashMapDTO.getJoularNodeEntityDTO(classMethodLineString).getId();
+            joularResourceService.getAncestors().add(id);
         }
-        log.debug("JoularNodeEntityDTO already in map");
     }
 
     public JoularNodeEntityDTO populateJoularNodeEntityDTO(MeasurableElementDTO measurableElementDTO, int lineNumber, Float value) {

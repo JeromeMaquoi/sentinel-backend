@@ -300,6 +300,50 @@ class JoularNodeEntityServiceImplTest {
     }
 
     @Test
+    void duplicatesCreateJoularNodeEntityDTOListTest() {
+        String classMethodLineString1 = "org.jabref.gui.fieldeditors.LinkedFileViewModelTest.setUp 75";
+        when(joularResourceService.getMatchCkJoular(classMethodLineString1)).thenReturn(Optional.ofNullable(ckAggregateLineDTO1));
+        String classMethodLineString2 = "org.jabref.logic.formatter.bibtexfields.UnitsToLatexFormatterTest.formatExample 28";
+        when(joularResourceService.getMatchCkJoular(classMethodLineString2)).thenReturn(Optional.ofNullable(ckAggregateLineDTO2));
+        String classMethodLineString3 = "org.jabref.logic.formatter.bibtexfields.UnitsToLatexFormatter.format 111";
+        when(joularResourceService.getMatchCkJoular(classMethodLineString3)).thenReturn(Optional.ofNullable(ckAggregateLineDTO3));
+
+        when(joularResourceService.getAncestors()).thenCallRealMethod();
+        doCallRealMethod().when(joularResourceService).setAncestors(new ArrayList<>());
+
+        FileListProvider fileListProvider = new TestingFileListProvider();
+        when(joularResourceService.getFileListProvider()).thenReturn(fileListProvider);
+
+        JoularNodeEntityListDTO maybeJoularNodeEntityListDTO = new JoularNodeEntityListDTO();
+        when(joularResourceService.getJoularNodeEntityListDTO()).thenReturn(maybeJoularNodeEntityListDTO);
+        doCallRealMethod().when(joularResourceService).setJoularNodeEntityListDTO(new JoularNodeEntityListDTO());
+
+        String iterationFilePath = "joular-csv-test/2-80461-1708609634917";
+        joularNodeEntityService.createJoularNodeEntityDTOList(Path.of(iterationFilePath));
+
+
+        List<String> actualAncestors1 = new ArrayList<>();
+        MeasurableElementDTO measurableElementDTO = createMeasurableElementDTO("org.jabref.gui.fieldeditors.LinkedFileViewModelTest", "setUp/1[java.nio.file.Path]", "org.jabref.gui.fieldeditors.LinkedFileViewModelTest.setUp");
+        String id1 = maybeJoularNodeEntityListDTO.get(0).getId();
+        JoularNodeEntityDTO joularNodeEntityDTO1 = createJoularNodeEntityDTO(id1, 75, 1.2417F, measurableElementDTO, actualAncestors1, null);
+
+        List<String> actualAncestors2 = new ArrayList<>();
+        MeasurableElementDTO measurableElementDTO2 = createMeasurableElementDTO("org.jabref.logic.formatter.bibtexfields.UnitsToLatexFormatterTest", "formatExample/0", "org.jabref.logic.formatter.bibtexfields.UnitsToLatexFormatterTest.formatExample");
+        String id2 = maybeJoularNodeEntityListDTO.get(1).getId();
+        actualAncestors2.add(id1);
+        JoularNodeEntityDTO joularNodeEntityDTO2 = createJoularNodeEntityDTO(id2, 28, null, measurableElementDTO2, actualAncestors2, id1);
+
+        List<String> actualAncestors3 = new ArrayList<>();
+        MeasurableElementDTO measurableElementDTO3 = createMeasurableElementDTO("org.jabref.logic.formatter.bibtexfields.UnitsToLatexFormatter", "format/1[java.lang.String]", "org.jabref.logic.formatter.bibtexfields.UnitsToLatexFormatter.format");
+        String id3 = maybeJoularNodeEntityListDTO.get(2).getId();
+        actualAncestors3.add(id1);
+        actualAncestors3.add(id2);
+        JoularNodeEntityDTO joularNodeEntityDTO3 = createJoularNodeEntityDTO(id3, 111, 0.4679F, measurableElementDTO3, actualAncestors3, id2);
+
+        assertThat(maybeJoularNodeEntityListDTO.getList()).containsExactlyInAnyOrder(joularNodeEntityDTO1, joularNodeEntityDTO2, joularNodeEntityDTO3);
+    }
+
+    @Test
     void exceptionCreateJoularNodeEntityDTOList() {
         String iterationFilePath = "joular-csv-test/no-csv-line-exception";
         assertThrows(NullPointerException.class, () -> {
