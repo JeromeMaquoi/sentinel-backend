@@ -92,6 +92,7 @@ public class JoularResourceServiceImpl implements JoularResourceService {
 
     @Override
     public Optional<CkAggregateLineDTO> getMatchCkJoular(String classMethodLineString) {
+        log.debug("getMatchCkJoular for : {}", classMethodLineString);
         Optional<JSONObject> optionalResult = getClassMethodLine(classMethodLineString);
         if (optionalResult.isPresent()) {
             JSONObject classMethodLine = optionalResult.get();
@@ -142,7 +143,7 @@ public class JoularResourceServiceImpl implements JoularResourceService {
             }
         }
         if (closestCkAggregateLineDTO == null) {
-            log.error("No method has the good lines for {}.{} {}", className, methodName, numberLine);
+            log.warn("No method has the good lines for {}.{} {}", className, methodName, numberLine);
             return Optional.empty();
         }
         log.debug("Good occurrence : {}.{}", closestCkAggregateLineDTO.getClassName(), closestCkAggregateLineDTO.getMethodName());
@@ -150,6 +151,7 @@ public class JoularResourceServiceImpl implements JoularResourceService {
     }
 
     public Optional<JSONObject> getClassMethodLine(String metric) {
+        log.debug("getClassMethodLine for : {}", metric);
         String className = metric.substring(0, metric.lastIndexOf('.'));
         String[] spaceSplit = metric.substring(metric.lastIndexOf('.') + 1).split(" ");
         if (spaceSplit.length < 3) {

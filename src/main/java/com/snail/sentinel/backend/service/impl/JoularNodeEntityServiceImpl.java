@@ -163,7 +163,7 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
         assert joularResourceService.getJoularNodeEntityListDTO() != null : "getJoularNodeEntityListDTO() returns null";
         int lineNumber = Integer.parseInt(classMethodLineString.split(" ")[1]);
 
-        if (!this.joularNodeHashMapDTO.isJoularNodeEntityDTOInMap(classMethodLineString)) {
+        if (!this.joularNodeHashMapDTO.isJoularNodeEntityDTOInMap(classMethodLineString) || isLastElement()) {
             Optional<MeasurableElementDTO> optionalMeasurableElementDTO = createJoularNodeEntityMeasurableElement(classMethodLineString);
 
             if (optionalMeasurableElementDTO.isPresent() && lineNumber > 0) {

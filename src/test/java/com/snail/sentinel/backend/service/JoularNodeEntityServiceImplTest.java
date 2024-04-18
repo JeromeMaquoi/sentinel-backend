@@ -47,6 +47,8 @@ class JoularNodeEntityServiceImplTest {
 
     private CkAggregateLineDTO ckAggregateLineDTO3;
 
+    private CkAggregateLineDTO ckAggregateLineDTO4;
+
     private String filePath = "filePath";
 
     @BeforeEach
@@ -66,6 +68,8 @@ class JoularNodeEntityServiceImplTest {
         // Two nodes (line 10)
         ckAggregateLineDTO2 = createCkAggregateLineDTO("org.jabref.logic.formatter.bibtexfields.UnitsToLatexFormatterTest", "formatExample/0", 25, 5);
         ckAggregateLineDTO3 = createCkAggregateLineDTO("org.jabref.logic.formatter.bibtexfields.UnitsToLatexFormatter", "format/1[java.lang.String]", 105, 15);
+
+        ckAggregateLineDTO4 = createCkAggregateLineDTO("org.jabref.logic.crawler.StudyYamlParser", "parseStudyYamlFile/0", 20, 10);
 
         ckAggregateLineHashMapDTO = new CkAggregateLineHashMapDTO();
         ckAggregateLineHashMapDTO.insertOne(ckAggregateLineDTO1);
@@ -134,7 +138,7 @@ class JoularNodeEntityServiceImplTest {
     }
 
     @Test
-    void simpleCreateJoularNodeEntityDTOTest() {
+    void simpleHandleOneMethodFromOneCsvLineTest() {
         String classMethodLineString = "org.jabref.gui.fieldeditors.LinkedFileViewModelTest.setUp 75";
         Float value = 1.2417F;
 
@@ -183,6 +187,21 @@ class JoularNodeEntityServiceImplTest {
         JoularNodeEntityDTO joularNodeEntityDTO = createJoularNodeEntityDTO(maybeJoularNodeEntityDTO.getId(), 111, value, measurableElementDTO, ancestors, parentId);
 
         assertEquals(joularNodeEntityDTO, maybeJoularNodeEntityDTO);
+    }
+
+    @Test
+    void exceptionHandleOneMethodFromOneCsvLineTest() {
+        String classMethodLineString = "org.jabref.logic.formatter.bibtexfields.UnitsToLatexFormatter.format 111";
+        Float value = 0.4679F;
+        when(joularResourceService.getJoularEntityListDTO()).thenReturn(null);
+        joularNodeEntityService.setJoularNodeHashMapDTO(null);
+        assertThrows(AssertionError.class, () -> {
+            joularNodeEntityService.handleOneMethodFromOneCsvLine(classMethodLineString, value);
+        });
+        joularNodeEntityService.setJoularNodeHashMapDTO(new JoularNodeHashMapDTO());
+        assertThrows(NullPointerException.class, () -> {
+            joularNodeEntityService.handleOneMethodFromOneCsvLine(classMethodLineString, value);
+        });
     }
 
     /*@Test
@@ -341,6 +360,59 @@ class JoularNodeEntityServiceImplTest {
         JoularNodeEntityDTO joularNodeEntityDTO3 = createJoularNodeEntityDTO(id3, 111, 0.4679F, measurableElementDTO3, actualAncestors3, id2);
 
         assertThat(maybeJoularNodeEntityListDTO.getList()).containsExactlyInAnyOrder(joularNodeEntityDTO1, joularNodeEntityDTO2, joularNodeEntityDTO3);
+    }
+
+    @Test
+    void sameMethodWithDifferentValueCreateJoularNodeEntityDTOListTest() {
+        String classMethodLineString1 = "org.jabref.gui.fieldeditors.LinkedFileViewModelTest.setUp 75";
+        when(joularResourceService.getMatchCkJoular(classMethodLineString1)).thenReturn(Optional.ofNullable(ckAggregateLineDTO1));
+
+        String classMethodLineString4 = "org.jabref.logic.crawler.StudyYamlParser.parseStudyYamlFile 25";
+        when(joularResourceService.getMatchCkJoular(classMethodLineString4)).thenReturn(Optional.ofNullable(ckAggregateLineDTO4));
+
+        String classMethodLineString2 = "org.jabref.logic.formatter.bibtexfields.UnitsToLatexFormatterTest.formatExample 28";
+        when(joularResourceService.getMatchCkJoular(classMethodLineString2)).thenReturn(Optional.ofNullable(ckAggregateLineDTO2));
+
+
+        when(joularResourceService.getAncestors()).thenCallRealMethod();
+        doCallRealMethod().when(joularResourceService).setAncestors(new ArrayList<>());
+
+        FileListProvider fileListProvider = new TestingFileListProvider();
+        when(joularResourceService.getFileListProvider()).thenReturn(fileListProvider);
+
+        JoularNodeEntityListDTO maybeJoularNodeEntityListDTO = new JoularNodeEntityListDTO();
+        when(joularResourceService.getJoularNodeEntityListDTO()).thenReturn(maybeJoularNodeEntityListDTO);
+        doCallRealMethod().when(joularResourceService).setJoularNodeEntityListDTO(new JoularNodeEntityListDTO());
+
+
+        String iterationFilePath = "joular-csv-test/3-82212-1708609756976";
+        joularNodeEntityService.createJoularNodeEntityDTOList(Path.of(iterationFilePath));
+
+
+        List<String> actualAncestors1 = new ArrayList<>();
+        MeasurableElementDTO measurableElementDTO = createMeasurableElementDTO("org.jabref.gui.fieldeditors.LinkedFileViewModelTest", "setUp/1[java.nio.file.Path]", "org.jabref.gui.fieldeditors.LinkedFileViewModelTest.setUp");
+        String id1 = maybeJoularNodeEntityListDTO.get(0).getId();
+        JoularNodeEntityDTO joularNodeEntityDTO1 = createJoularNodeEntityDTO(id1, 75, null, measurableElementDTO, actualAncestors1, null);
+
+        List<String> actualAncestors4 = new ArrayList<>();
+        actualAncestors4.add(id1);
+        MeasurableElementDTO measurableElementDTO4 = createMeasurableElementDTO("org.jabref.logic.crawler.StudyYamlParser", "parseStudyYamlFile/0", "org.jabref.logic.crawler.StudyYamlParser.parseStudyYamlFile");
+        String id4 = maybeJoularNodeEntityListDTO.get(1).getId();
+        JoularNodeEntityDTO joularNodeEntityDTO4 = createJoularNodeEntityDTO(id4, 25, 1.2417F, measurableElementDTO4, actualAncestors4, id1);
+
+        List<String> actualAncestors2 = new ArrayList<>();
+        MeasurableElementDTO measurableElementDTO2 = createMeasurableElementDTO("org.jabref.logic.formatter.bibtexfields.UnitsToLatexFormatterTest", "formatExample/0", "org.jabref.logic.formatter.bibtexfields.UnitsToLatexFormatterTest.formatExample");
+        String id2 = maybeJoularNodeEntityListDTO.get(2).getId();
+        actualAncestors2.add(id1);
+        JoularNodeEntityDTO joularNodeEntityDTO2 = createJoularNodeEntityDTO(id2, 28, null, measurableElementDTO2, actualAncestors2, id1);
+
+        List<String> actualAncestors5 = new ArrayList<>();
+        actualAncestors5.add(id1);
+        actualAncestors5.add(id2);
+        String id5 = maybeJoularNodeEntityListDTO.get(3).getId();
+        JoularNodeEntityDTO joularNodeEntityDTO5 = createJoularNodeEntityDTO(id5, 25, 0.4679F, measurableElementDTO4, actualAncestors5, id2);
+
+        assertThat(maybeJoularNodeEntityListDTO.getList()).containsExactlyInAnyOrder(joularNodeEntityDTO1, joularNodeEntityDTO4, joularNodeEntityDTO2, joularNodeEntityDTO5);
     }
 
     @Test
