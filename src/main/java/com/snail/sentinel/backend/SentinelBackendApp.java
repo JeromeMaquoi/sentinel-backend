@@ -68,15 +68,12 @@ public class SentinelBackendApp {
      * @param args the command line arguments.
      */
     public static void main(String[] args) {
-        startTime = System.currentTimeMillis();
+        Util.writeTimeToFile("Docker starting...");
         SpringApplication app = new SpringApplication(SentinelBackendApp.class);
         DefaultProfileUtil.addDefaultProfile(app);
         Environment env = app.run(args).getEnvironment();
         logApplicationStartup(env);
-
-        long totalTime = System.currentTimeMillis() - startTime;
-        String lineToAdd = "Starting the app inside the docker: " + totalTime/1000 + " seconds\n";
-        Util.writeTimeToFile(lineToAdd);
+        Util.writeTimeToFile("App started inside the docker");
     }
 
     private static void logApplicationStartup(Environment env) {

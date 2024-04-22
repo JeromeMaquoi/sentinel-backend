@@ -31,8 +31,6 @@ public class CkJoularResource {
 
     private final JoularResourceService joularResourceService;
 
-    private long startTime;
-
     public CkJoularResource(CkEntityService ckEntityService, CommitEntityService commitEntityService, JoularService joularService, JoularEntityService joularEntityService, JoularNodeEntityService joularNodeEntityService, JoularResourceService joularResourceService) {
         this.ckEntityService = ckEntityService;
         this.commitEntityService = commitEntityService;
@@ -44,7 +42,7 @@ public class CkJoularResource {
     }
 
     public void insertAllData() throws Exception {
-        startTime = System.currentTimeMillis();
+        Util.writeTimeToFile("Insertion of all the data into the db");
 
         //ckEntityService.deleteAll();
         //joularEntityService.deleteAll();
@@ -72,9 +70,7 @@ public class CkJoularResource {
         }
         insertCommits(listCommits);
 
-        long totalTime = System.currentTimeMillis() - startTime;
-        String lineToAdd = "Insertion of all the data into the database: " + totalTime/1000 + " seconds\n";
-        Util.writeTimeToFile(lineToAdd);
+        Util.writeTimeToFile("All data inserted to the database");
     }
 
     public void setRepoData() {
