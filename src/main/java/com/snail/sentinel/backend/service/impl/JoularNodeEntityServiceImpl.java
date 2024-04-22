@@ -122,6 +122,9 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
 
     @Override
     public void handleJoularNodeEntityCreationForOneIteration(Path iterationFilePath) {
+        log.info("\n");
+        log.info("\n");
+        log.info("\n");
         log.info("Request to handle JoularNodeEntity for iteration {}", iterationFilePath);
         this.joularNodeHashMapDTO = new JoularNodeHashMapDTO();
         createJoularNodeEntityDTOList(iterationFilePath);
@@ -144,7 +147,7 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
 
     public void handleOneCsvLine(JSONObject line) {
         log.debug("--------");
-        log.debug("New line:");
+        log.debug("New line: {}", line);
         String nextLine = line.keySet().iterator().next();
         Float value = line.getFloat(nextLine);
         List<String> allLineNodes = getEachNodeFromStringLine(nextLine);
@@ -175,8 +178,8 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
                 log.debug("ancestors for next cell : {}", joularResourceService.getAncestors());
                 joularResourceService.getJoularNodeEntityListDTO().add(joularNodeEntityDTO);
 
-            } else if (!classMethodLineString.contains("$$Lambda$") && !classMethodLineString.contains("<clinit>") && !classMethodLineString.contains("<init>")){
-                log.error("MeasurableElement not set for JoularNodeEntity with classMethodLine : {} for iteration {} of project {}", classMethodLineString, joularResourceService.getIterationDTO().getIterationId(), joularResourceService.getCommitSimpleDTO().getRepository().getName());
+            } else if (lineNumber > 0 && !classMethodLineString.contains("<clinit>") && !classMethodLineString.contains("<init>")){
+                log.warn("No JoularNodeEntity set for {}", classMethodLineString);
             }
         } else {
             log.debug("JoularNodeEntityDTO {} already in map. Adding its id to the ancestors list", classMethodLineString);

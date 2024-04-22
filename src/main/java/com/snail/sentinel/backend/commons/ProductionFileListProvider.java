@@ -18,7 +18,7 @@ public class ProductionFileListProvider implements FileListProvider {
     private static final Logger log = LoggerFactory.getLogger(ProductionFileListProvider.class);
     @Override
     public Set<Path> getFileList(String folder) {
-        log.info("folder : {}", folder);
+        //log.info("folder : {}", folder);
         try (Stream<Path> stream = Files.list(Paths.get(folder))) {
             return stream
                 .collect(Collectors.toSet());

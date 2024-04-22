@@ -65,6 +65,7 @@ public class Util {
             if (className.contains("$") && className.split("\\$")[1].length() > 1) {
                 method = className.substring(className.lastIndexOf("$") + 1);
             } else {
+                // The method is certainly a constructor of the class
                 method = className.substring(className.lastIndexOf(".") + 1);
             }
         } else if (methodName.contains("lambda$")) {

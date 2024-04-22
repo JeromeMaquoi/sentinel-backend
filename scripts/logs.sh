@@ -23,7 +23,7 @@ log_output_without_date() {
 
 log_configuration() {
     log_output_without_date "+++++++++++++++++++"
-    log_output_without_date "Execution ars:"
+    log_output_without_date "Execution args:"
     log_output_without_date "REPO_DIRECTORY : $REPO_DIRECTORY"
     log_output_without_date "PLUGINS_DIRECTORY : $PLUGINS_DIRECTORY"
     log_output_without_date "BATCH_SIZE : $BATCH_SIZE"
