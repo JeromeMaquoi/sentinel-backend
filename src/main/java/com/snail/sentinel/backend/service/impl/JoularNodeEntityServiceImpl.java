@@ -9,6 +9,7 @@ import com.snail.sentinel.backend.service.dto.JoularNodeEntityDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineDTO;
 import com.snail.sentinel.backend.service.dto.joular.JoularNodeEntityListDTO;
 import com.snail.sentinel.backend.service.dto.joularnode.JoularNodeHashMapDTO;
+import com.snail.sentinel.backend.service.dto.joularnode.JoularNodeKeyHashMap;
 import com.snail.sentinel.backend.service.dto.measurableelement.MeasurableElementDTO;
 import com.snail.sentinel.backend.service.exceptions.NoCsvLineFoundException;
 import com.snail.sentinel.backend.service.mapper.JoularNodeEntityMapper;
@@ -166,7 +167,9 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
         assert joularResourceService.getJoularNodeEntityListDTO() != null : "getJoularNodeEntityListDTO() returns null";
         int lineNumber = Integer.parseInt(classMethodLineString.split(" ")[1]);
 
-        if (!this.joularNodeHashMapDTO.isJoularNodeEntityDTOInMap(classMethodLineString) || isLastElement()) {
+        JoularNodeKeyHashMap key = new JoularNodeKeyHashMap(classMethodLineString.split(" ")[0], lineNumber, joularResourceService.getAncestors());
+
+        if (!this.joularNodeHashMapDTO.isJoularNodeEntityDTOInMap(key) || isLastElement()) {
             Optional<MeasurableElementDTO> optionalMeasurableElementDTO = createJoularNodeEntityMeasurableElement(classMethodLineString);
 
             if (optionalMeasurableElementDTO.isPresent() && lineNumber > 0) {
@@ -183,7 +186,7 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
             }
         } else {
             log.debug("JoularNodeEntityDTO {} already in map. Adding its id to the ancestors list", classMethodLineString);
-            String id = this.joularNodeHashMapDTO.getJoularNodeEntityDTO(classMethodLineString).getId();
+            String id = this.joularNodeHashMapDTO.getJoularNodeEntityDTO(key).getId();
             joularResourceService.getAncestors().add(id);
         }
     }
