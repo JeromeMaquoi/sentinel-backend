@@ -9,6 +9,7 @@ import com.snail.sentinel.backend.service.dto.JoularNodeEntityDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineDTO;
 import com.snail.sentinel.backend.service.dto.joular.JoularNodeEntityListDTO;
 import com.snail.sentinel.backend.service.dto.joularnode.JoularNodeHashMapDTO;
+import com.snail.sentinel.backend.service.dto.joularnode.JoularNodeKeyHashMap;
 import com.snail.sentinel.backend.service.dto.measurableelement.MeasurableElementDTO;
 import com.snail.sentinel.backend.service.exceptions.NoCsvLineFoundException;
 import com.snail.sentinel.backend.service.mapper.JoularNodeEntityMapper;
@@ -122,6 +123,9 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
 
     @Override
     public void handleJoularNodeEntityCreationForOneIteration(Path iterationFilePath) {
+        log.info("\n");
+        log.info("\n");
+        log.info("\n");
         log.info("Request to handle JoularNodeEntity for iteration {}", iterationFilePath);
         this.joularNodeHashMapDTO = new JoularNodeHashMapDTO();
         createJoularNodeEntityDTOList(iterationFilePath);
@@ -144,7 +148,7 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
 
     public void handleOneCsvLine(JSONObject line) {
         log.debug("--------");
-        log.debug("New line:");
+        log.debug("New line: {}", line);
         String nextLine = line.keySet().iterator().next();
         Float value = line.getFloat(nextLine);
         List<String> allLineNodes = getEachNodeFromStringLine(nextLine);
@@ -163,7 +167,9 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
         assert joularResourceService.getJoularNodeEntityListDTO() != null : "getJoularNodeEntityListDTO() returns null";
         int lineNumber = Integer.parseInt(classMethodLineString.split(" ")[1]);
 
-        if (!this.joularNodeHashMapDTO.isJoularNodeEntityDTOInMap(classMethodLineString)) {
+        JoularNodeKeyHashMap key = new JoularNodeKeyHashMap(classMethodLineString.split(" ")[0], lineNumber, joularResourceService.getAncestors());
+
+        if (!this.joularNodeHashMapDTO.isJoularNodeEntityDTOInMap(key) || isLastElement()) {
             Optional<MeasurableElementDTO> optionalMeasurableElementDTO = createJoularNodeEntityMeasurableElement(classMethodLineString);
 
             if (optionalMeasurableElementDTO.isPresent() && lineNumber > 0) {
@@ -175,12 +181,12 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
                 log.debug("ancestors for next cell : {}", joularResourceService.getAncestors());
                 joularResourceService.getJoularNodeEntityListDTO().add(joularNodeEntityDTO);
 
-            } else if (!classMethodLineString.contains("$$Lambda$") && !classMethodLineString.contains("<clinit>") && !classMethodLineString.contains("<init>")){
-                log.error("MeasurableElement not set for JoularNodeEntity with classMethodLine : {} for iteration {} of project {}", classMethodLineString, joularResourceService.getIterationDTO().getIterationId(), joularResourceService.getCommitSimpleDTO().getRepository().getName());
+            } else if (lineNumber > 0 && !classMethodLineString.contains("<clinit>") && !classMethodLineString.contains("<init>")){
+                log.warn("No JoularNodeEntity set for {}", classMethodLineString);
             }
         } else {
             log.debug("JoularNodeEntityDTO {} already in map. Adding its id to the ancestors list", classMethodLineString);
-            String id = this.joularNodeHashMapDTO.getJoularNodeEntityDTO(classMethodLineString).getId();
+            String id = this.joularNodeHashMapDTO.getJoularNodeEntityDTO(key).getId();
             joularResourceService.getAncestors().add(id);
         }
     }

@@ -15,6 +15,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -34,6 +36,8 @@ public class Util {
 
     public static final String FILE = "file";
     public static final String TOOL_VERSION = "ck-0.7.0-jar-with-dependencies";
+
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 
     public static List<JSONObject> readCsvToJson(String csvPath) throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(csvPath, StandardCharsets.UTF_8))) {
@@ -65,6 +69,7 @@ public class Util {
             if (className.contains("$") && className.split("\\$")[1].length() > 1) {
                 method = className.substring(className.lastIndexOf("$") + 1);
             } else {
+                // The method is certainly a constructor of the class
                 method = className.substring(className.lastIndexOf(".") + 1);
             }
         } else if (methodName.contains("lambda$")) {
@@ -158,7 +163,9 @@ public class Util {
         String filePath = System.getenv("PLUGINS_DIRECTORY") + "/totalTime.txt";
         log.info("filePath = {}", filePath);
         try (FileWriter fileWriter = new FileWriter(filePath, StandardCharsets.UTF_8, true)) {
-            fileWriter.write(lineToAdd);
+            LocalDateTime now = LocalDateTime.now();
+            String formattedTime = now.format(formatter);
+            fileWriter.write(formattedTime + " - " + lineToAdd + "\n");
             log.info("Line added to totalTime.txt");
         } catch (IOException e) {
             e.printStackTrace();

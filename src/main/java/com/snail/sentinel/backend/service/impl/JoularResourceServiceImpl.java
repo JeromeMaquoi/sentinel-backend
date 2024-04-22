@@ -92,6 +92,7 @@ public class JoularResourceServiceImpl implements JoularResourceService {
 
     @Override
     public Optional<CkAggregateLineDTO> getMatchCkJoular(String classMethodLineString) {
+        log.debug("getMatchCkJoular for : {}", classMethodLineString);
         Optional<JSONObject> optionalResult = getClassMethodLine(classMethodLineString);
         if (optionalResult.isPresent()) {
             JSONObject classMethodLine = optionalResult.get();
@@ -99,7 +100,7 @@ public class JoularResourceServiceImpl implements JoularResourceService {
             String methodName = Util.methodNameParser(className, classMethodLine.getString(METHOD_NAME));
             int numberLine = classMethodLine.getInt(LINE_NUMBER);
             //log.info("numberLine : {}", numberLine);
-            if (numberLine > 0) {
+            if (numberLine > 0 && !methodName.isEmpty()) {
                 List<CkAggregateLineDTO> allOccurrences = getCkAggregateLineHashMapDTO().getAllOccurrences(className, methodName);
                 //log.info("allOccurrences : {}", allOccurrences);
                 return findGoodOccurrence(allOccurrences, className, methodName, numberLine);
@@ -112,7 +113,7 @@ public class JoularResourceServiceImpl implements JoularResourceService {
     }
 
     public Optional<CkAggregateLineDTO> findGoodOccurrence(List<CkAggregateLineDTO> allOccurrences, String className, String methodName, int numberLine) {
-        log.debug("{}", System.lineSeparator());
+        log.debug("");
         if (allOccurrences.isEmpty()) {
             log.debug("No occurrence found for {}.{}", className, methodName);
             return Optional.empty();
@@ -126,7 +127,7 @@ public class JoularResourceServiceImpl implements JoularResourceService {
     }
 
     public Optional<CkAggregateLineDTO> findOccFromMultipleOcc(List<CkAggregateLineDTO> allOccurrences, String className, String methodName, int numberLine) {
-        log.debug("Multiple occurrences for {}.{}", className, methodName);
+        log.debug("Multiple occurrences for {} {}", className, methodName);
         CkAggregateLineDTO closestCkAggregateLineDTO = null;
         int lineGap = 100;
         for (CkAggregateLineDTO occ : allOccurrences) {
@@ -142,7 +143,8 @@ public class JoularResourceServiceImpl implements JoularResourceService {
             }
         }
         if (closestCkAggregateLineDTO == null) {
-            log.error("No method has the good lines for {}.{} {}", className, methodName, numberLine);
+            //log.info("Multiple occurrences for {} {} {}", className, methodName, numberLine);
+            log.debug("No method has the good lines for {} {} {}", className, methodName, numberLine);
             return Optional.empty();
         }
         log.debug("Good occurrence : {}.{}", closestCkAggregateLineDTO.getClassName(), closestCkAggregateLineDTO.getMethodName());
@@ -150,6 +152,7 @@ public class JoularResourceServiceImpl implements JoularResourceService {
     }
 
     public Optional<JSONObject> getClassMethodLine(String metric) {
+        log.debug("getClassMethodLine for : {}", metric);
         String className = metric.substring(0, metric.lastIndexOf('.'));
         String[] spaceSplit = metric.substring(metric.lastIndexOf('.') + 1).split(" ");
         if (spaceSplit.length < 3) {

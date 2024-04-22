@@ -5,26 +5,35 @@ import com.snail.sentinel.backend.service.dto.JoularNodeEntityDTO;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class JoularNodeHashMapDTO {
-    Map<String, JoularNodeEntityDTO> joularNodeEntityDTOMap = new HashMap<>();
-
-    public void setJoularNodeEntityDTOMap(List<JoularNodeEntityDTO> joularNodeEntityDTOList) {
-        for (JoularNodeEntityDTO joularNodeEntityDTO : joularNodeEntityDTOList) {
-            this.insertOne(joularNodeEntityDTO);
-        }
-    }
+    Map<JoularNodeKeyHashMap, JoularNodeEntityDTO> joularNodeEntityDTOMap = new HashMap<>();
 
     public void insertOne(JoularNodeEntityDTO joularNodeEntityDTO) {
-        String label = joularNodeEntityDTO.getLabel();
-        this.joularNodeEntityDTOMap.put(label, joularNodeEntityDTO);
+        String classMethodSignature = joularNodeEntityDTO.getMeasurableElement().getClassMethodSignature();
+        int lineNumber = joularNodeEntityDTO.getLineNumber();
+        List<String> ancestors = joularNodeEntityDTO.getAncestors();
+        JoularNodeKeyHashMap key = new JoularNodeKeyHashMap(classMethodSignature, lineNumber, ancestors);
+        joularNodeEntityDTOMap.put(key, joularNodeEntityDTO);
     }
 
-    public boolean isJoularNodeEntityDTOInMap(String label) {
-        return this.joularNodeEntityDTOMap.containsKey(label);
+    public boolean isJoularNodeEntityDTOInMap(JoularNodeKeyHashMap key) {
+        return this.joularNodeEntityDTOMap.containsKey(key);
     }
 
-    public JoularNodeEntityDTO getJoularNodeEntityDTO(String label) {
-        return this.joularNodeEntityDTOMap.get(label);
+    public JoularNodeEntityDTO getJoularNodeEntityDTO(JoularNodeKeyHashMap key) {
+        return joularNodeEntityDTOMap.get(key);
+    }
+
+    public Set<JoularNodeKeyHashMap> getKeys() {
+        return joularNodeEntityDTOMap.keySet();
+    }
+
+    @Override
+    public String toString() {
+        return "JoularNodeHashMapDTO{" +
+            "joularNodeEntityDTOMap=" + joularNodeEntityDTOMap +
+            '}';
     }
 }
