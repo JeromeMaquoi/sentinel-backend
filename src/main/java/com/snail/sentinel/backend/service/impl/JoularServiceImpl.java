@@ -34,6 +34,7 @@ public class JoularServiceImpl implements JoularService {
     }
     @Override
     public void insertBatchJoularData(HashMap<String, String> repoItem, JSONObject commitData) {
+        log.info("insertBatchJoularData");
         joularResourceService.setCommitSimpleDTO(repoItem, commitData);
         joularResourceService.setCkAggregateLineHashMapDTO(repoItem.get(Util.NAME));
         List<File> iterationPaths = Util.searchDirectories("joularjx-result", new File(System.getenv("REPO_DIRECTORY") + repoItem.get(Util.NAME)));
@@ -58,7 +59,7 @@ public class JoularServiceImpl implements JoularService {
         IterationDTO iterationDTO = createIterationDTOFromCsvFileName(csvPathFileName);
         joularResourceService.setIterationDTO(iterationDTO);
 
-        //joularEntityService.handleJoularEntityCreationForOneIteration(iterationFilePath);
+        joularEntityService.handleJoularEntityCreationForOneIteration(iterationFilePath);
         joularNodeEntityService.handleJoularNodeEntityCreationForOneIteration(iterationFilePath);
     }
 

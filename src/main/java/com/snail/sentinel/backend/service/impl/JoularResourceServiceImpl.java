@@ -106,7 +106,7 @@ public class JoularResourceServiceImpl implements JoularResourceService {
                 //log.info("allOccurrences : {}", allOccurrences);
                 return findGoodOccurrence(allOccurrences, className, methodName, numberLine);
             } else {
-                log.warn("The number of line is negative for \"{}.{}\"", className, methodName);
+                //log.warn("The number of line is negative for \"{}.{}\"", className, methodName);
                 return Optional.<CkAggregateLineDTO>empty();
             }
         }).orElseGet(() -> {
