@@ -16,12 +16,16 @@ public class RepoDataDTO {
         oneRepoData.put(Util.SHA, sha);
     }
 
-    public Map<String, String> getOneRepoData() {
-        return oneRepoData;
+    public String getOwner() {
+        return oneRepoData.get(Util.OWNER);
     }
 
-    public void setOneRepoData(Map<String, String> oneRepoData) {
-        this.oneRepoData = oneRepoData;
+    public String getName() {
+        return oneRepoData.get(Util.NAME);
+    }
+
+    public String getSha() {
+        return oneRepoData.get(Util.SHA);
     }
 
     @Override

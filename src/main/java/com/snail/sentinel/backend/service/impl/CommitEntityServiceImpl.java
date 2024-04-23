@@ -4,6 +4,7 @@ import com.snail.sentinel.backend.commons.Util;
 import com.snail.sentinel.backend.domain.CommitEntity;
 import com.snail.sentinel.backend.repository.CommitEntityRepository;
 import com.snail.sentinel.backend.service.CommitEntityService;
+import com.snail.sentinel.backend.service.dto.RepoDataDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitCompleteDTO;
 import com.snail.sentinel.backend.service.dto.commit.StatsDTO;
 import com.snail.sentinel.backend.service.dto.repository.RepositoryCompleteDTO;
@@ -67,10 +68,10 @@ public class CommitEntityServiceImpl implements CommitEntityService {
     }
 
     @Override
-    public CommitCompleteDTO createCommitEntityDTO(Map<String, String> repoItem, JSONObject commitData) {
+    public CommitCompleteDTO createCommitEntityDTO(RepoDataDTO repoItem, JSONObject commitData) {
         RepositoryCompleteDTO repositoryCompleteDTO = new RepositoryCompleteDTO();
-        repositoryCompleteDTO.setName(repoItem.get(Util.NAME));
-        repositoryCompleteDTO.setOwner(repoItem.get(Util.OWNER));
+        repositoryCompleteDTO.setName(repoItem.getName());
+        repositoryCompleteDTO.setOwner(repoItem.getOwner());
         repositoryCompleteDTO.setUrl(commitData.getString("html_url").split("/commit")[0]);
 
         StatsDTO statsDTO = new StatsDTO();
@@ -78,7 +79,7 @@ public class CommitEntityServiceImpl implements CommitEntityService {
         statsDTO.setDeletions(parseInt(commitData.getJSONObject("stats").get("deletions").toString()));
 
         CommitCompleteDTO commitCompleteDTO = new CommitCompleteDTO();
-        commitCompleteDTO.setSha(repoItem.get(Util.SHA));
+        commitCompleteDTO.setSha(repoItem.getSha());
         commitCompleteDTO.setDate(commitData.getJSONObject("commit").getJSONObject("committer").getString("date"));
         commitCompleteDTO.setMessage(commitData.getJSONObject("commit").getString("message"));
         commitCompleteDTO.setParentsSha(createParentsList(commitData.getJSONArray("parents")));

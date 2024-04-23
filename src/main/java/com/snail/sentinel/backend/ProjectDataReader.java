@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class ProjectDataReader {
     public List<RepoDataDTO> readProjectsFromCSV(String csvFilePath) throws CSVFileNotFoundException {
         List<RepoDataDTO> repoDataDTOList = new ArrayList<>();
 
-        try (BufferedReader br = new BufferedReader(new FileReader(csvFilePath))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(csvFilePath, StandardCharsets.UTF_8))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] split = line.split(",");
@@ -28,7 +29,7 @@ public class ProjectDataReader {
                     RepoDataDTO repoDataDTO = new RepoDataDTO(split[0].trim(), split[1].trim(), split[2].trim());
                     repoDataDTOList.add(repoDataDTO);
                 } else {
-                    log.error("Invalid data format in CSV file : {}", csvFilePath);
+                    log.error("Invalid data format in CSV file {} for line {}", csvFilePath, line);
                 }
             }
             return repoDataDTOList;

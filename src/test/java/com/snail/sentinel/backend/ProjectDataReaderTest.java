@@ -23,4 +23,16 @@ class ProjectDataReaderTest {
 
         assertThat(maybeRepoDataDTOList).containsExactlyInAnyOrder(repoDataDTO1, repoDataDTO2, repoDataDTO3, repoDataDTO4, repoDataDTO5);
     }
+
+    @Test
+    void tooManyParametersReadProjectsFromCSVTest() throws CSVFileNotFoundException {
+        String csvFilePath = "src/test/resources/project-data-test/projects-data-too-many-parameters.csv";
+        ProjectDataReader projectDataReader = new ProjectDataReader();
+        List<RepoDataDTO> maybeRepoDataDTOList = projectDataReader.readProjectsFromCSV(csvFilePath);
+
+        RepoDataDTO repoDataDTO1 = new RepoDataDTO("apache", "commons-configuration", "59e5152722198526c6ffe5361de7d1a6a87275c7");
+        RepoDataDTO repoDataDTO2 = new RepoDataDTO("spring-projects", "spring-boot", "3ed1f1a064a10e53adc2ad8c0b46a4b2c148ee21");
+
+        assertThat(maybeRepoDataDTOList).containsExactlyInAnyOrder(repoDataDTO1, repoDataDTO2);
+    }
 }

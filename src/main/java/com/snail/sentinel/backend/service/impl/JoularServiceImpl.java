@@ -3,6 +3,7 @@ package com.snail.sentinel.backend.service.impl;
 import com.snail.sentinel.backend.commons.Util;
 import com.snail.sentinel.backend.service.*;
 import com.snail.sentinel.backend.service.dto.IterationDTO;
+import com.snail.sentinel.backend.service.dto.RepoDataDTO;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -33,11 +33,11 @@ public class JoularServiceImpl implements JoularService {
         this.joularNodeEntityService = joularNodeEntityService;
     }
     @Override
-    public void insertBatchJoularData(HashMap<String, String> repoItem, JSONObject commitData) {
+    public void insertBatchJoularData(RepoDataDTO repoItem, JSONObject commitData) {
         log.info("insertBatchJoularData");
         joularResourceService.setCommitSimpleDTO(repoItem, commitData);
-        joularResourceService.setCkAggregateLineHashMapDTO(repoItem.get(Util.NAME));
-        List<File> iterationPaths = Util.searchDirectories("joularjx-result", new File(System.getenv("REPO_DIRECTORY") + repoItem.get(Util.NAME)));
+        joularResourceService.setCkAggregateLineHashMapDTO(repoItem.getName());
+        List<File> iterationPaths = Util.searchDirectories("joularjx-result", new File(System.getenv("REPO_DIRECTORY") + repoItem.getName()));
         for (File iterationFilePath : iterationPaths) {
             handleOneProject(iterationFilePath.getAbsolutePath());
         }

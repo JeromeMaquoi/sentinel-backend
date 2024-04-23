@@ -1,10 +1,9 @@
 package com.snail.sentinel.backend.service;
 
+import com.snail.sentinel.backend.service.dto.RepoDataDTO;
 import org.json.JSONObject;
-
-import java.util.HashMap;
 
 
 public interface JoularService {
-    void insertBatchJoularData(HashMap<String, String> repoItem, JSONObject commitData);
+    void insertBatchJoularData(RepoDataDTO repoItem, JSONObject commitData);
 }

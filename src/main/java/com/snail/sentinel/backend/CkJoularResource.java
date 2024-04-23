@@ -3,6 +3,7 @@ package com.snail.sentinel.backend;
 import com.snail.sentinel.backend.commons.ProductionFileListProvider;
 import com.snail.sentinel.backend.commons.Util;
 import com.snail.sentinel.backend.service.*;
+import com.snail.sentinel.backend.service.dto.RepoDataDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitCompleteDTO;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -10,14 +11,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 @Service
 public class CkJoularResource {
     private final Logger log = LoggerFactory.getLogger(CkJoularResource.class);
 
-    private final List<HashMap<String, String>> repoData;
+    private List<RepoDataDTO> repoDataList;
 
     private final CkEntityService ckEntityService;
 
@@ -38,7 +38,7 @@ public class CkJoularResource {
         this.joularEntityService = joularEntityService;
         this.joularNodeEntityService = joularNodeEntityService;
         this.joularResourceService = joularResourceService;
-        this.repoData = new ArrayList<>();
+        this.repoDataList = new ArrayList<>();
     }
 
     public void insertAllData() throws Exception {
@@ -47,33 +47,35 @@ public class CkJoularResource {
         ckEntityService.deleteAll();
         joularEntityService.deleteAll();
         joularNodeEntityService.deleteAll();
-        setRepoData();
+        //setRepoData();
+        String projectsDataPath = System.getenv("REPO_DIRECTORY") + "projects-data.csv";
+        repoDataList = new ProjectDataReader().readProjectsFromCSV(projectsDataPath);
         List<CommitCompleteDTO> listCommits = new ArrayList<>();
         // For each repository
-        for (HashMap<String, String> repoItem : repoData) {
-            log.info("Beginning for repository : {}", repoItem.get(Util.NAME));
+        for (RepoDataDTO repoData : repoDataList) {
+            log.info("Beginning for repository : {}", repoData.getName());
 
-            JSONObject commitData = commitEntityService.getCommitData(repoItem.get(Util.OWNER), repoItem.get(Util.NAME), repoItem.get(Util.SHA));
+            JSONObject commitData = commitEntityService.getCommitData(repoData.getOwner(), repoData.getName(), repoData.getSha());
 
             // Preparation of the Commit data to be inserted
-            CommitCompleteDTO commitCompleteDTO = commitEntityService.createCommitEntityDTO(repoItem, commitData);
+            CommitCompleteDTO commitCompleteDTO = commitEntityService.createCommitEntityDTO(repoData, commitData);
             listCommits.add(commitCompleteDTO);
 
             // Insertion of CK data
-            String csvPath = System.getenv("REPO_DIRECTORY") + repoItem.get(Util.NAME) + "/output-ck/";
+            String csvPath = System.getenv("REPO_DIRECTORY") + repoData.getName() + "/output-ck/";
             ckEntityService.insertBatchCkEntityDTO(commitCompleteDTO, csvPath, Integer.parseInt(System.getenv("BATCH_SIZE")));
 
             // Insertion of Joular data
             joularResourceService.setFileListProvider(new ProductionFileListProvider());
-            joularService.insertBatchJoularData(repoItem, commitData);
-            log.info("Ending for the repository: {}", repoItem.get(Util.NAME));
+            joularService.insertBatchJoularData(repoData, commitData);
+            log.info("Ending for the repository: {}", repoData.getName());
         }
         insertCommits(listCommits);
 
         Util.writeTimeToFile("All data inserted to the database");
     }
 
-    public void setRepoData() {
+    /*public void setRepoData() {
         HashMap<String, String> commonsConfiguration = new HashMap<>();
         commonsConfiguration.put(Util.OWNER, "apache");
         commonsConfiguration.put(Util.NAME, "commons-configuration");
@@ -102,9 +104,9 @@ public class CkJoularResource {
         //this.repoData.add(commonsConfiguration);
         //this.repoData.add(springBoot);
         //this.repoData.add(hibernate);
-        this.repoData.add(jabref);
+        this.repoDataList.add(jabref);
         //this.repoData.add(spoon);
-    }
+    }*/
 
     public void insertCommits(List<CommitCompleteDTO> listCommits) {
         commitEntityService.deleteAll();
