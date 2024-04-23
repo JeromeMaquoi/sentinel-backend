@@ -2,6 +2,7 @@ package com.snail.sentinel.backend.service;
 
 import com.snail.sentinel.backend.commons.FileListProvider;
 import com.snail.sentinel.backend.service.dto.IterationDTO;
+import com.snail.sentinel.backend.service.dto.RepoDataDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineHashMapDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
@@ -10,12 +11,11 @@ import com.snail.sentinel.backend.service.dto.joular.JoularNodeEntityListDTO;
 import com.snail.sentinel.backend.service.dto.measurableelement.MethodElementSetDTO;
 import org.json.JSONObject;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
 public interface JoularResourceService {
-    void setCommitSimpleDTO(HashMap<String, String> repoItem, JSONObject commitData);
+    void setCommitSimpleDTO(RepoDataDTO repoItem, JSONObject commitData);
     void setCommitSimpleDTO(CommitSimpleDTO commitSimpleDTO);
     CommitSimpleDTO getCommitSimpleDTO();
     void setCkAggregateLineHashMapDTO(String repoName);
