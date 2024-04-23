@@ -16,6 +16,7 @@ import com.snail.sentinel.backend.service.dto.measurableelement.MeasurableElemen
 import com.snail.sentinel.backend.service.dto.measurableelement.MethodElementSetDTO;
 import com.snail.sentinel.backend.service.dto.repository.RepositoryCompleteDTO;
 import com.snail.sentinel.backend.service.dto.repository.RepositorySimpleDTO;
+import com.snail.sentinel.backend.service.exceptions.GetMatchCkJoularException;
 import com.snail.sentinel.backend.service.impl.CkEntityServiceImpl;
 import com.snail.sentinel.backend.service.impl.CommitEntityServiceImpl;
 import com.snail.sentinel.backend.service.impl.JoularEntityServiceImpl;
@@ -268,7 +269,7 @@ class JoularEntityServiceImplTest {
         String classMethodSignature = joularEntityService.getClassMethodSignature(line);
         Optional<CkAggregateLineDTO> optionalMatchedCkJoular = joularResourceService.getMatchCkJoular(line);
         assertTrue(optionalMatchedCkJoular.isPresent());
-        CkAggregateLineDTO matchedCkJoular = optionalMatchedCkJoular.get();
+        CkAggregateLineDTO matchedCkJoular = optionalMatchedCkJoular.orElseThrow(() -> new GetMatchCkJoularException(line));
         MeasurableElementDTO methodElementDTO = Util.getMeasurableElementForJoular(matchedCkJoular, classMethodSignature);
 
         CommitSimpleDTO commitSimpleDTO = new CommitSimpleDTO();
@@ -318,7 +319,7 @@ class JoularEntityServiceImplTest {
         String classMethodSignature = joularEntityService.getClassMethodSignature(line);
         Optional<CkAggregateLineDTO> optionalMatchedCkJoular = joularResourceService.getMatchCkJoular(line);
         assertTrue(optionalMatchedCkJoular.isPresent());
-        CkAggregateLineDTO matchedCkJoular = optionalMatchedCkJoular.get();
+        CkAggregateLineDTO matchedCkJoular = optionalMatchedCkJoular.orElseThrow(() -> new GetMatchCkJoularException(line));
         MeasurableElementDTO methodElementDTO = Util.getMeasurableElementForJoular(matchedCkJoular, classMethodSignature);
 
         CommitSimpleDTO commitSimpleDTO = new CommitSimpleDTO();

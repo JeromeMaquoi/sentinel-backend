@@ -3,6 +3,7 @@ package com.snail.sentinel.backend.service;
 import com.snail.sentinel.backend.repository.CkEntityRepositoryAggregation;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineHashMapDTO;
+import com.snail.sentinel.backend.service.exceptions.GetMatchCkJoularException;
 import com.snail.sentinel.backend.service.impl.JoularResourceServiceImpl;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -84,7 +85,7 @@ class JoularResourceServiceImplTest {
         String line = "org.apache.commons.configuration2.TestINIConfiguration.testValueWithSemicolon 1006";
         Optional<JSONObject> optionalResult = joularResourceService.getClassMethodLine(line);
         assertTrue(optionalResult.isPresent());
-        JSONObject maybeClassMethodLine = optionalResult.get();
+        JSONObject maybeClassMethodLine = optionalResult.orElseThrow(() -> new IllegalStateException("Class method line not found for " + line));
 
         JSONObject classMethodLine = new JSONObject();
         classMethodLine.put("className", "org.apache.commons.configuration2.TestINIConfiguration");
@@ -96,9 +97,10 @@ class JoularResourceServiceImplTest {
 
     @Test
     void simple2GetClassMethodLineTest() {
-        Optional<JSONObject> optionalResult = joularResourceService.getClassMethodLine("org.springframework.boot.context.config.ConfigDataLocationRuntimeHints.getFileNames 60");
+        String line = "org.springframework.boot.context.config.ConfigDataLocationRuntimeHints.getFileNames 60";
+        Optional<JSONObject> optionalResult = joularResourceService.getClassMethodLine(line);
         assertTrue(optionalResult.isPresent());
-        JSONObject maybeClassMethodLine = optionalResult.get();
+        JSONObject maybeClassMethodLine = optionalResult.orElseThrow(() -> new IllegalStateException("Class method line not found for " + line));
 
         JSONObject classMethodLine = new JSONObject();
         classMethodLine.put("className", "org.springframework.boot.context.config.ConfigDataLocationRuntimeHints");
@@ -119,7 +121,7 @@ class JoularResourceServiceImplTest {
         String line = "org.springframework.boot.context.config.ConfigDataLocationRuntimeHints.getFileNames 67";
         Optional<CkAggregateLineDTO> optionalMaybeCkAggregateLineDTO = joularResourceService.getMatchCkJoular(line);
         assertTrue(optionalMaybeCkAggregateLineDTO.isPresent());
-        CkAggregateLineDTO maybeCkAggregateLineDTO = optionalMaybeCkAggregateLineDTO.get();
+        CkAggregateLineDTO maybeCkAggregateLineDTO = optionalMaybeCkAggregateLineDTO.orElseThrow(() -> new GetMatchCkJoularException(line));
 
         CkAggregateLineDTO ckAggregateLineDTO = new CkAggregateLineDTO();
         ckAggregateLineDTO.setClassName("org.springframework.boot.context.config.ConfigDataLocationRuntimeHints");
@@ -136,7 +138,7 @@ class JoularResourceServiceImplTest {
         String line = "org.apache.commons.configuration2.tree.DefaultConfigurationKey$KeyIterator.nextDelimiterPos 662";
         Optional<CkAggregateLineDTO> optionalMaybeCkAggregateLineDTO = joularResourceService.getMatchCkJoular(line);
         assertTrue(optionalMaybeCkAggregateLineDTO.isPresent());
-        CkAggregateLineDTO maybeCkAggregateLineDTO = optionalMaybeCkAggregateLineDTO.get();
+        CkAggregateLineDTO maybeCkAggregateLineDTO = optionalMaybeCkAggregateLineDTO.orElseThrow(() -> new GetMatchCkJoularException(line));
 
         CkAggregateLineDTO ckAggregateLineDTO = new CkAggregateLineDTO();
         ckAggregateLineDTO.setClassName("org.apache.commons.configuration2.tree.DefaultConfigurationKey");
@@ -158,7 +160,7 @@ class JoularResourceServiceImplTest {
 
         Optional<CkAggregateLineDTO> optionalMaybeGoodOccurrence = joularResourceService.findOccFromMultipleOcc(allOccurrences, className, methodName, numberLine);
         assertTrue(optionalMaybeGoodOccurrence.isPresent());
-        CkAggregateLineDTO maybeGoodOccurrence = optionalMaybeGoodOccurrence.get();
+        CkAggregateLineDTO maybeGoodOccurrence = optionalMaybeGoodOccurrence.orElseThrow(() -> new IllegalStateException("Good occurrence is not present"));
 
         assertEquals(ckAggregateLineDTO2, maybeGoodOccurrence);
     }
@@ -174,7 +176,7 @@ class JoularResourceServiceImplTest {
 
         Optional<CkAggregateLineDTO> optionalMaybeGoodOccurrence = joularResourceService.findOccFromMultipleOcc(allOccurrences, className, methodName, numberLine);
         assertTrue(optionalMaybeGoodOccurrence.isPresent());
-        CkAggregateLineDTO maybeGoodOccurrence = optionalMaybeGoodOccurrence.get();
+        CkAggregateLineDTO maybeGoodOccurrence = optionalMaybeGoodOccurrence.orElseThrow(() -> new IllegalStateException("Occurrence from multiple occurrence is not present"));
 
         assertEquals(ckAggregateLineDTO2, maybeGoodOccurrence);
     }
@@ -203,7 +205,7 @@ class JoularResourceServiceImplTest {
 
         Optional<CkAggregateLineDTO> optionalMaybeGoodOccurrence = joularResourceService.findOccFromMultipleOcc(allOccurrences, className, methodName, numberLine);
         assertTrue(optionalMaybeGoodOccurrence.isPresent());
-        CkAggregateLineDTO maybeGoodOccurrence = optionalMaybeGoodOccurrence.get();
+        CkAggregateLineDTO maybeGoodOccurrence = optionalMaybeGoodOccurrence.orElseThrow(() -> new IllegalStateException("Occurrence from multiple occurrence is not present"));
         assertEquals(ckAggregateLineDTO3, maybeGoodOccurrence);
     }
 
@@ -218,7 +220,7 @@ class JoularResourceServiceImplTest {
 
         Optional<CkAggregateLineDTO> optionalMaybeGoodOccurrence = joularResourceService.findGoodOccurrence(allOccurrences, className, methodName, numberLine);
         assertTrue(optionalMaybeGoodOccurrence.isPresent());
-        CkAggregateLineDTO maybeGoodOccurrence = optionalMaybeGoodOccurrence.get();
+        CkAggregateLineDTO maybeGoodOccurrence = optionalMaybeGoodOccurrence.orElseThrow(() -> new IllegalStateException("Good occurrence is not present"));
         assertEquals(ckAggregateLineDTO2, maybeGoodOccurrence);
     }
 }

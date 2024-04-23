@@ -11,6 +11,7 @@ import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
 import com.snail.sentinel.backend.service.dto.joular.JoularNodeEntityListDTO;
 import com.snail.sentinel.backend.service.dto.joularnode.JoularNodeHashMapDTO;
 import com.snail.sentinel.backend.service.dto.measurableelement.MeasurableElementDTO;
+import com.snail.sentinel.backend.service.exceptions.CreateJoularNodeEntityMeasurableElementException;
 import com.snail.sentinel.backend.service.impl.JoularNodeEntityServiceImpl;
 import com.snail.sentinel.backend.service.impl.JoularResourceServiceImpl;
 import com.snail.sentinel.backend.service.mapper.JoularNodeEntityMapper;
@@ -134,7 +135,7 @@ class JoularNodeEntityServiceImplTest {
         when(joularResourceService.getMatchCkJoular(classMethodLineString)).thenReturn(Optional.ofNullable(ckAggregateLineDTO1));
         Optional<MeasurableElementDTO> optionalMeasurableElementDTO = joularNodeEntityService.createJoularNodeEntityMeasurableElement(classMethodLineString);
         assertTrue(optionalMeasurableElementDTO.isPresent());
-        MeasurableElementDTO maybeMeasurableElementDTO = optionalMeasurableElementDTO.get();
+        MeasurableElementDTO maybeMeasurableElementDTO = optionalMeasurableElementDTO.orElseThrow(() -> new CreateJoularNodeEntityMeasurableElementException(classMethodLineString));
 
         MeasurableElementDTO measurableElementDTO = createMeasurableElementDTO("org.jabref.gui.fieldeditors.LinkedFileViewModelTest", "setUp/1[java.nio.file.Path]", "org.jabref.gui.fieldeditors.LinkedFileViewModelTest.setUp");
 

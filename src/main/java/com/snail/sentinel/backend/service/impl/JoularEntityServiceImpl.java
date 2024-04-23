@@ -6,10 +6,7 @@ import com.snail.sentinel.backend.repository.JoularEntityRepository;
 import com.snail.sentinel.backend.service.JoularEntityService;
 import com.snail.sentinel.backend.service.JoularResourceService;
 import com.snail.sentinel.backend.service.dto.measurableelement.MeasurableElementDTO;
-import com.snail.sentinel.backend.service.exceptions.CommitSimpleDTONotSetException;
-import com.snail.sentinel.backend.service.exceptions.FileListProviderNotSetException;
-import com.snail.sentinel.backend.service.exceptions.IterationDTONotSetException;
-import com.snail.sentinel.backend.service.exceptions.NoCsvLineFoundException;
+import com.snail.sentinel.backend.service.exceptions.*;
 import com.snail.sentinel.backend.service.dto.IterationDTO;
 import com.snail.sentinel.backend.service.dto.joular.JoularEntityDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineDTO;
@@ -118,7 +115,7 @@ public class JoularEntityServiceImpl implements JoularEntityService {
             Float value = line.getFloat(nextLine);
             Optional<CkAggregateLineDTO> optionalResult = joularResourceService.getMatchCkJoular(nextLine);
             if (optionalResult.isPresent()) {
-                CkAggregateLineDTO matchedCkJoular = optionalResult.get();
+                CkAggregateLineDTO matchedCkJoular = optionalResult.orElseThrow(() -> new GetMatchCkJoularException(nextLine));
                 String classMethodSignature = getClassMethodSignature(nextLine);
                 MeasurableElementDTO methodElementDTO = getMeasurableElementForJoular(matchedCkJoular, classMethodSignature);
                 addOrUpdateJoularEntityListDTO(methodElementDTO, value);
