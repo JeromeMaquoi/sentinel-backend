@@ -44,8 +44,8 @@ public class CkJoularResource {
     public void insertAllData() throws Exception {
         Util.writeTimeToFile("Insertion of all the data into the db");
 
-        //ckEntityService.deleteAll();
-        //joularEntityService.deleteAll();
+        ckEntityService.deleteAll();
+        joularEntityService.deleteAll();
         joularNodeEntityService.deleteAll();
         setRepoData();
         List<CommitCompleteDTO> listCommits = new ArrayList<>();
@@ -61,7 +61,7 @@ public class CkJoularResource {
 
             // Insertion of CK data
             String csvPath = System.getenv("REPO_DIRECTORY") + repoItem.get(Util.NAME) + "/output-ck/";
-            //ckEntityService.insertBatchCkEntityDTO(commitCompleteDTO, csvPath, Integer.parseInt(System.getenv("BATCH_SIZE")));
+            ckEntityService.insertBatchCkEntityDTO(commitCompleteDTO, csvPath, Integer.parseInt(System.getenv("BATCH_SIZE")));
 
             // Insertion of Joular data
             joularResourceService.setFileListProvider(new ProductionFileListProvider());

@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -163,7 +164,7 @@ public class Util {
         String filePath = System.getenv("PLUGINS_DIRECTORY") + "/totalTime.txt";
         log.info("filePath = {}", filePath);
         try (FileWriter fileWriter = new FileWriter(filePath, StandardCharsets.UTF_8, true)) {
-            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime now = LocalDateTime.now(ZoneId.of("Europe/Brussels"));
             String formattedTime = now.format(formatter);
             fileWriter.write(formattedTime + " - " + lineToAdd + "\n");
             log.info("Line added to totalTime.txt");

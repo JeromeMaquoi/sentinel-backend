@@ -11,6 +11,8 @@ import com.snail.sentinel.backend.service.dto.joular.JoularNodeEntityListDTO;
 import com.snail.sentinel.backend.service.dto.joularnode.JoularNodeHashMapDTO;
 import com.snail.sentinel.backend.service.dto.joularnode.JoularNodeKeyHashMap;
 import com.snail.sentinel.backend.service.dto.measurableelement.MeasurableElementDTO;
+import com.snail.sentinel.backend.service.exceptions.CreateJoularNodeEntityMeasurableElementException;
+import com.snail.sentinel.backend.service.exceptions.GetMatchCkJoularException;
 import com.snail.sentinel.backend.service.exceptions.NoCsvLineFoundException;
 import com.snail.sentinel.backend.service.mapper.JoularNodeEntityMapper;
 
@@ -173,7 +175,7 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
             Optional<MeasurableElementDTO> optionalMeasurableElementDTO = createJoularNodeEntityMeasurableElement(classMethodLineString);
 
             if (optionalMeasurableElementDTO.isPresent() && lineNumber > 0) {
-                MeasurableElementDTO measurableElementDTO = optionalMeasurableElementDTO.get();
+                MeasurableElementDTO measurableElementDTO = optionalMeasurableElementDTO.orElseThrow(() -> new CreateJoularNodeEntityMeasurableElementException(classMethodLineString));
                 joularNodeEntityDTO = populateJoularNodeEntityDTO(measurableElementDTO, lineNumber, value);
                 log.debug("ancestors for {} : {}", joularNodeEntityDTO.getMeasurableElement().getMethodName(), joularNodeEntityDTO.getAncestors());
                 this.joularNodeHashMapDTO.insertOne(joularNodeEntityDTO);
@@ -220,7 +222,7 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
     public Optional<MeasurableElementDTO> createJoularNodeEntityMeasurableElement(String classMethodLineString) {
         Optional<CkAggregateLineDTO> optionalMatchedCkJoular = joularResourceService.getMatchCkJoular(classMethodLineString);
         if (optionalMatchedCkJoular.isPresent()) {
-            CkAggregateLineDTO matchedCkJoular = optionalMatchedCkJoular.get();
+            CkAggregateLineDTO matchedCkJoular = optionalMatchedCkJoular.orElseThrow(() -> new GetMatchCkJoularException(classMethodLineString));
             String classMethodSignature = classMethodLineString.substring(0, classMethodLineString.lastIndexOf(" "));
             return Optional.of(Util.getMeasurableElementForJoular(matchedCkJoular, classMethodSignature));
         }

@@ -94,22 +94,25 @@ public class JoularResourceServiceImpl implements JoularResourceService {
     public Optional<CkAggregateLineDTO> getMatchCkJoular(String classMethodLineString) {
         log.debug("getMatchCkJoular for : {}", classMethodLineString);
         Optional<JSONObject> optionalResult = getClassMethodLine(classMethodLineString);
-        if (optionalResult.isPresent()) {
-            JSONObject classMethodLine = optionalResult.get();
+
+        return optionalResult.map(classMethodLine -> {
             String className = Util.classNameParser(classMethodLine.getString(CLASS_NAME));
             String methodName = Util.methodNameParser(className, classMethodLine.getString(METHOD_NAME));
             int numberLine = classMethodLine.getInt(LINE_NUMBER);
             //log.info("numberLine : {}", numberLine);
+
             if (numberLine > 0 && !methodName.isEmpty()) {
                 List<CkAggregateLineDTO> allOccurrences = getCkAggregateLineHashMapDTO().getAllOccurrences(className, methodName);
                 //log.info("allOccurrences : {}", allOccurrences);
                 return findGoodOccurrence(allOccurrences, className, methodName, numberLine);
-            } /*else {
-                log.warn("The number of line is negative for \"{}.{}\"", className, methodName);
-            }*/
-        }
-        log.debug("getMatchCkJoular empty for {}", classMethodLineString);
-        return Optional.empty();
+            } else {
+                //log.warn("The number of line is negative for \"{}.{}\"", className, methodName);
+                return Optional.<CkAggregateLineDTO>empty();
+            }
+        }).orElseGet(() -> {
+            log.debug("getMatchCkJoular empty for {}", classMethodLineString);
+            return Optional.empty();
+        });
     }
 
     public Optional<CkAggregateLineDTO> findGoodOccurrence(List<CkAggregateLineDTO> allOccurrences, String className, String methodName, int numberLine) {
