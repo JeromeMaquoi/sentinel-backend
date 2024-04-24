@@ -56,9 +56,13 @@ public class Util {
             String line = null;
             while ((line = reader.readLine()) != null) {
                 final String[] lineValues = line.split(",");
-                JSONObject jsonValues = new JSONObject();
-                jsonValues.put(lineValues[0], lineValues[1]);
-                jsonObjectList.add(jsonValues);
+                // For now, the length is limited to 2 because it prevents from the kotlin source code to be inserted, because these stack trace elements contain more than one "," so the app is not designed to handle this, yet
+                //TODO handle Kotlin source code
+                if (lineValues.length == 2) {
+                    JSONObject jsonValues = new JSONObject();
+                    jsonValues.put(lineValues[0], lineValues[1]);
+                    jsonObjectList.add(jsonValues);
+                }
             }
         }
         return jsonObjectList;

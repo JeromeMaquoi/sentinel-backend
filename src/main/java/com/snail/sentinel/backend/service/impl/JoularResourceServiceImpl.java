@@ -158,7 +158,7 @@ public class JoularResourceServiceImpl implements JoularResourceService {
         log.debug("getClassMethodLine for : {}", metric);
         String className = metric.substring(0, metric.lastIndexOf('.'));
         String[] spaceSplit = metric.substring(metric.lastIndexOf('.') + 1).split(" ");
-        if (spaceSplit.length < 3) {
+        if (spaceSplit.length < 3 && !metric.contains("access$000")) {
             String methodName = spaceSplit[0];
             int numberLine = parseInt(spaceSplit[1]);
             JSONObject jsonObject = new JSONObject();

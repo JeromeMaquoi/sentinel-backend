@@ -160,7 +160,11 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
         // Check if last element of array
         for (String methodNameAndLine : allLineNodes) {
             setLastElement(allLineNodes.indexOf(methodNameAndLine) == allLineNodes.size() - 1);
-            handleOneMethodFromOneCsvLine(methodNameAndLine, value);
+            // For now, the length is limited to 2 because it prevents from the kotlin source code to be inserted, because these stack trace elements contain more than one "," so the app is not designed to handle this, yet
+            //TODO handle Kotlin source code
+            if (methodNameAndLine.split(" ").length == 2) {
+                handleOneMethodFromOneCsvLine(methodNameAndLine, value);
+            }
         }
     }
 
@@ -183,7 +187,7 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
                 log.debug("ancestors for next cell : {}", joularResourceService.getAncestors());
                 joularResourceService.getJoularNodeEntityListDTO().add(joularNodeEntityDTO);
 
-            } else if (lineNumber > 0 && !classMethodLineString.contains("<clinit>") && !classMethodLineString.contains("<init>")){
+            } else if (lineNumber > 0 && !classMethodLineString.contains("<clinit>") && !classMethodLineString.contains("<init>") && !classMethodLineString.contains("access$000")){
                 log.warn("No JoularNodeEntity set for {}", classMethodLineString);
             }
         } else {
