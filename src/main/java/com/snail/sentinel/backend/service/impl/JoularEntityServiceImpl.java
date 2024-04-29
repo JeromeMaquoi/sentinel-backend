@@ -37,12 +37,6 @@ public class JoularEntityServiceImpl implements JoularEntityService {
 
     private final JoularResourceService joularResourceService;
 
-    private static final String CLASS_NAME = "className";
-
-    private static final String METHOD_NAME = "methodName";
-
-    private static final String LINE_NUMBER = "lineNumber";
-
     public JoularEntityServiceImpl(JoularEntityRepository joularEntityRepository, JoularEntityMapper joularEntityMapper, JoularResourceService joularResourceService) {
         this.joularEntityRepository = joularEntityRepository;
         this.joularEntityMapper = joularEntityMapper;
@@ -56,7 +50,14 @@ public class JoularEntityServiceImpl implements JoularEntityService {
 
     @Override
     public List<JoularEntity> findByCommitSha(String sha) {
+        log.info("Find JoularEntities by commit sha : {}", sha);
         return joularEntityRepository.findByCommitSha(sha);
+    }
+
+    @Override
+    public int countByCommitSha(String sha) {
+        log.info("Count number of JoularEntities for sha : {} = {}", sha, joularEntityRepository.countByCommitSha(sha));
+        return joularEntityRepository.countByCommitSha(sha);
     }
 
     @Override

@@ -45,8 +45,8 @@ public class CkJoularResource {
         Util.writeTimeToFile("Insertion of all the data into the db");
 
         //ckEntityService.deleteAll();
-        joularEntityService.deleteAll();
-        joularNodeEntityService.deleteAll();
+        //joularEntityService.deleteAll();
+        //joularNodeEntityService.deleteAll();
 
         String projectsDataPath = System.getenv("REPO_DIRECTORY") + "projects-data.csv";
         repoDataList = new ProjectDataReader().readProjectsFromCSV(projectsDataPath);
@@ -62,12 +62,20 @@ public class CkJoularResource {
             listCommits.add(commitCompleteDTO);
 
             // Insertion of CK data
-            String csvPath = System.getenv("REPO_DIRECTORY") + repoData.getName() + "/output-ck/";
-            //ckEntityService.insertBatchCkEntityDTO(commitCompleteDTO, csvPath, Integer.parseInt(System.getenv("BATCH_SIZE")));
+            if (ckEntityService.countByCommitSha(repoData.getSha()) == 0) {
+                String csvPath = System.getenv("REPO_DIRECTORY") + repoData.getName() + "/output-ck/";
+                ckEntityService.insertBatchCkEntityDTO(commitCompleteDTO, csvPath, Integer.parseInt(System.getenv("BATCH_SIZE")));
+            } else {
+                log.info("Ck data already in the database for {}", repoData.getName());
+            }
 
             // Insertion of Joular data
-            joularResourceService.setFileListProvider(new ProductionFileListProvider());
-            joularService.insertBatchJoularData(repoData, commitData);
+            if (joularEntityService.findByCommitSha(repoData.getSha()).isEmpty() && joularNodeEntityService.countByCommitSha(repoData.getSha()) == 0) {
+                joularResourceService.setFileListProvider(new ProductionFileListProvider());
+                joularService.insertBatchJoularData(repoData, commitData);
+            } else {
+                log.info("Joular data already in the database for {}", repoData.getName());
+            }
             log.info("Ending for the repository: {}", repoData.getName());
         }
         insertCommits(listCommits);

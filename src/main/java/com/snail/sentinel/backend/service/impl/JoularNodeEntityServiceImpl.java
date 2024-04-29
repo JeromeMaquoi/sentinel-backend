@@ -47,6 +47,8 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
 
     private JoularNodeHashMapDTO joularNodeHashMapDTO;
 
+    private int numberOfMethods = 0;
+
     public JoularNodeEntityServiceImpl(
             JoularNodeEntityRepository joularNodeEntityRepository,
             JoularNodeEntityMapper joularNodeEntityMapper,
@@ -124,6 +126,12 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
     }
 
     @Override
+    public int countByCommitSha(String sha) {
+        log.info("Count number of JoularNodeEntities by commit sha : {} = {}", sha, joularNodeEntityRepository.countByCommitSha(sha));
+        return joularNodeEntityRepository.countByCommitSha(sha);
+    }
+
+    @Override
     public void handleJoularNodeEntityCreationForOneIteration(Path iterationFilePath) {
         log.info("\n");
         log.info("\n");
@@ -173,6 +181,8 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
         assert joularResourceService.getJoularNodeEntityListDTO() != null : "getJoularNodeEntityListDTO() returns null";
         int lineNumber = Integer.parseInt(classMethodLineString.split(" ")[1]);
 
+        addMethod();
+
         JoularNodeKeyHashMap key = new JoularNodeKeyHashMap(classMethodLineString.split(" ")[0], lineNumber, joularResourceService.getAncestors());
 
         if (!this.joularNodeHashMapDTO.isJoularNodeEntityDTOInMap(key) || isLastElement()) {
@@ -187,8 +197,8 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
                 log.debug("ancestors for next cell : {}", joularResourceService.getAncestors());
                 joularResourceService.getJoularNodeEntityListDTO().add(joularNodeEntityDTO);
 
-            } else if (lineNumber > 0 && !classMethodLineString.contains("<clinit>") && !classMethodLineString.contains("<init>") && !classMethodLineString.contains("access$000")){
-                log.warn("No JoularNodeEntity set for {}", classMethodLineString);
+            } else if (lineNumber > 0 && !classMethodLineString.contains("<clinit>") && !classMethodLineString.contains("<init>") && !classMethodLineString.contains("access$000") && !classMethodLineString.contains("$")){
+                log.warn("{} : No JoularNodeEntity set for {}", getNumberOfMethods(), classMethodLineString);
             }
         } else {
             log.debug("JoularNodeEntityDTO {} already in map. Adding its id to the ancestors list", classMethodLineString);
@@ -256,5 +266,13 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
 
     public JoularNodeEntityDTO getJoularNodeEntityDTO() {
         return joularNodeEntityDTO;
+    }
+
+    public void addMethod() {
+        numberOfMethods++;
+    }
+
+    public int getNumberOfMethods() {
+        return numberOfMethods;
     }
 }

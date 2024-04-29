@@ -10,4 +10,6 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface JoularNodeEntityRepository extends MongoRepository<JoularNodeEntity, String> {}
+public interface JoularNodeEntityRepository extends MongoRepository<JoularNodeEntity, String> {
+    int countByCommitSha(String commitSha);
+}

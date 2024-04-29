@@ -42,7 +42,14 @@ public class CkEntityServiceImpl implements CkEntityService {
 
     @Override
     public List<CkEntity> findByCommitSha(String sha) {
+        log.info("Find CkEntities by commitSha : {}", sha);
         return ckEntityRepository.findByCommitSha(sha);
+    }
+
+    @Override
+    public int countByCommitSha(String sha) {
+        log.info("Count number of CkEntities by commitSha : {} = {}", sha, ckEntityRepository.countByCommitSha(sha));
+        return ckEntityRepository.countByCommitSha(sha);
     }
 
     @Override
@@ -65,6 +72,7 @@ public class CkEntityServiceImpl implements CkEntityService {
 
     @Override
     public void deleteAll() {
+        log.debug("Delete all CkEntities");
         ckEntityRepository.deleteAll();
     }
 

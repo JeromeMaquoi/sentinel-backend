@@ -167,7 +167,7 @@ public class JoularResourceServiceImpl implements JoularResourceService {
             jsonObject.put(LINE_NUMBER, numberLine);
             return Optional.of(jsonObject);
         }
-        log.debug("getClassMethodLine empty for {}", metric);
+        log.warn("getClassMethodLine empty for {}", metric);
         return Optional.empty();
     }
 
