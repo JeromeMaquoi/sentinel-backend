@@ -54,6 +54,8 @@ public class CkJoularResource {
         // For each repository
         for (RepoDataDTO repoData : repoDataList) {
             log.info("Beginning for repository : {}", repoData.getName());
+            Util.writeTimeToFile("Beginning for repository : " + repoData.getName());
+            Util.writeTimeToFileWarningRepositoryName(repoData.getName());
 
             JSONObject commitData = commitEntityService.getCommitData(repoData.getOwner(), repoData.getName(), repoData.getSha());
 
