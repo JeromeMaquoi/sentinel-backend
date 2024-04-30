@@ -188,4 +188,35 @@ public class Util {
             e.printStackTrace();
         }
     }
+
+    public static void writeTimeToFileWarningIterationTitle(int iterationId) {
+        String filePath = System.getenv("PLUGINS_DIRECTORY") + "/unhandled-methods.txt";
+        try (FileWriter fileWriter = new FileWriter(filePath, StandardCharsets.UTF_8, true)) {
+            fileWriter.write("\n============\n");
+            fileWriter.write("Iteration " + iterationId + "\n");
+            fileWriter.write("============\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void writeTimeToFileForWarningIterationResult(int numberOfCell, String message) {
+        String filePath = System.getenv("PLUGINS_DIRECTORY") + "/unhandled-methods.txt";
+        try (FileWriter fileWriter = new FileWriter(filePath, StandardCharsets.UTF_8, true)) {
+            LocalDateTime now = LocalDateTime.now(ZoneId.of("Europe/Brussels"));
+            String formattedTime = now.format(formatter);
+            fileWriter.write(formattedTime + " - Cell number " + numberOfCell + " : " + message + "\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void writeTimeToFileForWarningEmptyLine() {
+        String filePath = System.getenv("PLUGINS_DIRECTORY") + "/unhandled-methods.txt";
+        try (FileWriter fileWriter = new FileWriter(filePath, StandardCharsets.UTF_8, true)) {
+            fileWriter.write("\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -156,6 +156,7 @@ public class JoularEntityServiceImpl implements JoularEntityService {
                 MeasurableElementDTO methodElementDTO = getMeasurableElementForJoular(matchedCkJoular, classMethodSignature);
                 addOrUpdateJoularEntityListDTO(methodElementDTO, value);
             } else {
+                Util.writeTimeToFileForWarningIterationResult(getNumberOfMethods(), "No JoularEntity set for " + nextLine);
                 addUnhandledMethod();
             }
         }

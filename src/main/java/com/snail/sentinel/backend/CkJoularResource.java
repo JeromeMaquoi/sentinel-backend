@@ -45,8 +45,8 @@ public class CkJoularResource {
         Util.writeTimeToFile("Insertion of all the data into the db");
 
         //ckEntityService.deleteAll();
-        //joularEntityService.deleteAll();
-        //joularNodeEntityService.deleteAll();
+        joularEntityService.deleteAll();
+        joularNodeEntityService.deleteAll();
 
         String projectsDataPath = System.getenv("REPO_DIRECTORY") + "projects-data.csv";
         repoDataList = new ProjectDataReader().readProjectsFromCSV(projectsDataPath);
