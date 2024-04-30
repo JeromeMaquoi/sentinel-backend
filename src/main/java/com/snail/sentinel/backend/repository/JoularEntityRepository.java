@@ -13,4 +13,6 @@ public interface JoularEntityRepository extends MongoRepository<JoularEntity, St
     List<JoularEntity> findByCommitShaAndMeasurableElementClassNameAndMeasurableElementClassMethodSignature(String sha, String className, String classMethodSignature);
 
     void deleteJoularEntitiesByCommit_Repository_Name(String repoName);
+
+    int countByCommitSha(String sha);
 }

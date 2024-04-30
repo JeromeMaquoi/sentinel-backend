@@ -37,11 +37,9 @@ public class JoularEntityServiceImpl implements JoularEntityService {
 
     private final JoularResourceService joularResourceService;
 
-    private static final String CLASS_NAME = "className";
+    private int numberOfMethods;
 
-    private static final String METHOD_NAME = "methodName";
-
-    private static final String LINE_NUMBER = "lineNumber";
+    private int numberOfUnhandledMethods;
 
     public JoularEntityServiceImpl(JoularEntityRepository joularEntityRepository, JoularEntityMapper joularEntityMapper, JoularResourceService joularResourceService) {
         this.joularEntityRepository = joularEntityRepository;
@@ -56,7 +54,14 @@ public class JoularEntityServiceImpl implements JoularEntityService {
 
     @Override
     public List<JoularEntity> findByCommitSha(String sha) {
+        log.info("Find JoularEntities by commit sha : {}", sha);
         return joularEntityRepository.findByCommitSha(sha);
+    }
+
+    @Override
+    public int countByCommitSha(String sha) {
+        log.info("Count number of JoularEntities for sha : {} = {}", sha, joularEntityRepository.countByCommitSha(sha));
+        return joularEntityRepository.countByCommitSha(sha);
     }
 
     @Override
@@ -80,8 +85,36 @@ public class JoularEntityServiceImpl implements JoularEntityService {
     @Override
     public void handleJoularEntityCreationForOneIteration(Path iterationFilePath) {
         log.info("Request to handle JoularEntity for iteration {}", iterationFilePath);
+        setNumberOfMethods(0);
+        setNumberOfUnhandledMethods(0);
         JoularEntityListDTO joularEntityListDTO = createJoularEntityDTOList(iterationFilePath);
         insertJoularEntityListData(joularEntityListDTO);
+    }
+
+    @Override
+    public int getNumberOfMethods() {
+        return numberOfMethods;
+    }
+
+    public void setNumberOfMethods(int numberOfMethods) {
+        this.numberOfMethods = numberOfMethods;
+    }
+
+    public void addMethod(){
+        numberOfMethods++;
+    }
+
+    @Override
+    public int getNumberOfUnhandledMethods() {
+        return numberOfUnhandledMethods;
+    }
+
+    public void setNumberOfUnhandledMethods(int numberOfUnhandledMethods) {
+        this.numberOfUnhandledMethods = numberOfUnhandledMethods;
+    }
+
+    public void addUnhandledMethod() {
+        numberOfUnhandledMethods++;
     }
 
     public JoularEntityListDTO createJoularEntityDTOList(Path iterationFilePath) {
@@ -99,6 +132,7 @@ public class JoularEntityServiceImpl implements JoularEntityService {
         Path csvPath = joularResourceService.getFileListProvider().getFileList(iterationFilePath + "/app/total/methods").iterator().next();
         try {
             List<JSONObject> allLines = Util.readCsvWithoutHeaderToJson(csvPath.toString());
+            log.info("Creation of the JoularEntityListDTO");
             for (JSONObject line : allLines) {
                 handleOneCsvLine(line);
             }
@@ -111,7 +145,9 @@ public class JoularEntityServiceImpl implements JoularEntityService {
     public void handleOneCsvLine(JSONObject line) {
         String nextLine = line.keySet().iterator().next();
         String regex = "^([+-]?\\d*\\.?\\d*)$";
+        addMethod();
         if (Pattern.matches(regex, line.getString(nextLine))) {
+            log.debug("line : {}", nextLine);
             Float value = line.getFloat(nextLine);
             Optional<CkAggregateLineDTO> optionalResult = joularResourceService.getMatchCkJoular(nextLine);
             if (optionalResult.isPresent()) {
@@ -119,6 +155,9 @@ public class JoularEntityServiceImpl implements JoularEntityService {
                 String classMethodSignature = getClassMethodSignature(nextLine);
                 MeasurableElementDTO methodElementDTO = getMeasurableElementForJoular(matchedCkJoular, classMethodSignature);
                 addOrUpdateJoularEntityListDTO(methodElementDTO, value);
+            } else {
+                Util.writeTimeToFileForWarningIterationResult(getNumberOfMethods(), "No JoularEntity set for " + nextLine);
+                addUnhandledMethod();
             }
         }
     }
@@ -126,8 +165,10 @@ public class JoularEntityServiceImpl implements JoularEntityService {
     public void addOrUpdateJoularEntityListDTO(MeasurableElementDTO methodElementDTO, Float value) {
         JoularEntityDTO joularEntityDTO = new JoularEntityDTO();
         if (joularResourceService.getMethodElementSetDTO().has(methodElementDTO)) {
+            log.debug("Updating JoularNodeEntityDTO from list");
             joularResourceService.getJoularEntityListDTO().update(methodElementDTO, value);
         } else {
+            log.debug("Adding JoularNodeEntityDTO to list");
             joularResourceService.getMethodElementSetDTO().add(methodElementDTO);
             joularEntityDTO.setIterationDTO(joularResourceService.getIterationDTO());
             joularEntityDTO.setCommitSimpleDTO(joularResourceService.getCommitSimpleDTO());

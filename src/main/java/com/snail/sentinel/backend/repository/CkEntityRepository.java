@@ -14,6 +14,7 @@ import java.util.List;
 @Repository
 public interface CkEntityRepository extends MongoRepository<CkEntity, String> {
     List<CkEntity> findByCommitSha(String sha);
+    int countByCommitSha(String sha);
     List<CkEntity> findByCommitShaAndName(String sha, String name);
     List<CkEntity> findByCommitShaAndMeasurableElementClassNameAndMeasurableElementMethodNameAndNameIn(String sha, String className, String methodName, List<String> names);
     void deleteCkEntitiesByCommitRepositoryName(String repoName);

@@ -366,6 +366,6 @@ class JoularEntityServiceImplTest {
         joularEntityListDTO.add(joularEntityDTO);
 
         // Assert
-        assertEquals(maybeJoularEntityListDTO, joularEntityListDTO);
+        assertEquals(joularEntityListDTO, maybeJoularEntityListDTO);
     }
 }

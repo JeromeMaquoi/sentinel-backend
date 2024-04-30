@@ -16,6 +16,8 @@ public interface CkEntityService {
 
     List<CkEntity> findByCommitSha(String sha);
 
+    int countByCommitSha(String sha);
+
     List<CkEntity> findByCommitShaAndMetricName(String sha, String metricName);
 
     List<CkEntity> findByCommitShaAndMethodElementAndMetricNames(String sha, String className, String methodName, List<String> names);

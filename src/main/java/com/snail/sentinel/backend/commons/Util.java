@@ -56,9 +56,13 @@ public class Util {
             String line = null;
             while ((line = reader.readLine()) != null) {
                 final String[] lineValues = line.split(",");
-                JSONObject jsonValues = new JSONObject();
-                jsonValues.put(lineValues[0], lineValues[1]);
-                jsonObjectList.add(jsonValues);
+                // For now, the length is limited to 2 because it prevents from the kotlin source code to be inserted, because these stack trace elements contain more than one "," so the app is not designed to handle this, yet
+                //TODO handle Kotlin source code
+                if (lineValues.length == 2) {
+                    JSONObject jsonValues = new JSONObject();
+                    jsonValues.put(lineValues[0], lineValues[1]);
+                    jsonObjectList.add(jsonValues);
+                }
             }
         }
         return jsonObjectList;
@@ -162,12 +166,55 @@ public class Util {
 
     public static void writeTimeToFile(String lineToAdd) {
         String filePath = System.getenv("PLUGINS_DIRECTORY") + "/totalTime.txt";
-        log.info("filePath = {}", filePath);
+        log.debug("filePath = {}", filePath);
         try (FileWriter fileWriter = new FileWriter(filePath, StandardCharsets.UTF_8, true)) {
             LocalDateTime now = LocalDateTime.now(ZoneId.of("Europe/Brussels"));
             String formattedTime = now.format(formatter);
             fileWriter.write(formattedTime + " - " + lineToAdd + "\n");
             log.info("Line added to totalTime.txt");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void writeTimeToFileForIteration(String joularType, int iterationNumber, int numberOfCells, int numberOfUnhandledCells) {
+        String filePath = System.getenv("PLUGINS_DIRECTORY") + "/totalTime.txt";
+        try (FileWriter fileWriter = new FileWriter(filePath, StandardCharsets.UTF_8, true)) {
+            LocalDateTime now = LocalDateTime.now(ZoneId.of("Europe/Brussels"));
+            String formattedTime = now.format(formatter);
+            fileWriter.write("        => " + formattedTime + " - Data for iteration " + iterationNumber + " of " + joularType + " done (" + numberOfUnhandledCells + " unhandled cells out of " + numberOfCells + ")!\n");
+            log.info("Iteration line added to totalTime.txt");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void writeTimeToFileWarningIterationTitle(int iterationId) {
+        String filePath = System.getenv("PLUGINS_DIRECTORY") + "/unhandled-methods.txt";
+        try (FileWriter fileWriter = new FileWriter(filePath, StandardCharsets.UTF_8, true)) {
+            fileWriter.write("\n============\n");
+            fileWriter.write("Iteration " + iterationId + "\n");
+            fileWriter.write("============\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void writeTimeToFileForWarningIterationResult(int numberOfCell, String message) {
+        String filePath = System.getenv("PLUGINS_DIRECTORY") + "/unhandled-methods.txt";
+        try (FileWriter fileWriter = new FileWriter(filePath, StandardCharsets.UTF_8, true)) {
+            LocalDateTime now = LocalDateTime.now(ZoneId.of("Europe/Brussels"));
+            String formattedTime = now.format(formatter);
+            fileWriter.write(formattedTime + " - Cell number " + numberOfCell + " : " + message + "\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void writeTimeToFileForWarningEmptyLine() {
+        String filePath = System.getenv("PLUGINS_DIRECTORY") + "/unhandled-methods.txt";
+        try (FileWriter fileWriter = new FileWriter(filePath, StandardCharsets.UTF_8, true)) {
+            fileWriter.write("\n");
         } catch (IOException e) {
             e.printStackTrace();
         }
