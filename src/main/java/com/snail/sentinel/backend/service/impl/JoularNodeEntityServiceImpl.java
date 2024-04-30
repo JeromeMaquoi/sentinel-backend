@@ -47,7 +47,9 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
 
     private JoularNodeHashMapDTO joularNodeHashMapDTO;
 
-    private int numberOfMethods = 0;
+    private int numberOfMethods;
+
+    private int numberOfUnhandledMethods;
 
     public JoularNodeEntityServiceImpl(
             JoularNodeEntityRepository joularNodeEntityRepository,
@@ -137,9 +139,13 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
         log.info("\n");
         log.info("\n");
         log.info("Request to handle JoularNodeEntity for iteration {}", iterationFilePath);
+        setNumberOfMethods(0);
+        setNumberOfUnhandledMethods(0);
         this.joularNodeHashMapDTO = new JoularNodeHashMapDTO();
         createJoularNodeEntityDTOList(iterationFilePath);
         bulkAdd(joularResourceService.getJoularNodeEntityListDTO().getList());
+        log.info("Total number of cells in the csv : {}", getNumberOfMethods());
+        log.info("Number of unhandled cells in the csv : {}", getNumberOfUnhandledMethods());
     }
 
     public void createJoularNodeEntityDTOList(Path iterationFilePath) {
@@ -199,6 +205,7 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
 
             } else if (lineNumber > 0 && !classMethodLineString.contains("<clinit>") && !classMethodLineString.contains("<init>") && !classMethodLineString.contains("access$000") && !classMethodLineString.contains("$")){
                 log.warn("{} : No JoularNodeEntity set for {}", getNumberOfMethods(), classMethodLineString);
+                addUnhandledMethod();
             }
         } else {
             log.debug("JoularNodeEntityDTO {} already in map. Adding its id to the ancestors list", classMethodLineString);
@@ -272,7 +279,25 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
         numberOfMethods++;
     }
 
+    @Override
     public int getNumberOfMethods() {
         return numberOfMethods;
+    }
+
+    public void setNumberOfMethods(int number) {
+        numberOfMethods = number;
+    }
+
+    public void addUnhandledMethod() {
+        numberOfUnhandledMethods++;
+    }
+
+    @Override
+    public int getNumberOfUnhandledMethods() {
+        return numberOfUnhandledMethods;
+    }
+
+    public void setNumberOfUnhandledMethods(int number) {
+        numberOfUnhandledMethods = number;
     }
 }

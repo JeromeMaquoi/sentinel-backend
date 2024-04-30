@@ -63,4 +63,8 @@ public interface JoularNodeEntityService {
     void handleJoularNodeEntityCreationForOneIteration(Path iterationFilePath);
 
     int countByCommitSha(String sha);
+
+    int getNumberOfMethods();
+
+    int getNumberOfUnhandledMethods();
 }

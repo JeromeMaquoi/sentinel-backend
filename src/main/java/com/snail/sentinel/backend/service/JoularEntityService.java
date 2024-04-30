@@ -20,4 +20,8 @@ public interface JoularEntityService {
     List<JoularEntity> findByCommitShaAndAstElement(String sha, String className, String methodSignature);
 
     void handleJoularEntityCreationForOneIteration(Path iterationFilePath);
+
+    int getNumberOfMethods();
+
+    int getNumberOfUnhandledMethods();
 }

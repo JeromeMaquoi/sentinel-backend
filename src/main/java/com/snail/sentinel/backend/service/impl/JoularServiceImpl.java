@@ -60,7 +60,9 @@ public class JoularServiceImpl implements JoularService {
         joularResourceService.setIterationDTO(iterationDTO);
 
         joularEntityService.handleJoularEntityCreationForOneIteration(iterationFilePath);
+        Util.writeTimeToFileForIteration("JoularEntity", iterationDTO.getIterationId(), joularEntityService.getNumberOfMethods(), joularEntityService.getNumberOfUnhandledMethods());
         joularNodeEntityService.handleJoularNodeEntityCreationForOneIteration(iterationFilePath);
+        Util.writeTimeToFileForIteration("JoularNodeEntity", iterationDTO.getIterationId(), joularNodeEntityService.getNumberOfMethods(), joularNodeEntityService.getNumberOfUnhandledMethods());
     }
 
     public IterationDTO createIterationDTOFromCsvFileName(String fileName) {

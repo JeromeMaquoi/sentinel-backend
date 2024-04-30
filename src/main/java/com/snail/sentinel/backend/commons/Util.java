@@ -166,12 +166,24 @@ public class Util {
 
     public static void writeTimeToFile(String lineToAdd) {
         String filePath = System.getenv("PLUGINS_DIRECTORY") + "/totalTime.txt";
-        log.info("filePath = {}", filePath);
+        log.debug("filePath = {}", filePath);
         try (FileWriter fileWriter = new FileWriter(filePath, StandardCharsets.UTF_8, true)) {
             LocalDateTime now = LocalDateTime.now(ZoneId.of("Europe/Brussels"));
             String formattedTime = now.format(formatter);
             fileWriter.write(formattedTime + " - " + lineToAdd + "\n");
             log.info("Line added to totalTime.txt");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void writeTimeToFileForIteration(String joularType, int iterationNumber, int numberOfCells, int numberOfUnhandledCells) {
+        String filePath = System.getenv("PLUGINS_DIRECTORY") + "/totalTime.txt";
+        try (FileWriter fileWriter = new FileWriter(filePath, StandardCharsets.UTF_8, true)) {
+            LocalDateTime now = LocalDateTime.now(ZoneId.of("Europe/Brussels"));
+            String formattedTime = now.format(formatter);
+            fileWriter.write("        => " + formattedTime + " - Data for iteration " + iterationNumber + " of " + joularType + " done (" + numberOfUnhandledCells + " unhandled cells out of " + numberOfCells + ")!\n");
+            log.info("Iteration line added to totalTime.txt");
         } catch (IOException e) {
             e.printStackTrace();
         }
