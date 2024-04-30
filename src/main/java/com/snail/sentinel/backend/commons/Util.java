@@ -200,6 +200,15 @@ public class Util {
         }
     }
 
+    public static void writeTimeToFileWarningRepositoryName(String repositoryName) {
+        String filePath = System.getenv("PLUGINS_DIRECTORY") + "/unhandled-methods.txt";
+        try (FileWriter fileWriter = new FileWriter(filePath, StandardCharsets.UTF_8, true)) {
+            fileWriter.write("\n\nREPOSITORY : " + repositoryName + "\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void writeTimeToFileForWarningIterationResult(int numberOfCell, String message) {
         String filePath = System.getenv("PLUGINS_DIRECTORY") + "/unhandled-methods.txt";
         try (FileWriter fileWriter = new FileWriter(filePath, StandardCharsets.UTF_8, true)) {
