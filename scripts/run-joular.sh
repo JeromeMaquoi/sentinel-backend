@@ -41,6 +41,8 @@ do
         mvn clean test -Drat.skip=true
     fi
     log_iteration_output "$i"
+    log_sleep_iteration "$SLEEP"
+    sleep "$SLEEP"
 done
 log_and_print_output_with_date "Finished JoularJX for commons-configuration"
 echo -e "\n\n\n\n"
@@ -85,6 +87,8 @@ do
         sudo xvfb-run --auto-servernum ./gradlew clean test -PITERATION_ID=$i
     fi
     log_iteration_output "$i"
+    log_sleep_iteration "$SLEEP"
+    sleep "$SLEEP"
 done
 log_and_print_output_with_date "Finished JoularJX for jabref"
 echo -e "\n\n\n\n"
@@ -127,6 +131,8 @@ do
         sudo ./gradlew clean hibernate-core:test -PITERATION_ID=$i --rerun
     fi
     log_iteration_output "$i"
+    log_sleep_iteration "$SLEEP"
+    sleep "$SLEEP"
 done
 log_and_print_output_with_date "Finished JoularJX for hibernate-orm"
 echo -e "\n\n\n\n"
@@ -168,6 +174,8 @@ do
         sudo ./gradlew clean spring-boot-project:spring-boot:test -PITERATION_ID=$i --rerun
     fi
     log_iteration_output "$i"
+    log_sleep_iteration "$SLEEP"
+    sleep "$SLEEP"
 done
 log_and_print_output_with_date "Finished JoularJX for spring-boot"
 echo -e "\n\n\n\n"
@@ -210,6 +218,8 @@ do
         mvn clean test -Drat.skip=true
     fi
     log_iteration_output "$i"
+    log_sleep_iteration "$SLEEP"
+    sleep "$SLEEP"
 done
 log_and_print_output_with_date "Finished JoularJX for spoon"
 echo -e "\n\n\n\n"

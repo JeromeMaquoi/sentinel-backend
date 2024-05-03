@@ -32,10 +32,15 @@ log_configuration() {
     log_output_without_date "CLONE : $CLONE"
     log_output_without_date "CK : $CK"
     log_output_without_date "JOULAR : $JOULAR"
+    log_output_without_date "NB_WARMUP : $NB_WARMUP"
     log_output_without_date "+++++++++++++++++++"
 }
 
 log_iteration_output() {
     echo -e "        => "`date "+%Y/%m/%d %H:%M:%S"`" - Test for iteration $1 done!\n\n"
-    echo "        => "`date "+%Y/%m/%d %H:%M:%S"`" - Test for iteration $1 done!" >> $LOGFILE
+    echo "        => "`date "+%Y/%m/%d %H:%M:%S"`" - Test for iteration $1 done!" >> "$LOGFILE"
+}
+
+log_sleep_iteration() {
+    echo "        => Sleep $1 seconds before next iteration" >> "$LOGFILE"
 }
