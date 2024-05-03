@@ -44,7 +44,7 @@ public class CkJoularResource {
     public void insertAllData() throws Exception {
         Util.writeTimeToFile("Insertion of all the data into the db");
 
-        //ckEntityService.deleteAll();
+        ckEntityService.deleteAll();
         joularEntityService.deleteAll();
         joularNodeEntityService.deleteAll();
 
