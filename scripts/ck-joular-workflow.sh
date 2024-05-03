@@ -33,7 +33,7 @@ if [ -z "$JOULAR" ] || [ "$JOULAR" == "true" ]; then
     # Warming up the CPU
     sudo REPO_DIRECTORY="$REPO_DIRECTORY" PLUGINS_DIRECTORY="$PLUGINS_DIRECTORY" NB_WARMUP="$NB_WARMUP" bash ./warmup.sh
     # Execution of JoularJX for each repository
-    sudo REPO_DIRECTORY="$REPO_DIRECTORY" PLUGINS_DIRECTORY="$PLUGINS_DIRECTORY" NB_ITERATION="$NB_ITERATION" bash ./run-joular.sh
+    sudo REPO_DIRECTORY="$REPO_DIRECTORY" PLUGINS_DIRECTORY="$PLUGINS_DIRECTORY" NB_ITERATION="$NB_ITERATION" SLEEP="$SLEEP" bash ./run-joular.sh
     log_and_print_output_with_date "JoularJX analysis finished"
 fi
 
