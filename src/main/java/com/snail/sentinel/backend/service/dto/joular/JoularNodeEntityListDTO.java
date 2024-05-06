@@ -21,6 +21,10 @@ public class JoularNodeEntityListDTO {
         this.joularNodeEntityDTOList.add(joularNodeEntityDTO);
     }
 
+    public void addAll(List<JoularNodeEntityDTO> joularNodeEntityDTOList) {
+        this.joularNodeEntityDTOList.addAll(joularNodeEntityDTOList);
+    }
+
     public List<JoularNodeEntityDTO> getList() {
         return this.joularNodeEntityDTOList;
     }

@@ -51,6 +51,11 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
 
     private int numberOfUnhandledMethods;
 
+    private boolean ignoreLine = false;
+
+    // List of all the methods of the current line
+    List<JoularNodeEntityDTO> methodsOfCurrentLine;
+
     public JoularNodeEntityServiceImpl(
             JoularNodeEntityRepository joularNodeEntityRepository,
             JoularNodeEntityMapper joularNodeEntityMapper,
@@ -168,17 +173,28 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
         String nextLine = line.keySet().iterator().next();
         Float value = line.getFloat(nextLine);
         List<String> allLineNodes = getEachNodeFromStringLine(nextLine);
+
         // List of all ancestors of one method of the line
         joularResourceService.setAncestors(new ArrayList<>());
+        methodsOfCurrentLine = new ArrayList<>();
+
         log.debug("ancestors list reset");
         // Check if last element of array
         for (String methodNameAndLine : allLineNodes) {
             setLastElement(allLineNodes.indexOf(methodNameAndLine) == allLineNodes.size() - 1);
             // For now, the length is limited to 2 because it prevents from the kotlin source code to be inserted, because these stack trace elements contain more than one "," so the app is not designed to handle this, yet
             //TODO handle Kotlin source code
-            if (methodNameAndLine.split(" ").length == 2) {
+            if (methodNameAndLine.split(" ").length == 2 && !ignoreLine) {
                 handleOneMethodFromOneCsvLine(methodNameAndLine, value);
+            } else {
+                ignoreLine = true;
             }
+        }
+
+        if (ignoreLine) {
+            log.warn("Ignoring the entire line due to unhandled methods : {}", nextLine);
+        } else {
+            joularResourceService.getJoularNodeEntityListDTO().addAll(methodsOfCurrentLine);
         }
     }
 
@@ -201,12 +217,14 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
                 this.joularNodeHashMapDTO.insertOne(joularNodeEntityDTO);
                 joularResourceService.getAncestors().add(joularNodeEntityDTO.getId());
                 log.debug("ancestors for next cell : {}", joularResourceService.getAncestors());
-                joularResourceService.getJoularNodeEntityListDTO().add(joularNodeEntityDTO);
+                //joularResourceService.getJoularNodeEntityListDTO().add(joularNodeEntityDTO);
+                methodsOfCurrentLine.add(joularNodeEntityDTO);
 
             } else if (lineNumber > 0 && !classMethodLineString.contains("<clinit>") && !classMethodLineString.contains("<init>") && !classMethodLineString.contains("access$000") && !classMethodLineString.contains("$")){
                 log.warn("{} : No JoularNodeEntity set for {}", getNumberOfMethods(), classMethodLineString);
                 Util.writeTimeToFileForWarningIterationResult(getNumberOfMethods(), "No JoularNodeEntity set for " +  classMethodLineString);
                 addUnhandledMethod();
+                ignoreLine = true;
             }
         } else {
             log.debug("JoularNodeEntityDTO {} already in map. Adding its id to the ancestors list", classMethodLineString);
