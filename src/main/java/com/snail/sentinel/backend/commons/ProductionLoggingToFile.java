@@ -9,10 +9,10 @@ import java.time.format.DateTimeFormatter;
 
 public class ProductionLoggingToFile implements LoggingToFile {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+    private final String filePath = System.getenv("PLUGINS_DIRECTORY") + "/unhandled-methods.txt";
 
     @Override
     public void writeTimeToFileForWarningIterationResult(int numberOfCell, String message) {
-        String filePath = System.getenv("PLUGINS_DIRECTORY") + "/unhandled-methods.txt";
         try (FileWriter fileWriter = new FileWriter(filePath, StandardCharsets.UTF_8, true)) {
             LocalDateTime now = LocalDateTime.now(ZoneId.of("Europe/Brussels"));
             String formattedTime = now.format(formatter);
@@ -23,12 +23,20 @@ public class ProductionLoggingToFile implements LoggingToFile {
     }
 
     @Override
-    public void writeTimeToFile(String lineToAdd) {
-        String filePath = System.getenv("PLUGINS_DIRECTORY") + "/unhandled-methods.txt";
+    public void writeTimeToFileUnhandledMethods(String lineToAdd) {
         try (FileWriter fileWriter = new FileWriter(filePath, StandardCharsets.UTF_8, true)) {
             LocalDateTime now = LocalDateTime.now(ZoneId.of("Europe/Brussels"));
             String formattedTime = now.format(formatter);
             fileWriter.write(formattedTime + " - " + lineToAdd + "\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void writeEmptyLineToFile() {
+        try (FileWriter fileWriter = new FileWriter(filePath, StandardCharsets.UTF_8, true)) {
+            fileWriter.write("\n");
         } catch (IOException e) {
             e.printStackTrace();
         }

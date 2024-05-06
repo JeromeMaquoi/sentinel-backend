@@ -5,5 +5,8 @@ public class TestingLoggingToFile implements LoggingToFile {
     public void writeTimeToFileForWarningIterationResult(int numberOfCell, String message) { /* no logs written into files for tests */ }
 
     @Override
-    public void writeTimeToFile(String lineToAdd) { /* no logs written into files for tests */ }
+    public void writeTimeToFileUnhandledMethods(String lineToAdd) { /* no logs written into files for tests */ }
+
+    @Override
+    public void writeEmptyLineToFile() { /* no logs written into files for tests */ }
 }

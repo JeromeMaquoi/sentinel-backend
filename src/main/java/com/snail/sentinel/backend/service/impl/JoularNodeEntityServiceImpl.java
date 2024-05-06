@@ -195,8 +195,9 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
         }
 
         if (ignoreLine) {
-            log.warn("{} : {}", lineNumber, nextLine);
-            joularResourceService.getLoggingToFile().writeTimeToFile("Line " + lineNumber + ": " + nextLine);
+            //log.warn("{} : {}", lineNumber, nextLine);
+            joularResourceService.getLoggingToFile().writeTimeToFileUnhandledMethods("Line " + lineNumber + ": " + nextLine);
+            joularResourceService.getLoggingToFile().writeEmptyLineToFile();
         } else {
             joularResourceService.getJoularNodeEntityListDTO().addAll(methodsOfCurrentLine);
         }
@@ -227,7 +228,7 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
 
             } else if (lineNumber > 0 && !classMethodLineString.contains("<clinit>") && !classMethodLineString.contains("<init>") && !classMethodLineString.contains("access$000") && !classMethodLineString.contains("$")){
                 //log.warn("{} : No JoularNodeEntity set for {}", getNumberOfMethods(), classMethodLineString);
-                //joularResourceService.getLoggingToFile().writeTimeToFileForWarningIterationResult(getNumberOfMethods(), "No JoularNodeEntity set for " +  classMethodLineString);
+                joularResourceService.getLoggingToFile().writeTimeToFileForWarningIterationResult(getNumberOfMethods(), "No JoularNodeEntity set for " +  classMethodLineString);
                 addUnhandledMethod();
                 ignoreLine = true;
             }

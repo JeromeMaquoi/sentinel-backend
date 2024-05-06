@@ -1,6 +1,7 @@
 package com.snail.sentinel.backend;
 
 import com.snail.sentinel.backend.commons.ProductionFileListProvider;
+import com.snail.sentinel.backend.commons.ProductionLoggingToFile;
 import com.snail.sentinel.backend.commons.Util;
 import com.snail.sentinel.backend.service.*;
 import com.snail.sentinel.backend.service.dto.RepoDataDTO;
@@ -42,6 +43,7 @@ public class CkJoularResource {
     }
 
     public void insertAllData() throws Exception {
+        joularResourceService.setLoggingToFile(new ProductionLoggingToFile());
         Util.writeTimeToFile("Insertion of all the data into the db");
 
         ckEntityService.deleteAll();
