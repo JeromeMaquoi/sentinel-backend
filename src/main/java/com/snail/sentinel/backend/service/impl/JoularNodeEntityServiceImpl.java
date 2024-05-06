@@ -159,15 +159,17 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
         Path csvpath = joularResourceService.getFileListProvider().getFileList(iterationFilePath + "/app/total/calltrees").iterator().next();
         try {
             List<JSONObject> allLines = Util.readCsvWithoutHeaderToJson(csvpath.toString());
+            int lineNumber = 1;
             for (JSONObject line : allLines) {
-                handleOneCsvLine(line);
+                handleOneCsvLine(lineNumber, line);
+                lineNumber++;
             }
         } catch (IOException e) {
             throw new NoCsvLineFoundException(e);
         }
     }
 
-    public void handleOneCsvLine(JSONObject line) {
+    public void handleOneCsvLine(int lineNumber, JSONObject line) {
         log.debug("--------");
         log.debug("New line: {}", line);
         String nextLine = line.keySet().iterator().next();
@@ -176,7 +178,8 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
 
         // List of all ancestors of one method of the line
         joularResourceService.setAncestors(new ArrayList<>());
-        methodsOfCurrentLine = new ArrayList<>();
+        setMethodsOfCurrentLine();
+        setIgnoreLine(false);
 
         log.debug("ancestors list reset");
         // Check if last element of array
@@ -192,7 +195,8 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
         }
 
         if (ignoreLine) {
-            log.warn("Ignoring the entire line due to unhandled methods : {}", nextLine);
+            log.warn("{} : {}", lineNumber, nextLine);
+            joularResourceService.getLoggingToFile().writeTimeToFile("Line " + lineNumber + ": " + nextLine);
         } else {
             joularResourceService.getJoularNodeEntityListDTO().addAll(methodsOfCurrentLine);
         }
@@ -201,8 +205,10 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
     public void handleOneMethodFromOneCsvLine(String classMethodLineString, Float value) {
         assert this.joularNodeHashMapDTO != null : "joularNodeHashMapDTO is null";
         assert joularResourceService.getJoularNodeEntityListDTO() != null : "getJoularNodeEntityListDTO() returns null";
-        int lineNumber = Integer.parseInt(classMethodLineString.split(" ")[1]);
+        assert this.methodsOfCurrentLine != null : "methodsOfCurrentLine is null";
+        assert joularResourceService.getLoggingToFile() != null : "joularResourceService.getLoggingToFile() is null";
 
+        int lineNumber = Integer.parseInt(classMethodLineString.split(" ")[1]);
         addMethod();
 
         JoularNodeKeyHashMap key = new JoularNodeKeyHashMap(classMethodLineString.split(" ")[0], lineNumber, joularResourceService.getAncestors());
@@ -217,12 +223,11 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
                 this.joularNodeHashMapDTO.insertOne(joularNodeEntityDTO);
                 joularResourceService.getAncestors().add(joularNodeEntityDTO.getId());
                 log.debug("ancestors for next cell : {}", joularResourceService.getAncestors());
-                //joularResourceService.getJoularNodeEntityListDTO().add(joularNodeEntityDTO);
                 methodsOfCurrentLine.add(joularNodeEntityDTO);
 
             } else if (lineNumber > 0 && !classMethodLineString.contains("<clinit>") && !classMethodLineString.contains("<init>") && !classMethodLineString.contains("access$000") && !classMethodLineString.contains("$")){
-                log.warn("{} : No JoularNodeEntity set for {}", getNumberOfMethods(), classMethodLineString);
-                Util.writeTimeToFileForWarningIterationResult(getNumberOfMethods(), "No JoularNodeEntity set for " +  classMethodLineString);
+                //log.warn("{} : No JoularNodeEntity set for {}", getNumberOfMethods(), classMethodLineString);
+                //joularResourceService.getLoggingToFile().writeTimeToFileForWarningIterationResult(getNumberOfMethods(), "No JoularNodeEntity set for " +  classMethodLineString);
                 addUnhandledMethod();
                 ignoreLine = true;
             }
@@ -318,5 +323,23 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
 
     public void setNumberOfUnhandledMethods(int number) {
         numberOfUnhandledMethods = number;
+    }
+
+    public void setMethodsOfCurrentLine() {
+        methodsOfCurrentLine = new ArrayList<>();
+    }
+
+    @Override
+    public List<JoularNodeEntityDTO> getMethodsOfCurrentLine() {
+        return methodsOfCurrentLine;
+    }
+
+    public void setIgnoreLine(boolean ignoreLine) {
+        this.ignoreLine = ignoreLine;
+    }
+
+    @Override
+    public boolean getIgnoreLine() {
+        return ignoreLine;
     }
 }

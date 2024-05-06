@@ -209,17 +209,6 @@ public class Util {
         }
     }
 
-    public static void writeTimeToFileForWarningIterationResult(int numberOfCell, String message) {
-        String filePath = System.getenv("PLUGINS_DIRECTORY") + "/unhandled-methods.txt";
-        try (FileWriter fileWriter = new FileWriter(filePath, StandardCharsets.UTF_8, true)) {
-            LocalDateTime now = LocalDateTime.now(ZoneId.of("Europe/Brussels"));
-            String formattedTime = now.format(formatter);
-            fileWriter.write(formattedTime + " - Cell number " + numberOfCell + " : " + message + "\n");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public static void writeTimeToFileForWarningEmptyLine() {
         String filePath = System.getenv("PLUGINS_DIRECTORY") + "/unhandled-methods.txt";
         try (FileWriter fileWriter = new FileWriter(filePath, StandardCharsets.UTF_8, true)) {

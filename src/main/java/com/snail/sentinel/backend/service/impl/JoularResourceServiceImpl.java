@@ -1,6 +1,7 @@
 package com.snail.sentinel.backend.service.impl;
 
 import com.snail.sentinel.backend.commons.FileListProvider;
+import com.snail.sentinel.backend.commons.LoggingToFile;
 import com.snail.sentinel.backend.commons.Util;
 import com.snail.sentinel.backend.repository.CkEntityRepositoryAggregation;
 import com.snail.sentinel.backend.service.CommitEntityService;
@@ -53,6 +54,8 @@ public class JoularResourceServiceImpl implements JoularResourceService {
     private static final String METHOD_NAME = "methodName";
 
     private static final String LINE_NUMBER = "lineNumber";
+
+    private LoggingToFile loggingToFile;
 
     public JoularResourceServiceImpl(CommitEntityService commitEntityService, CkEntityRepositoryAggregation ckEntityRepositoryAggregation) {
         this.commitEntityService = commitEntityService;
@@ -229,5 +232,15 @@ public class JoularResourceServiceImpl implements JoularResourceService {
     @Override
     public List<String> getAncestors() {
         return this.ancestors;
+    }
+
+    @Override
+    public void setLoggingToFile(LoggingToFile loggingToFile) {
+        this.loggingToFile = loggingToFile;
+    }
+
+    @Override
+    public LoggingToFile getLoggingToFile() {
+        return loggingToFile;
     }
 }
