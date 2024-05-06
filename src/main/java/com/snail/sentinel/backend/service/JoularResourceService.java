@@ -1,6 +1,7 @@
 package com.snail.sentinel.backend.service;
 
 import com.snail.sentinel.backend.commons.FileListProvider;
+import com.snail.sentinel.backend.commons.LoggingToFile;
 import com.snail.sentinel.backend.service.dto.IterationDTO;
 import com.snail.sentinel.backend.service.dto.RepoDataDTO;
 import com.snail.sentinel.backend.service.dto.ck.CkAggregateLineDTO;
@@ -34,4 +35,6 @@ public interface JoularResourceService {
     JoularNodeEntityListDTO getJoularNodeEntityListDTO();
     void setAncestors(List<String> ancestors);
     List<String> getAncestors();
+    void setLoggingToFile(LoggingToFile loggingToFile);
+    LoggingToFile getLoggingToFile();
 }

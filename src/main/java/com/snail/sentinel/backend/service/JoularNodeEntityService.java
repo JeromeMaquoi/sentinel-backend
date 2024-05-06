@@ -67,4 +67,8 @@ public interface JoularNodeEntityService {
     int getNumberOfMethods();
 
     int getNumberOfUnhandledMethods();
+
+    List<JoularNodeEntityDTO> getMethodsOfCurrentLine();
+
+    boolean getIgnoreLine();
 }

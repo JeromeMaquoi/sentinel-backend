@@ -182,7 +182,9 @@ public class Util {
         try (FileWriter fileWriter = new FileWriter(filePath, StandardCharsets.UTF_8, true)) {
             LocalDateTime now = LocalDateTime.now(ZoneId.of("Europe/Brussels"));
             String formattedTime = now.format(formatter);
-            fileWriter.write("        => " + formattedTime + " - Data for iteration " + iterationNumber + " of " + joularType + " done (" + numberOfUnhandledCells + " unhandled cells out of " + numberOfCells + ")!\n");
+            float percentageFloat = (1 - ((float) numberOfUnhandledCells / numberOfCells)) * 100;
+            String percentageString = String.format("%.1f", percentageFloat);
+            fileWriter.write("        => " + formattedTime + " - Data for iteration " + iterationNumber + " of " + joularType + " done - " + percentageString + "% successful (" + numberOfUnhandledCells + " unhandled cells out of " + numberOfCells + ")!\n");
             log.info("Iteration line added to totalTime.txt");
         } catch (IOException e) {
             e.printStackTrace();
@@ -204,17 +206,6 @@ public class Util {
         String filePath = System.getenv("PLUGINS_DIRECTORY") + "/unhandled-methods.txt";
         try (FileWriter fileWriter = new FileWriter(filePath, StandardCharsets.UTF_8, true)) {
             fileWriter.write("\n\nREPOSITORY : " + repositoryName + "\n");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void writeTimeToFileForWarningIterationResult(int numberOfCell, String message) {
-        String filePath = System.getenv("PLUGINS_DIRECTORY") + "/unhandled-methods.txt";
-        try (FileWriter fileWriter = new FileWriter(filePath, StandardCharsets.UTF_8, true)) {
-            LocalDateTime now = LocalDateTime.now(ZoneId.of("Europe/Brussels"));
-            String formattedTime = now.format(formatter);
-            fileWriter.write(formattedTime + " - Cell number " + numberOfCell + " : " + message + "\n");
         } catch (IOException e) {
             e.printStackTrace();
         }
