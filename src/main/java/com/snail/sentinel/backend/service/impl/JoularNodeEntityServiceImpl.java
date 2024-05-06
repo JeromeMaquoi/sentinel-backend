@@ -190,7 +190,9 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
             if (methodNameAndLine.split(" ").length == 2 && !ignoreLine) {
                 handleOneMethodFromOneCsvLine(methodNameAndLine, value);
             } else {
-                ignoreLine = true;
+                addMethod();
+                addUnhandledMethod();
+                setIgnoreLine(true);
             }
         }
 
@@ -230,7 +232,7 @@ public class JoularNodeEntityServiceImpl implements JoularNodeEntityService {
                 //log.warn("{} : No JoularNodeEntity set for {}", getNumberOfMethods(), classMethodLineString);
                 joularResourceService.getLoggingToFile().writeTimeToFileForWarningIterationResult(getNumberOfMethods(), "No JoularNodeEntity set for " +  classMethodLineString);
                 addUnhandledMethod();
-                ignoreLine = true;
+                setIgnoreLine(true);
             }
         } else {
             log.debug("JoularNodeEntityDTO {} already in map. Adding its id to the ancestors list", classMethodLineString);
