@@ -15,4 +15,6 @@ public interface JoularEntityRepository extends MongoRepository<JoularEntity, St
     void deleteJoularEntitiesByCommit_Repository_Name(String repoName);
 
     int countByCommitSha(String sha);
+
+    void deleteByCommitSha(String commitSha);
 }

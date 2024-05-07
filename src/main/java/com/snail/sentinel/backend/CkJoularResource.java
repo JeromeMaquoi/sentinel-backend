@@ -45,19 +45,21 @@ public class CkJoularResource {
     public void insertAllData() throws Exception {
         joularResourceService.setLoggingToFile(new ProductionLoggingToFile());
         Util.writeTimeToFile("Insertion of all the data into the db");
-
-        ckEntityService.deleteAll();
-        joularEntityService.deleteAll();
-        joularNodeEntityService.deleteAll();
-
         String projectsDataPath = System.getenv("REPO_DIRECTORY") + "projects-data.csv";
         repoDataList = new ProjectDataReader().readProjectsFromCSV(projectsDataPath);
         List<CommitCompleteDTO> listCommits = new ArrayList<>();
+
         // For each repository
         for (RepoDataDTO repoData : repoDataList) {
+            ckEntityService.deleteByCommitSha(repoData.getSha());
+            joularEntityService.deleteByCommitSha(repoData.getSha());
+            joularNodeEntityService.deleteByCommitSha(repoData.getSha());
+
             log.info("Beginning for repository : {}", repoData.getName());
             Util.writeTimeToFile("Beginning for repository : " + repoData.getName());
             Util.writeTimeToFileWarningRepositoryName(repoData.getName());
+            log.info("Starting to delete all the data for commit {} of repository {}", repoData.getSha(), repoData.getName());
+            Util.writeTimeToFile("Starting to delete all the data for commit " + repoData.getSha() + " of repository " + repoData.getName());
 
             JSONObject commitData = commitEntityService.getCommitData(repoData.getOwner(), repoData.getName(), repoData.getSha());
 
@@ -66,20 +68,15 @@ public class CkJoularResource {
             listCommits.add(commitCompleteDTO);
 
             // Insertion of CK data
-            if (ckEntityService.countByCommitSha(repoData.getSha()) == 0) {
-                String csvPath = System.getenv("REPO_DIRECTORY") + repoData.getName() + "/output-ck/";
-                ckEntityService.insertBatchCkEntityDTO(commitCompleteDTO, csvPath, Integer.parseInt(System.getenv("BATCH_SIZE")));
-            } else {
-                log.info("Ck data already in the database for {}", repoData.getName());
-            }
+            String csvPath = System.getenv("REPO_DIRECTORY") + repoData.getName() + "/output-ck/";
+            ckEntityService.insertBatchCkEntityDTO(commitCompleteDTO, csvPath, Integer.parseInt(System.getenv("BATCH_SIZE")));
+            Util.writeTimeToFile("Ck data inserted into the db");
 
             // Insertion of Joular data
-            if (joularEntityService.findByCommitSha(repoData.getSha()).isEmpty() && joularNodeEntityService.countByCommitSha(repoData.getSha()) == 0) {
-                joularResourceService.setFileListProvider(new ProductionFileListProvider());
-                joularService.insertBatchJoularData(repoData, commitData);
-            } else {
-                log.info("Joular data already in the database for {}", repoData.getName());
-            }
+            joularResourceService.setFileListProvider(new ProductionFileListProvider());
+            joularService.insertBatchJoularData(repoData, commitData);
+            Util.writeTimeToFile("Joular data inserted into the db");
+
             log.info("Ending for the repository: {}", repoData.getName());
         }
         insertCommits(listCommits);
@@ -91,5 +88,6 @@ public class CkJoularResource {
         commitEntityService.deleteAll();
         commitEntityService.bulkAdd(listCommits);
         log.info("Created information for the list of CommitEntity");
+        Util.writeTimeToFile("Added all commits to database");
     }
 }

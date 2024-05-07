@@ -29,7 +29,7 @@ public class ProjectDataReader {
                     RepoDataDTO repoDataDTO = new RepoDataDTO(split[0].trim(), split[1].trim(), split[2].trim());
                     repoDataDTOList.add(repoDataDTO);
                 } else {
-                    log.error("Invalid data format in CSV file {} for line {}", csvFilePath, line);
+                    log.warn("Invalid data format in CSV file {} for line {}", csvFilePath, line);
                 }
             }
             return repoDataDTOList;
