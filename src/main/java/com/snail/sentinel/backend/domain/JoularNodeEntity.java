@@ -26,7 +26,7 @@ public class JoularNodeEntity implements Serializable {
     @Id
     private String id;
 
-    @Field("line_number")
+    @Field("lineNumber")
     private Integer lineNumber;
 
     @Field("value")

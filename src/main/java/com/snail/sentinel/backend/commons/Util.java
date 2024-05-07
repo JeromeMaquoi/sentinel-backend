@@ -171,7 +171,7 @@ public class Util {
             LocalDateTime now = LocalDateTime.now(ZoneId.of("Europe/Brussels"));
             String formattedTime = now.format(formatter);
             fileWriter.write(formattedTime + " - " + lineToAdd + "\n");
-            log.info("Line added to totalTime.txt");
+            //log.info("Line added to totalTime.txt");
         } catch (IOException e) {
             e.printStackTrace();
         }

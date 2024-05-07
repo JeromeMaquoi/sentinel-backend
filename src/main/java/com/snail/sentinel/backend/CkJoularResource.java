@@ -58,6 +58,8 @@ public class CkJoularResource {
             log.info("Beginning for repository : {}", repoData.getName());
             Util.writeTimeToFile("Beginning for repository : " + repoData.getName());
             Util.writeTimeToFileWarningRepositoryName(repoData.getName());
+            log.info("Starting to delete all the data for commit {} of repository {}", repoData.getSha(), repoData.getName());
+            Util.writeTimeToFile("Starting to delete all the data for commit " + repoData.getSha() + " of repository " + repoData.getName());
 
             JSONObject commitData = commitEntityService.getCommitData(repoData.getOwner(), repoData.getName(), repoData.getSha());
 
