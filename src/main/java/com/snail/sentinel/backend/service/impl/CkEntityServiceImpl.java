@@ -77,6 +77,11 @@ public class CkEntityServiceImpl implements CkEntityService {
     }
 
     @Override
+    public void deleteByCommitSha(String commitSha) {
+        ckEntityRepository.deleteByCommitSha(commitSha);
+    }
+
+    @Override
     public void insertBatchCkEntityDTO(CommitCompleteDTO commitCompleteDTO, String csvPath, int batchSize) throws IOException {
         List<CkEntityDTO> batch = new ArrayList<>();
         for (String astElem: Arrays.asList(Util.AST_ELEM_CLASS, Util.AST_ELEM_METHOD, Util.AST_ELEM_VARIABLE)) {

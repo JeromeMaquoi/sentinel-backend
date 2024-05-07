@@ -13,6 +13,8 @@ public interface JoularEntityService {
 
     void deleteAll();
 
+    void deleteByCommitSha(String commitSha);
+
     List<JoularEntity> findByCommitSha(String sha);
 
     int countByCommitSha(String sha);

@@ -12,4 +12,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface JoularNodeEntityRepository extends MongoRepository<JoularNodeEntity, String> {
     int countByCommitSha(String commitSha);
+    void deleteByCommitSha(String commitSha);
 }

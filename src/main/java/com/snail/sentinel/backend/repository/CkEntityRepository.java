@@ -18,4 +18,5 @@ public interface CkEntityRepository extends MongoRepository<CkEntity, String> {
     List<CkEntity> findByCommitShaAndName(String sha, String name);
     List<CkEntity> findByCommitShaAndMeasurableElementClassNameAndMeasurableElementMethodNameAndNameIn(String sha, String className, String methodName, List<String> names);
     void deleteCkEntitiesByCommitRepositoryName(String repoName);
+    void deleteByCommitSha(String commitSha);
 }

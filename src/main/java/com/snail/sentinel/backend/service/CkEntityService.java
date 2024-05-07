@@ -14,6 +14,8 @@ public interface CkEntityService {
 
     void deleteAll();
 
+    void deleteByCommitSha(String commitSha);
+
     List<CkEntity> findByCommitSha(String sha);
 
     int countByCommitSha(String sha);

@@ -83,6 +83,11 @@ public class JoularEntityServiceImpl implements JoularEntityService {
     }
 
     @Override
+    public void deleteByCommitSha(String commitSha) {
+        joularEntityRepository.deleteByCommitSha(commitSha);
+    }
+
+    @Override
     public void handleJoularEntityCreationForOneIteration(Path iterationFilePath) {
         log.info("Request to handle JoularEntity for iteration {}", iterationFilePath);
         setNumberOfMethods(0);
@@ -129,13 +134,15 @@ public class JoularEntityServiceImpl implements JoularEntityService {
         }
         joularResourceService.setJoularEntityListDTO(new JoularEntityListDTO());
         joularResourceService.setMethodElementSetDTO(new MethodElementSetDTO());
-        Path csvPath = joularResourceService.getFileListProvider().getFileList(iterationFilePath + "/app/total/methods").iterator().next();
         try {
+            Path csvPath = joularResourceService.getFileListProvider().getFileList(iterationFilePath + "/app/total/methods").iterator().next();
             List<JSONObject> allLines = Util.readCsvWithoutHeaderToJson(csvPath.toString());
             log.info("Creation of the JoularEntityListDTO");
             for (JSONObject line : allLines) {
                 handleOneCsvLine(line);
             }
+        } catch (NoSuchElementException e) {
+            log.warn("No file found for the given iteration path: {}", iterationFilePath);
         } catch (IOException e) {
             throw new NoCsvLineFoundException(e);
         }

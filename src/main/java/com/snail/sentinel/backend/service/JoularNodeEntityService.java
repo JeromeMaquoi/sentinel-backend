@@ -60,6 +60,8 @@ public interface JoularNodeEntityService {
 
     void deleteAll();
 
+    void deleteByCommitSha(String commitSha);
+
     void handleJoularNodeEntityCreationForOneIteration(Path iterationFilePath);
 
     int countByCommitSha(String sha);
