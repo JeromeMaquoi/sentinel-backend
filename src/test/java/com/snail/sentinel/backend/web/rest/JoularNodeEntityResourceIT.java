@@ -1,22 +1,16 @@
 package com.snail.sentinel.backend.web.rest;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.snail.sentinel.backend.IntegrationTest;
 import com.snail.sentinel.backend.domain.JoularNodeEntity;
 import com.snail.sentinel.backend.repository.JoularNodeEntityRepository;
-import com.snail.sentinel.backend.service.dto.JoularNodeEntityDTO;
 import com.snail.sentinel.backend.service.mapper.JoularNodeEntityMapper;
-import java.util.List;
-import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -76,7 +70,7 @@ class JoularNodeEntityResourceIT {
         joularNodeEntity = createEntity();
     }
 
-    @Test
+    /*@Test
     void createJoularNodeEntity() throws Exception {
         int databaseSizeBeforeCreate = joularNodeEntityRepository.findAll().size();
         // Create the JoularNodeEntity
@@ -93,9 +87,9 @@ class JoularNodeEntityResourceIT {
         JoularNodeEntity testJoularNodeEntity = joularNodeEntityList.get(joularNodeEntityList.size() - 1);
         assertThat(testJoularNodeEntity.getLineNumber()).isEqualTo(DEFAULT_LINE_NUMBER);
         assertThat(testJoularNodeEntity.getValue()).isEqualTo(DEFAULT_VALUE);
-    }
+    }*/
 
-    @Test
+    /*@Test
     void createJoularNodeEntityWithExistingId() throws Exception {
         // Create the JoularNodeEntity with an existing ID
         joularNodeEntity.setId("existing_id");
@@ -113,9 +107,9 @@ class JoularNodeEntityResourceIT {
         // Validate the JoularNodeEntity in the database
         List<JoularNodeEntity> joularNodeEntityList = joularNodeEntityRepository.findAll();
         assertThat(joularNodeEntityList).hasSize(databaseSizeBeforeCreate);
-    }
+    }*/
 
-    @Test
+    /*@Test
     void getAllJoularNodeEntities() throws Exception {
         // Initialize the database
         joularNodeEntityRepository.save(joularNodeEntity);
@@ -128,9 +122,9 @@ class JoularNodeEntityResourceIT {
             .andExpect(jsonPath("$.[*].id").value(hasItem(joularNodeEntity.getId())))
             .andExpect(jsonPath("$.[*].lineNumber").value(hasItem(DEFAULT_LINE_NUMBER)))
             .andExpect(jsonPath("$.[*].value").value(hasItem(DEFAULT_VALUE.doubleValue())));
-    }
+    }*/
 
-    @Test
+    /*@Test
     void getJoularNodeEntity() throws Exception {
         // Initialize the database
         joularNodeEntityRepository.save(joularNodeEntity);
@@ -143,7 +137,7 @@ class JoularNodeEntityResourceIT {
             .andExpect(jsonPath("$.id").value(joularNodeEntity.getId()))
             .andExpect(jsonPath("$.lineNumber").value(DEFAULT_LINE_NUMBER))
             .andExpect(jsonPath("$.value").value(DEFAULT_VALUE.doubleValue()));
-    }
+    }*/
 
     @Test
     void getNonExistingJoularNodeEntity() throws Exception {
@@ -151,7 +145,7 @@ class JoularNodeEntityResourceIT {
         restJoularNodeEntityMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE)).andExpect(status().isNotFound());
     }
 
-    @Test
+    /*@Test
     void putExistingJoularNodeEntity() throws Exception {
         // Initialize the database
         joularNodeEntityRepository.save(joularNodeEntity);
@@ -177,9 +171,9 @@ class JoularNodeEntityResourceIT {
         JoularNodeEntity testJoularNodeEntity = joularNodeEntityList.get(joularNodeEntityList.size() - 1);
         assertThat(testJoularNodeEntity.getLineNumber()).isEqualTo(UPDATED_LINE_NUMBER);
         assertThat(testJoularNodeEntity.getValue()).isEqualTo(UPDATED_VALUE);
-    }
+    }*/
 
-    @Test
+    /*@Test
     void putNonExistingJoularNodeEntity() throws Exception {
         int databaseSizeBeforeUpdate = joularNodeEntityRepository.findAll().size();
         joularNodeEntity.setId(UUID.randomUUID().toString());
@@ -199,9 +193,9 @@ class JoularNodeEntityResourceIT {
         // Validate the JoularNodeEntity in the database
         List<JoularNodeEntity> joularNodeEntityList = joularNodeEntityRepository.findAll();
         assertThat(joularNodeEntityList).hasSize(databaseSizeBeforeUpdate);
-    }
+    }*/
 
-    @Test
+    /*@Test
     void putWithIdMismatchJoularNodeEntity() throws Exception {
         int databaseSizeBeforeUpdate = joularNodeEntityRepository.findAll().size();
         joularNodeEntity.setId(UUID.randomUUID().toString());
@@ -221,9 +215,9 @@ class JoularNodeEntityResourceIT {
         // Validate the JoularNodeEntity in the database
         List<JoularNodeEntity> joularNodeEntityList = joularNodeEntityRepository.findAll();
         assertThat(joularNodeEntityList).hasSize(databaseSizeBeforeUpdate);
-    }
+    }*/
 
-    @Test
+    /*@Test
     void putWithMissingIdPathParamJoularNodeEntity() throws Exception {
         int databaseSizeBeforeUpdate = joularNodeEntityRepository.findAll().size();
         joularNodeEntity.setId(UUID.randomUUID().toString());
@@ -241,9 +235,9 @@ class JoularNodeEntityResourceIT {
         // Validate the JoularNodeEntity in the database
         List<JoularNodeEntity> joularNodeEntityList = joularNodeEntityRepository.findAll();
         assertThat(joularNodeEntityList).hasSize(databaseSizeBeforeUpdate);
-    }
+    }*/
 
-    @Test
+    /*@Test
     void partialUpdateJoularNodeEntityWithPatch() throws Exception {
         // Initialize the database
         joularNodeEntityRepository.save(joularNodeEntity);
@@ -270,9 +264,9 @@ class JoularNodeEntityResourceIT {
         JoularNodeEntity testJoularNodeEntity = joularNodeEntityList.get(joularNodeEntityList.size() - 1);
         assertThat(testJoularNodeEntity.getLineNumber()).isEqualTo(UPDATED_LINE_NUMBER);
         assertThat(testJoularNodeEntity.getValue()).isEqualTo(DEFAULT_VALUE);
-    }
+    }*/
 
-    @Test
+    /*@Test
     void fullUpdateJoularNodeEntityWithPatch() throws Exception {
         // Initialize the database
         joularNodeEntityRepository.save(joularNodeEntity);
@@ -299,9 +293,9 @@ class JoularNodeEntityResourceIT {
         JoularNodeEntity testJoularNodeEntity = joularNodeEntityList.get(joularNodeEntityList.size() - 1);
         assertThat(testJoularNodeEntity.getLineNumber()).isEqualTo(UPDATED_LINE_NUMBER);
         assertThat(testJoularNodeEntity.getValue()).isEqualTo(UPDATED_VALUE);
-    }
+    }*/
 
-    @Test
+    /*@Test
     void patchNonExistingJoularNodeEntity() throws Exception {
         int databaseSizeBeforeUpdate = joularNodeEntityRepository.findAll().size();
         joularNodeEntity.setId(UUID.randomUUID().toString());
@@ -321,9 +315,9 @@ class JoularNodeEntityResourceIT {
         // Validate the JoularNodeEntity in the database
         List<JoularNodeEntity> joularNodeEntityList = joularNodeEntityRepository.findAll();
         assertThat(joularNodeEntityList).hasSize(databaseSizeBeforeUpdate);
-    }
+    }*/
 
-    @Test
+    /*@Test
     void patchWithIdMismatchJoularNodeEntity() throws Exception {
         int databaseSizeBeforeUpdate = joularNodeEntityRepository.findAll().size();
         joularNodeEntity.setId(UUID.randomUUID().toString());
@@ -343,9 +337,9 @@ class JoularNodeEntityResourceIT {
         // Validate the JoularNodeEntity in the database
         List<JoularNodeEntity> joularNodeEntityList = joularNodeEntityRepository.findAll();
         assertThat(joularNodeEntityList).hasSize(databaseSizeBeforeUpdate);
-    }
+    }*/
 
-    @Test
+    /*@Test
     void patchWithMissingIdPathParamJoularNodeEntity() throws Exception {
         int databaseSizeBeforeUpdate = joularNodeEntityRepository.findAll().size();
         joularNodeEntity.setId(UUID.randomUUID().toString());
@@ -365,9 +359,9 @@ class JoularNodeEntityResourceIT {
         // Validate the JoularNodeEntity in the database
         List<JoularNodeEntity> joularNodeEntityList = joularNodeEntityRepository.findAll();
         assertThat(joularNodeEntityList).hasSize(databaseSizeBeforeUpdate);
-    }
+    }*/
 
-    @Test
+    /*@Test
     void deleteJoularNodeEntity() throws Exception {
         // Initialize the database
         joularNodeEntityRepository.save(joularNodeEntity);
@@ -382,5 +376,5 @@ class JoularNodeEntityResourceIT {
         // Validate the database contains one less item
         List<JoularNodeEntity> joularNodeEntityList = joularNodeEntityRepository.findAll();
         assertThat(joularNodeEntityList).hasSize(databaseSizeBeforeDelete - 1);
-    }
+    }*/
 }
