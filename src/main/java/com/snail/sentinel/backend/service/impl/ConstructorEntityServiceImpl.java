@@ -85,4 +85,10 @@ public class ConstructorEntityServiceImpl implements ConstructorEntityService {
         LOG.debug("Request to delete ConstructorEntity : {}", id);
         constructorEntityRepository.deleteById(id);
     }
+
+    @Override
+    public void deleteAll() {
+        LOG.debug("Request to delete all ConstructorEntities");
+        constructorEntityRepository.deleteAll();
+    }
 }

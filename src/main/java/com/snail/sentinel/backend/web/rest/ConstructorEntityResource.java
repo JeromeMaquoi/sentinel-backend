@@ -1,8 +1,10 @@
 package com.snail.sentinel.backend.web.rest;
 
 import com.snail.sentinel.backend.repository.ConstructorEntityRepository;
+import com.snail.sentinel.backend.service.ConstructorAttributeService;
 import com.snail.sentinel.backend.service.ConstructorEntityService;
 import com.snail.sentinel.backend.service.dto.ConstructorEntityDTO;
+import com.snail.sentinel.backend.service.dto.RegisterAttributeRequest;
 import com.snail.sentinel.backend.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -21,7 +23,7 @@ import tech.jhipster.web.util.ResponseUtil;
  * REST controller for managing {@link com.snail.sentinel.backend.domain.ConstructorEntity}.
  */
 @RestController
-@RequestMapping("/api/constructor-entities")
+@RequestMapping("/api/v1/constructor-entities")
 public class ConstructorEntityResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConstructorEntityResource.class);
@@ -35,12 +37,16 @@ public class ConstructorEntityResource {
 
     private final ConstructorEntityRepository constructorEntityRepository;
 
+    private final ConstructorAttributeService constructorAttributeService;
+
     public ConstructorEntityResource(
         ConstructorEntityService constructorEntityService,
-        ConstructorEntityRepository constructorEntityRepository
+        ConstructorEntityRepository constructorEntityRepository,
+        ConstructorAttributeService constructorAttributeService
     ) {
         this.constructorEntityService = constructorEntityService;
         this.constructorEntityRepository = constructorEntityRepository;
+        this.constructorAttributeService = constructorAttributeService;
     }
 
     /**
@@ -50,7 +56,7 @@ public class ConstructorEntityResource {
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new constructorEntityDTO, or with status {@code 400 (Bad Request)} if the constructorEntity has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PostMapping("")
+    /*@PostMapping("")
     public ResponseEntity<ConstructorEntityDTO> createConstructorEntity(@RequestBody ConstructorEntityDTO constructorEntityDTO)
         throws URISyntaxException {
         LOG.debug("REST request to save ConstructorEntity : {}", constructorEntityDTO);
@@ -58,7 +64,19 @@ public class ConstructorEntityResource {
             throw new BadRequestAlertException("A new constructorEntity cannot already have an ID", ENTITY_NAME, "idexists");
         }
         constructorEntityDTO = constructorEntityService.save(constructorEntityDTO);
-        return ResponseEntity.created(new URI("/api/constructor-entities/" + constructorEntityDTO.getId()))
+        return ResponseEntity.created(new URI("/api/v1/constructor-entities/" + constructorEntityDTO.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, constructorEntityDTO.getId()))
+            .body(constructorEntityDTO);
+    }*/
+
+    @PostMapping("")
+    public ResponseEntity<ConstructorEntityDTO> registerConstructorEntityAttributes(@RequestBody RegisterAttributeRequest registerAttributeRequest) throws URISyntaxException {
+        ConstructorEntityDTO constructorEntityDTO = constructorAttributeService.registerAttribute(
+            registerAttributeRequest.getConstructorSignature(),
+            registerAttributeRequest.getAttributeName(),
+            registerAttributeRequest.getAttributeType()
+        );
+        return ResponseEntity.created(new URI("/api/v1/constructor-entities/" + constructorEntityDTO.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, constructorEntityDTO.getId()))
             .body(constructorEntityDTO);
     }
@@ -167,5 +185,12 @@ public class ConstructorEntityResource {
         LOG.debug("REST request to delete ConstructorEntity : {}", id);
         constructorEntityService.delete(id);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id)).build();
+    }
+
+    @DeleteMapping("")
+    public ResponseEntity<Void> deleteAllConstructorEntities() {
+        LOG.debug("REST request to delete all ConstructorEntities");
+        constructorEntityService.deleteAll();
+        return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, "all")).build();
     }
 }
