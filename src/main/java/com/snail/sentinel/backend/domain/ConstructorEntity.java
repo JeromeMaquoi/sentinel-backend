@@ -1,11 +1,9 @@
 package com.snail.sentinel.backend.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -33,9 +31,7 @@ public class ConstructorEntity implements Serializable {
     @Field("file")
     private String file;
 
-    @DBRef
-    @Field("attributeEntity")
-    @JsonIgnoreProperties(value = { "constructorEntity" }, allowSetters = true)
+    @Field("attributeEntities")
     private Set<AttributeEntity> attributeEntities = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
@@ -110,30 +106,7 @@ public class ConstructorEntity implements Serializable {
     }
 
     public void setAttributeEntities(Set<AttributeEntity> attributeEntities) {
-        if (this.attributeEntities != null) {
-            this.attributeEntities.forEach(i -> i.setConstructorEntity(null));
-        }
-        if (attributeEntities != null) {
-            attributeEntities.forEach(i -> i.setConstructorEntity(this));
-        }
         this.attributeEntities = attributeEntities;
-    }
-
-    public ConstructorEntity attributeEntities(Set<AttributeEntity> attributeEntities) {
-        this.setAttributeEntities(attributeEntities);
-        return this;
-    }
-
-    public ConstructorEntity addAttributeEntity(AttributeEntity attributeEntity) {
-        this.attributeEntities.add(attributeEntity);
-        attributeEntity.setConstructorEntity(this);
-        return this;
-    }
-
-    public ConstructorEntity removeAttributeEntity(AttributeEntity attributeEntity) {
-        this.attributeEntities.remove(attributeEntity);
-        attributeEntity.setConstructorEntity(null);
-        return this;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here

@@ -47,7 +47,6 @@ public class ConstructorAttributeServiceImpl implements ConstructorAttributeServ
         AttributeEntity attributeEntity = new AttributeEntity();
         attributeEntity.setName(attributeName);
         attributeEntity.setType(attributeType);
-        attributeEntity.setConstructorEntity(constructorEntity);
         attributeEntity = attributeEntityRepository.save(attributeEntity);
         log.info("After attributeEntity save: {}", attributeEntity);
 

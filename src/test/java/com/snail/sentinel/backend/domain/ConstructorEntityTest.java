@@ -30,20 +30,16 @@ class ConstructorEntityTest {
         ConstructorEntity constructorEntity = getConstructorEntityRandomSampleGenerator();
         AttributeEntity attributeEntityBack = getAttributeEntityRandomSampleGenerator();
 
-        constructorEntity.addAttributeEntity(attributeEntityBack);
+        constructorEntity.getAttributeEntities().add(attributeEntityBack);
         assertThat(constructorEntity.getAttributeEntities()).containsOnly(attributeEntityBack);
-        assertThat(attributeEntityBack.getConstructorEntity()).isEqualTo(constructorEntity);
 
-        constructorEntity.removeAttributeEntity(attributeEntityBack);
+        constructorEntity.getAttributeEntities().remove(attributeEntityBack);
         assertThat(constructorEntity.getAttributeEntities()).doesNotContain(attributeEntityBack);
-        assertThat(attributeEntityBack.getConstructorEntity()).isNull();
 
-        constructorEntity.attributeEntities(new HashSet<>(Set.of(attributeEntityBack)));
+        constructorEntity.setAttributeEntities(new HashSet<>(Set.of(attributeEntityBack)));
         assertThat(constructorEntity.getAttributeEntities()).containsOnly(attributeEntityBack);
-        assertThat(attributeEntityBack.getConstructorEntity()).isEqualTo(constructorEntity);
 
         constructorEntity.setAttributeEntities(new HashSet<>());
         assertThat(constructorEntity.getAttributeEntities()).doesNotContain(attributeEntityBack);
-        assertThat(attributeEntityBack.getConstructorEntity()).isNull();
     }
 }

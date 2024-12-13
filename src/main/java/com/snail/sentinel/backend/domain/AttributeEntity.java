@@ -1,9 +1,7 @@
 package com.snail.sentinel.backend.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -24,11 +22,6 @@ public class AttributeEntity implements Serializable {
 
     @Field("type")
     private String type;
-
-    @DBRef
-    @Field("constructorEntity")
-    @JsonIgnoreProperties(value = { "attributeEntities" }, allowSetters = true)
-    private ConstructorEntity constructorEntity;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -71,18 +64,6 @@ public class AttributeEntity implements Serializable {
         this.type = type;
     }
 
-    public ConstructorEntity getConstructorEntity() {
-        return this.constructorEntity;
-    }
-
-    public void setConstructorEntity(ConstructorEntity constructorEntity) {
-        this.constructorEntity = constructorEntity;
-    }
-
-    public AttributeEntity constructorEntity(ConstructorEntity constructorEntity) {
-        this.setConstructorEntity(constructorEntity);
-        return this;
-    }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 

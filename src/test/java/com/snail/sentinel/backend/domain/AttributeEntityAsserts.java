@@ -23,7 +23,6 @@ public class AttributeEntityAsserts {
      */
     public static void assertAttributeEntityAllUpdatablePropertiesEquals(AttributeEntity expected, AttributeEntity actual) {
         assertAttributeEntityUpdatableFieldsEquals(expected, actual);
-        assertAttributeEntityUpdatableRelationshipsEquals(expected, actual);
     }
 
     /**
@@ -49,17 +48,5 @@ public class AttributeEntityAsserts {
             .as("Verify AttributeEntity relevant properties")
             .satisfies(e -> assertThat(e.getName()).as("check name").isEqualTo(actual.getName()))
             .satisfies(e -> assertThat(e.getType()).as("check type").isEqualTo(actual.getType()));
-    }
-
-    /**
-     * Asserts that the entity has all the updatable relationships set.
-     *
-     * @param expected the expected entity
-     * @param actual the actual entity
-     */
-    public static void assertAttributeEntityUpdatableRelationshipsEquals(AttributeEntity expected, AttributeEntity actual) {
-        assertThat(expected)
-            .as("Verify AttributeEntity relationships")
-            .satisfies(e -> assertThat(e.getConstructorEntity()).as("check constructorEntity").isEqualTo(actual.getConstructorEntity()));
     }
 }

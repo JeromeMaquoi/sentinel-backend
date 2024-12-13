@@ -22,16 +22,4 @@ class AttributeEntityTest {
         attributeEntity2 = getAttributeEntitySample2();
         assertThat(attributeEntity1).isNotEqualTo(attributeEntity2);
     }
-
-    @Test
-    void constructorEntityTest() {
-        AttributeEntity attributeEntity = getAttributeEntityRandomSampleGenerator();
-        ConstructorEntity constructorEntityBack = getConstructorEntityRandomSampleGenerator();
-
-        attributeEntity.setConstructorEntity(constructorEntityBack);
-        assertThat(attributeEntity.getConstructorEntity()).isEqualTo(constructorEntityBack);
-
-        attributeEntity.constructorEntity(null);
-        assertThat(attributeEntity.getConstructorEntity()).isNull();
-    }
 }
