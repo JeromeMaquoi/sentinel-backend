@@ -40,15 +40,15 @@ public class ConstructorAttributeServiceImpl implements ConstructorAttributeServ
 
         boolean attributeExists = constructorEntity.getAttributeEntities().stream().anyMatch(attributeEntity -> attributeEntity.getName().equals(attributeName) && attributeEntity.getType().equals(attributeType));
         if (attributeExists) {
-            log.info("Attribute already exists: {} of type {} for constructor {}", attributeName, attributeType, constructorSignature);
+            log.debug("Attribute already exists: {} of type {} for constructor {}", attributeName, attributeType, constructorSignature);
             return constructorEntityMapper.toDto(constructorEntity);
         }
 
+        log.info("Creating new attribute for constructor: {} of type {}", constructorSignature, attributeType);
         AttributeEntity attributeEntity = new AttributeEntity();
         attributeEntity.setName(attributeName);
         attributeEntity.setType(attributeType);
         attributeEntity = attributeEntityRepository.save(attributeEntity);
-        log.info("After attributeEntity save: {}", attributeEntity);
 
         constructorEntity.getAttributeEntities().add(attributeEntity);
         ConstructorEntity savedEntity = constructorEntityRepository.save(constructorEntity);

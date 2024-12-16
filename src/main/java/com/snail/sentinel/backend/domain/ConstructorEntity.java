@@ -25,13 +25,13 @@ public class ConstructorEntity implements Serializable {
     @Field("signature")
     private String signature;
 
-    @Field("pkg")
-    private String pkg;
+    @Field("class")
+    private String className;
 
     @Field("file")
     private String file;
 
-    @Field("attributeEntities")
+    @Field("attributes")
     private Set<AttributeEntity> attributeEntities = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
@@ -75,17 +75,17 @@ public class ConstructorEntity implements Serializable {
         this.signature = signature;
     }
 
-    public String getPkg() {
-        return this.pkg;
+    public String getClassName() {
+        return this.className;
     }
 
     public ConstructorEntity pkg(String pkg) {
-        this.setPkg(pkg);
+        this.setClassName(pkg);
         return this;
     }
 
-    public void setPkg(String pkg) {
-        this.pkg = pkg;
+    public void setClassName(String className) {
+        this.className = className;
     }
 
     public String getFile() {
@@ -135,7 +135,7 @@ public class ConstructorEntity implements Serializable {
             "id=" + getId() +
             ", name='" + getName() + "'" +
             ", signature='" + getSignature() + "'" +
-            ", pkg='" + getPkg() + "'" +
+            ", pkg='" + getClassName() + "'" +
             ", file='" + getFile() + "'" +
             "}";
     }
