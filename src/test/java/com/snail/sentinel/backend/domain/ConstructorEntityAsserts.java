@@ -49,7 +49,7 @@ public class ConstructorEntityAsserts {
             .as("Verify ConstructorEntity relevant properties")
             .satisfies(e -> assertThat(e.getName()).as("check name").isEqualTo(actual.getName()))
             .satisfies(e -> assertThat(e.getSignature()).as("check signature").isEqualTo(actual.getSignature()))
-            .satisfies(e -> assertThat(e.getClassName()).as("check pkg").isEqualTo(actual.getClassName()))
+            .satisfies(e -> assertThat(e.getClassName()).as("check className").isEqualTo(actual.getClassName()))
             .satisfies(e -> assertThat(e.getFile()).as("check file").isEqualTo(actual.getFile()));
     }
 

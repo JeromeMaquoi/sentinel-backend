@@ -79,7 +79,7 @@ public class ConstructorEntity implements Serializable {
         return this.className;
     }
 
-    public ConstructorEntity pkg(String pkg) {
+    public ConstructorEntity className(String pkg) {
         this.setClassName(pkg);
         return this;
     }

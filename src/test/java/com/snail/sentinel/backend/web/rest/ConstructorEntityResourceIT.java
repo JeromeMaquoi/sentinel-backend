@@ -69,7 +69,7 @@ class ConstructorEntityResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static ConstructorEntity createEntity() {
-        return new ConstructorEntity().name(DEFAULT_NAME).signature(DEFAULT_SIGNATURE).pkg(DEFAULT_PKG).file(DEFAULT_FILE);
+        return new ConstructorEntity().name(DEFAULT_NAME).signature(DEFAULT_SIGNATURE).className(DEFAULT_PKG).file(DEFAULT_FILE);
     }
 
     /**
@@ -79,7 +79,7 @@ class ConstructorEntityResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static ConstructorEntity createUpdatedEntity() {
-        return new ConstructorEntity().name(UPDATED_NAME).signature(UPDATED_SIGNATURE).pkg(UPDATED_PKG).file(UPDATED_FILE);
+        return new ConstructorEntity().name(UPDATED_NAME).signature(UPDATED_SIGNATURE).className(UPDATED_PKG).file(UPDATED_FILE);
     }
 
     @BeforeEach
@@ -184,7 +184,7 @@ class ConstructorEntityResourceIT {
 
         // Update the constructorEntity
         ConstructorEntity updatedConstructorEntity = constructorEntityRepository.findById(constructorEntity.getId()).orElseThrow();
-        updatedConstructorEntity.name(UPDATED_NAME).signature(UPDATED_SIGNATURE).pkg(UPDATED_PKG).file(UPDATED_FILE);
+        updatedConstructorEntity.name(UPDATED_NAME).signature(UPDATED_SIGNATURE).className(UPDATED_PKG).file(UPDATED_FILE);
         ConstructorEntityDTO constructorEntityDTO = constructorEntityMapper.toDto(updatedConstructorEntity);
 
         restConstructorEntityMockMvc
@@ -300,7 +300,7 @@ class ConstructorEntityResourceIT {
         ConstructorEntity partialUpdatedConstructorEntity = new ConstructorEntity();
         partialUpdatedConstructorEntity.setId(constructorEntity.getId());
 
-        partialUpdatedConstructorEntity.name(UPDATED_NAME).signature(UPDATED_SIGNATURE).pkg(UPDATED_PKG).file(UPDATED_FILE);
+        partialUpdatedConstructorEntity.name(UPDATED_NAME).signature(UPDATED_SIGNATURE).className(UPDATED_PKG).file(UPDATED_FILE);
 
         restConstructorEntityMockMvc
             .perform(

@@ -15,7 +15,7 @@ public class ConstructorEntityDTO implements Serializable {
 
     private String signature;
 
-    private String pkg;
+    private String className;
 
     private String file;
 
@@ -43,12 +43,12 @@ public class ConstructorEntityDTO implements Serializable {
         this.signature = signature;
     }
 
-    public String getPkg() {
-        return pkg;
+    public String getClassName() {
+        return className;
     }
 
-    public void setPkg(String pkg) {
-        this.pkg = pkg;
+    public void setClassName(String className) {
+        this.className = className;
     }
 
     public String getFile() {
@@ -87,7 +87,7 @@ public class ConstructorEntityDTO implements Serializable {
             "id='" + getId() + "'" +
             ", name='" + getName() + "'" +
             ", signature='" + getSignature() + "'" +
-            ", pkg='" + getPkg() + "'" +
+            ", className='" + getClassName() + "'" +
             ", file='" + getFile() + "'" +
             "}";
     }
