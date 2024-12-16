@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service Implementation for managing {@link com.snail.sentinel.backend.domain.ConstructorEntity}.
@@ -90,5 +91,18 @@ public class ConstructorEntityServiceImpl implements ConstructorEntityService {
     public void deleteAll() {
         LOG.debug("Request to delete all ConstructorEntities");
         constructorEntityRepository.deleteAll();
+    }
+
+    @Override
+    @Transactional
+    public ConstructorEntity getOrCreateConstructor(String signature, String name, String fileName, String className) {
+        return constructorEntityRepository.findBySignature(signature).orElseGet(() -> {
+            ConstructorEntity newConstructorEntity = new ConstructorEntity();
+            newConstructorEntity.setSignature(signature);
+            newConstructorEntity.setName(name);
+            newConstructorEntity.setFileName(fileName);
+            newConstructorEntity.setClassName(className);
+            return constructorEntityRepository.save(newConstructorEntity);
+        });
     }
 }

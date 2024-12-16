@@ -1,5 +1,6 @@
 package com.snail.sentinel.backend.service;
 
+import com.snail.sentinel.backend.domain.ConstructorEntity;
 import com.snail.sentinel.backend.service.dto.ConstructorEntityDTO;
 import java.util.List;
 import java.util.Optional;
@@ -55,4 +56,6 @@ public interface ConstructorEntityService {
     void delete(String id);
 
     void deleteAll();
+
+    ConstructorEntity getOrCreateConstructor(String signature, String name, String fileName, String className);
 }

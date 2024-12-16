@@ -5,7 +5,7 @@ import com.snail.sentinel.backend.domain.ConstructorEntity;
 import com.snail.sentinel.backend.repository.ConstructorEntityRepository;
 import com.snail.sentinel.backend.service.AttributeService;
 import com.snail.sentinel.backend.service.ConstructorAttributeService;
-import com.snail.sentinel.backend.service.ConstructorService;
+import com.snail.sentinel.backend.service.ConstructorEntityService;
 import com.snail.sentinel.backend.service.dto.ConstructorEntityDTO;
 import com.snail.sentinel.backend.service.dto.RegisterAttributeRequest;
 import com.snail.sentinel.backend.service.mapper.ConstructorEntityMapper;
@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ConstructorAttributeServiceImpl implements ConstructorAttributeService {
     private static final Logger log = LoggerFactory.getLogger(ConstructorAttributeServiceImpl.class);
 
-    private final ConstructorService constructorService;
+    private final ConstructorEntityService constructorService;
 
     private final AttributeService attributeService;
 
@@ -27,7 +27,7 @@ public class ConstructorAttributeServiceImpl implements ConstructorAttributeServ
 
     private final ConstructorEntityRepository constructorEntityRepository;
 
-    public ConstructorAttributeServiceImpl(ConstructorService constructorService, AttributeService attributeService, ConstructorEntityMapper constructorEntityMapper, ConstructorEntityRepository constructorEntityRepository) {
+    public ConstructorAttributeServiceImpl(ConstructorEntityService constructorService, AttributeService attributeService, ConstructorEntityMapper constructorEntityMapper, ConstructorEntityRepository constructorEntityRepository) {
         this.constructorService = constructorService;
         this.attributeService = attributeService;
         this.constructorEntityMapper = constructorEntityMapper;

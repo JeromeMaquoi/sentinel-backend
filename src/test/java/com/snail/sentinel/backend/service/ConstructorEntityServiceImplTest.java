@@ -2,30 +2,29 @@ package com.snail.sentinel.backend.service;
 
 import com.snail.sentinel.backend.domain.ConstructorEntity;
 import com.snail.sentinel.backend.repository.ConstructorEntityRepository;
-import com.snail.sentinel.backend.service.impl.ConstructorServiceImpl;
+import com.snail.sentinel.backend.service.impl.ConstructorEntityServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class ConstructorServiceImplTest {
+class ConstructorEntityServiceImplTest {
     @Mock
     private ConstructorEntityRepository constructorEntityRepository;
 
     @InjectMocks
-    private ConstructorServiceImpl constructorService;
+    private ConstructorEntityServiceImpl constructorService;
 
     @BeforeEach
     public void init() {
-        constructorEntityRepository = mock(ConstructorEntityRepository.class);
-        constructorService = new ConstructorServiceImpl(constructorEntityRepository);
+        MockitoAnnotations.initMocks(this);
     }
 
     @Test

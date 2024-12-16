@@ -2,7 +2,6 @@ package com.snail.sentinel.backend.service;
 
 import com.snail.sentinel.backend.domain.AttributeEntity;
 import com.snail.sentinel.backend.domain.ConstructorEntity;
-import com.snail.sentinel.backend.repository.AttributeEntityRepository;
 import com.snail.sentinel.backend.repository.ConstructorEntityRepository;
 import com.snail.sentinel.backend.service.dto.ConstructorEntityDTO;
 import com.snail.sentinel.backend.service.dto.RegisterAttributeRequest;
@@ -21,10 +20,7 @@ import static org.mockito.Mockito.when;
 
 public class ConstructorAttributeServiceImplTest {
     @Mock
-    private ConstructorService constructorService;
-
-    @Mock
-    private AttributeEntityRepository attributeEntityRepository;
+    private ConstructorEntityService constructorService;
 
     @Mock
     private AttributeService attributeService;
