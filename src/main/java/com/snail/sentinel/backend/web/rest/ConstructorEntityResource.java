@@ -71,11 +71,7 @@ public class ConstructorEntityResource {
 
     @PostMapping("")
     public ResponseEntity<ConstructorEntityDTO> registerConstructorEntityAttributes(@RequestBody RegisterAttributeRequest registerAttributeRequest) throws URISyntaxException {
-        ConstructorEntityDTO constructorEntityDTO = constructorAttributeService.registerAttribute(
-            registerAttributeRequest.getConstructorSignature(),
-            registerAttributeRequest.getAttributeName(),
-            registerAttributeRequest.getAttributeType()
-        );
+        ConstructorEntityDTO constructorEntityDTO = constructorAttributeService.registerAttribute(registerAttributeRequest);
         return ResponseEntity.created(new URI("/api/v1/constructor-entities/" + constructorEntityDTO.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, constructorEntityDTO.getId()))
             .body(constructorEntityDTO);
