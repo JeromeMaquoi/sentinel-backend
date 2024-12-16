@@ -3,6 +3,7 @@ package com.snail.sentinel.backend.web.rest;
 import static com.snail.sentinel.backend.domain.ConstructorEntityAsserts.*;
 //import static com.snail.sentinel.backend.web.rest.TestUtil.createUpdateProxyForBean;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -10,14 +11,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.snail.sentinel.backend.IntegrationTest;
 import com.snail.sentinel.backend.domain.ConstructorEntity;
 import com.snail.sentinel.backend.repository.ConstructorEntityRepository;
+import com.snail.sentinel.backend.service.dto.ConstructorEntityDTO;
 import com.snail.sentinel.backend.service.mapper.ConstructorEntityMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.UUID;
 
 /**
  * Integration tests for the {@link ConstructorEntityResource} REST controller.
@@ -39,7 +44,7 @@ class ConstructorEntityResourceIT {
     private static final String DEFAULT_FILE = "AAAAAAAAAA";
     private static final String UPDATED_FILE = "BBBBBBBBBB";
 
-    private static final String ENTITY_API_URL = "/api/constructor-entities";
+    private static final String ENTITY_API_URL = "/api/v1/constructor-entities";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
     @Autowired
@@ -91,7 +96,7 @@ class ConstructorEntityResourceIT {
         }
     }
 
-    /*@Test
+    @Test
     void createConstructorEntity() throws Exception {
         long databaseSizeBeforeCreate = getRepositoryCount();
         // Create the ConstructorEntity
@@ -112,26 +117,9 @@ class ConstructorEntityResourceIT {
         assertConstructorEntityUpdatableFieldsEquals(returnedConstructorEntity, getPersistedConstructorEntity(returnedConstructorEntity));
 
         insertedConstructorEntity = returnedConstructorEntity;
-    }*/
+    }
 
-    /*@Test
-    void createConstructorEntityWithExistingId() throws Exception {
-        // Create the ConstructorEntity with an existing ID
-        constructorEntity.setId("existing_id");
-        ConstructorEntityDTO constructorEntityDTO = constructorEntityMapper.toDto(constructorEntity);
-
-        long databaseSizeBeforeCreate = getRepositoryCount();
-
-        // An entity with an existing ID cannot be created, so this API call must fail
-        restConstructorEntityMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(constructorEntityDTO)))
-            .andExpect(status().isBadRequest());
-
-        // Validate the ConstructorEntity in the database
-        assertSameRepositoryCount(databaseSizeBeforeCreate);
-    }*/
-
-    /*@Test
+    @Test
     void getAllConstructorEntities() throws Exception {
         // Initialize the database
         insertedConstructorEntity = constructorEntityRepository.save(constructorEntity);
@@ -144,11 +132,11 @@ class ConstructorEntityResourceIT {
             .andExpect(jsonPath("$.[*].id").value(hasItem(constructorEntity.getId())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
             .andExpect(jsonPath("$.[*].signature").value(hasItem(DEFAULT_SIGNATURE)))
-            .andExpect(jsonPath("$.[*].pkg").value(hasItem(DEFAULT_PKG)))
-            .andExpect(jsonPath("$.[*].file").value(hasItem(DEFAULT_FILE)));
-    }*/
+            .andExpect(jsonPath("$.[*].className").value(hasItem(DEFAULT_PKG)))
+            .andExpect(jsonPath("$.[*].fileName").value(hasItem(DEFAULT_FILE)));
+    }
 
-    /*@Test
+    @Test
     void getConstructorEntity() throws Exception {
         // Initialize the database
         insertedConstructorEntity = constructorEntityRepository.save(constructorEntity);
@@ -161,9 +149,9 @@ class ConstructorEntityResourceIT {
             .andExpect(jsonPath("$.id").value(constructorEntity.getId()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
             .andExpect(jsonPath("$.signature").value(DEFAULT_SIGNATURE))
-            .andExpect(jsonPath("$.pkg").value(DEFAULT_PKG))
-            .andExpect(jsonPath("$.file").value(DEFAULT_FILE));
-    }*/
+            .andExpect(jsonPath("$.className").value(DEFAULT_PKG))
+            .andExpect(jsonPath("$.fileName").value(DEFAULT_FILE));
+    }
 
     @Test
     void getNonExistingConstructorEntity() throws Exception {
@@ -171,7 +159,7 @@ class ConstructorEntityResourceIT {
         restConstructorEntityMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE)).andExpect(status().isNotFound());
     }
 
-    /*@Test
+    @Test
     void putExistingConstructorEntity() throws Exception {
         // Initialize the database
         insertedConstructorEntity = constructorEntityRepository.save(constructorEntity);
@@ -194,9 +182,9 @@ class ConstructorEntityResourceIT {
         // Validate the ConstructorEntity in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
         assertPersistedConstructorEntityToMatchAllProperties(updatedConstructorEntity);
-    }*/
+    }
 
-    /*@Test
+    @Test
     void putNonExistingConstructorEntity() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         constructorEntity.setId(UUID.randomUUID().toString());
@@ -215,9 +203,9 @@ class ConstructorEntityResourceIT {
 
         // Validate the ConstructorEntity in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
-    }*/
+    }
 
-    /*@Test
+    @Test
     void putWithIdMismatchConstructorEntity() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         constructorEntity.setId(UUID.randomUUID().toString());
@@ -236,9 +224,9 @@ class ConstructorEntityResourceIT {
 
         // Validate the ConstructorEntity in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
-    }*/
+    }
 
-    /*@Test
+    @Test
     void putWithMissingIdPathParamConstructorEntity() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         constructorEntity.setId(UUID.randomUUID().toString());
@@ -253,7 +241,7 @@ class ConstructorEntityResourceIT {
 
         // Validate the ConstructorEntity in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
-    }*/
+    }
 
     /*@Test
     void partialUpdateConstructorEntityWithPatch() throws Exception {
@@ -285,7 +273,7 @@ class ConstructorEntityResourceIT {
         );
     }*/
 
-    /*@Test
+    @Test
     void fullUpdateConstructorEntityWithPatch() throws Exception {
         // Initialize the database
         insertedConstructorEntity = constructorEntityRepository.save(constructorEntity);
@@ -313,9 +301,9 @@ class ConstructorEntityResourceIT {
             partialUpdatedConstructorEntity,
             getPersistedConstructorEntity(partialUpdatedConstructorEntity)
         );
-    }*/
+    }
 
-    /*@Test
+    @Test
     void patchNonExistingConstructorEntity() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         constructorEntity.setId(UUID.randomUUID().toString());
@@ -334,9 +322,9 @@ class ConstructorEntityResourceIT {
 
         // Validate the ConstructorEntity in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
-    }*/
+    }
 
-    /*@Test
+    @Test
     void patchWithIdMismatchConstructorEntity() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         constructorEntity.setId(UUID.randomUUID().toString());
@@ -355,9 +343,9 @@ class ConstructorEntityResourceIT {
 
         // Validate the ConstructorEntity in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
-    }*/
+    }
 
-    /*@Test
+    @Test
     void patchWithMissingIdPathParamConstructorEntity() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         constructorEntity.setId(UUID.randomUUID().toString());
@@ -372,9 +360,9 @@ class ConstructorEntityResourceIT {
 
         // Validate the ConstructorEntity in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
-    }*/
+    }
 
-    /*@Test
+    @Test
     void deleteConstructorEntity() throws Exception {
         // Initialize the database
         insertedConstructorEntity = constructorEntityRepository.save(constructorEntity);
@@ -388,7 +376,7 @@ class ConstructorEntityResourceIT {
 
         // Validate the database contains one less item
         assertDecrementedRepositoryCount(databaseSizeBeforeDelete);
-    }*/
+    }
 
     protected long getRepositoryCount() {
         return constructorEntityRepository.count();
