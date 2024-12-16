@@ -37,6 +37,9 @@ public class ConstructorAttributeServiceImpl implements ConstructorAttributeServ
         ConstructorEntity constructorEntity = constructorEntityRepository.findBySignature(constructorSignature).orElseGet(() -> {
             ConstructorEntity newConstructorEntity = new ConstructorEntity();
             newConstructorEntity.setSignature(constructorSignature);
+            newConstructorEntity.setName(request.getConstructorName());
+            newConstructorEntity.setFile(request.getConstructorFileName());
+            newConstructorEntity.setClassName(request.getConstructorClassName());
             return constructorEntityRepository.save(newConstructorEntity);
         });
 
