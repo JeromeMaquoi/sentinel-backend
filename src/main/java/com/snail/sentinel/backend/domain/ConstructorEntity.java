@@ -29,7 +29,7 @@ public class ConstructorEntity implements Serializable {
     private String className;
 
     @Field("file")
-    private String file;
+    private String fileName;
 
     @Field("attributes")
     private Set<AttributeEntity> attributeEntities = new HashSet<>();
@@ -88,17 +88,17 @@ public class ConstructorEntity implements Serializable {
         this.className = className;
     }
 
-    public String getFile() {
-        return this.file;
+    public String getFileName() {
+        return this.fileName;
     }
 
     public ConstructorEntity file(String file) {
-        this.setFile(file);
+        this.setFileName(file);
         return this;
     }
 
-    public void setFile(String file) {
-        this.file = file;
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 
     public Set<AttributeEntity> getAttributeEntities() {
@@ -136,7 +136,7 @@ public class ConstructorEntity implements Serializable {
             ", name='" + getName() + "'" +
             ", signature='" + getSignature() + "'" +
             ", pkg='" + getClassName() + "'" +
-            ", file='" + getFile() + "'" +
+            ", file='" + getFileName() + "'" +
             "}";
     }
 }

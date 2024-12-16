@@ -2,9 +2,10 @@ package com.snail.sentinel.backend.service.impl;
 
 import com.snail.sentinel.backend.domain.AttributeEntity;
 import com.snail.sentinel.backend.domain.ConstructorEntity;
-import com.snail.sentinel.backend.repository.AttributeEntityRepository;
 import com.snail.sentinel.backend.repository.ConstructorEntityRepository;
+import com.snail.sentinel.backend.service.AttributeService;
 import com.snail.sentinel.backend.service.ConstructorAttributeService;
+import com.snail.sentinel.backend.service.ConstructorService;
 import com.snail.sentinel.backend.service.dto.ConstructorEntityDTO;
 import com.snail.sentinel.backend.service.dto.RegisterAttributeRequest;
 import com.snail.sentinel.backend.service.mapper.ConstructorEntityMapper;
@@ -18,47 +19,45 @@ import org.springframework.transaction.annotation.Transactional;
 public class ConstructorAttributeServiceImpl implements ConstructorAttributeService {
     private static final Logger log = LoggerFactory.getLogger(ConstructorAttributeServiceImpl.class);
 
-    private final ConstructorEntityRepository constructorEntityRepository;
+    private final ConstructorService constructorService;
 
-    private final AttributeEntityRepository attributeEntityRepository;
+    private final AttributeService attributeService;
 
     private final ConstructorEntityMapper constructorEntityMapper;
 
-    public ConstructorAttributeServiceImpl(ConstructorEntityRepository constructorEntityRepository, AttributeEntityRepository attributeEntityRepository, ConstructorEntityMapper constructorEntityMapper) {
-        this.constructorEntityRepository = constructorEntityRepository;
-        this.attributeEntityRepository = attributeEntityRepository;
+    private final ConstructorEntityRepository constructorEntityRepository;
+
+    public ConstructorAttributeServiceImpl(ConstructorService constructorService, AttributeService attributeService, ConstructorEntityMapper constructorEntityMapper, ConstructorEntityRepository constructorEntityRepository) {
+        this.constructorService = constructorService;
+        this.attributeService = attributeService;
         this.constructorEntityMapper = constructorEntityMapper;
+        this.constructorEntityRepository = constructorEntityRepository;
     }
 
     @Override
     @Transactional
     public ConstructorEntityDTO registerAttribute(RegisterAttributeRequest request) {
         String constructorSignature = request.getConstructorSignature();
-        ConstructorEntity constructorEntity = constructorEntityRepository.findBySignature(constructorSignature).orElseGet(() -> {
-            ConstructorEntity newConstructorEntity = new ConstructorEntity();
-            newConstructorEntity.setSignature(constructorSignature);
-            newConstructorEntity.setName(request.getConstructorName());
-            newConstructorEntity.setFile(request.getConstructorFileName());
-            newConstructorEntity.setClassName(request.getConstructorClassName());
-            return constructorEntityRepository.save(newConstructorEntity);
-        });
+        ConstructorEntity constructorEntity = constructorService.getOrCreateConstructor(
+            request.getConstructorSignature(),
+            request.getConstructorName(),
+            request.getConstructorFileName(),
+            request.getConstructorClassName()
+        );
 
         String attributeName = request.getAttributeName();
         String attributeType = request.getAttributeType();
-        boolean attributeExists = constructorEntity.getAttributeEntities().stream().anyMatch(attributeEntity -> attributeEntity.getName().equals(attributeName) && attributeEntity.getType().equals(attributeType));
-        if (attributeExists) {
+        if (attributeService.attributeExists(constructorEntity, attributeName, attributeType)) {
             log.debug("Attribute already exists: {} of type {} for constructor {}", attributeName, attributeType, constructorSignature);
             return constructorEntityMapper.toDto(constructorEntity);
         }
 
         log.info("Creating new attribute for constructor: {} of type {}", constructorSignature, attributeType);
-        AttributeEntity attributeEntity = new AttributeEntity();
-        attributeEntity.setName(attributeName);
-        attributeEntity.setType(attributeType);
-        attributeEntity = attributeEntityRepository.save(attributeEntity);
 
+        AttributeEntity attributeEntity = attributeService.createAttribute(attributeName, attributeType);
         constructorEntity.getAttributeEntities().add(attributeEntity);
         ConstructorEntity savedEntity = constructorEntityRepository.save(constructorEntity);
+
         return constructorEntityMapper.toDto(savedEntity);
     }
 }

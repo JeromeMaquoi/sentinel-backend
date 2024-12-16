@@ -17,7 +17,7 @@ public class ConstructorEntityDTO implements Serializable {
 
     private String className;
 
-    private String file;
+    private String fileName;
 
     public String getId() {
         return id;
@@ -51,12 +51,12 @@ public class ConstructorEntityDTO implements Serializable {
         this.className = className;
     }
 
-    public String getFile() {
-        return file;
+    public String getFileName() {
+        return fileName;
     }
 
-    public void setFile(String file) {
-        this.file = file;
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 
     @Override
@@ -88,7 +88,7 @@ public class ConstructorEntityDTO implements Serializable {
             ", name='" + getName() + "'" +
             ", signature='" + getSignature() + "'" +
             ", className='" + getClassName() + "'" +
-            ", file='" + getFile() + "'" +
+            ", file='" + getFileName() + "'" +
             "}";
     }
 }
