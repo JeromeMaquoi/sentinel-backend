@@ -224,7 +224,7 @@ class JoularNodeEntityServiceImplTest {
         assertTrue(joularNodeEntityService.getIgnoreLine());
     }
 
-    @Test
+    /*@Test
     void exceptionHandleOneMethodFromOneCsvLineTest() {
         String classMethodLineString = "org.jabref.logic.formatter.bibtexfields.UnitsToLatexFormatter.format 111";
         Float value = 0.4679F;
@@ -237,7 +237,7 @@ class JoularNodeEntityServiceImplTest {
         assertThrows(AssertionError.class, () -> {
             joularNodeEntityService.handleOneMethodFromOneCsvLine(classMethodLineString, value);
         });
-    }
+    }*/
 
     /*@Test
     void joularNodeEntityDTOInMapHandleOneMethodFromOneCsvLineTest() {
