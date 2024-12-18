@@ -3,14 +3,14 @@ package com.snail.sentinel.backend.service.impl;
 import com.snail.sentinel.backend.domain.AttributeEntity;
 import com.snail.sentinel.backend.domain.ConstructorEntity;
 import com.snail.sentinel.backend.repository.AttributeEntityRepository;
-import com.snail.sentinel.backend.service.AttributeService;
+import com.snail.sentinel.backend.service.AttributeEntityService;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AttributeServiceImpl implements AttributeService {
+public class AttributeEntityServiceImpl implements AttributeEntityService {
     private final AttributeEntityRepository attributeEntityRepository;
 
-    public AttributeServiceImpl(AttributeEntityRepository attributeEntityRepository) {
+    public AttributeEntityServiceImpl(AttributeEntityRepository attributeEntityRepository) {
         this.attributeEntityRepository = attributeEntityRepository;
     }
 

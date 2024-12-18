@@ -18,12 +18,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-public class ConstructorAttributeServiceImplTest {
+public class ConstructorAttributeEntityServiceImplTest {
     @Mock
     private ConstructorEntityService constructorService;
 
     @Mock
-    private AttributeService attributeService;
+    private AttributeEntityService attributeEntityService;
 
     @Mock
     private ConstructorEntityMapper constructorEntityMapper;
@@ -51,8 +51,8 @@ public class ConstructorAttributeServiceImplTest {
 
         ConstructorEntity constructorEntity = new ConstructorEntity();
         when(constructorService.getOrCreateConstructor(anyString(), anyString(), anyString(), anyString())).thenReturn(constructorEntity);
-        when(attributeService.attributeExists(any(ConstructorEntity.class), anyString(), anyString())).thenReturn(false);
-        when(attributeService.createAttribute(anyString(), anyString())).thenReturn(new AttributeEntity());
+        when(attributeEntityService.attributeExists(any(ConstructorEntity.class), anyString(), anyString())).thenReturn(false);
+        when(attributeEntityService.createAttribute(anyString(), anyString())).thenReturn(new AttributeEntity());
         when(constructorEntityRepository.save(any(ConstructorEntity.class))).thenReturn(constructorEntity);
         when(constructorEntityMapper.toDto(any(ConstructorEntity.class))).thenReturn(new ConstructorEntityDTO());
 

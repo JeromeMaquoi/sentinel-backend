@@ -3,7 +3,7 @@ package com.snail.sentinel.backend.service.impl;
 import com.snail.sentinel.backend.domain.AttributeEntity;
 import com.snail.sentinel.backend.domain.ConstructorEntity;
 import com.snail.sentinel.backend.repository.ConstructorEntityRepository;
-import com.snail.sentinel.backend.service.AttributeService;
+import com.snail.sentinel.backend.service.AttributeEntityService;
 import com.snail.sentinel.backend.service.ConstructorAttributeService;
 import com.snail.sentinel.backend.service.ConstructorEntityService;
 import com.snail.sentinel.backend.service.dto.ConstructorEntityDTO;
@@ -21,15 +21,15 @@ public class ConstructorAttributeServiceImpl implements ConstructorAttributeServ
 
     private final ConstructorEntityService constructorService;
 
-    private final AttributeService attributeService;
+    private final AttributeEntityService attributeEntityService;
 
     private final ConstructorEntityMapper constructorEntityMapper;
 
     private final ConstructorEntityRepository constructorEntityRepository;
 
-    public ConstructorAttributeServiceImpl(ConstructorEntityService constructorService, AttributeService attributeService, ConstructorEntityMapper constructorEntityMapper, ConstructorEntityRepository constructorEntityRepository) {
+    public ConstructorAttributeServiceImpl(ConstructorEntityService constructorService, AttributeEntityService attributeEntityService, ConstructorEntityMapper constructorEntityMapper, ConstructorEntityRepository constructorEntityRepository) {
         this.constructorService = constructorService;
-        this.attributeService = attributeService;
+        this.attributeEntityService = attributeEntityService;
         this.constructorEntityMapper = constructorEntityMapper;
         this.constructorEntityRepository = constructorEntityRepository;
     }
@@ -47,14 +47,14 @@ public class ConstructorAttributeServiceImpl implements ConstructorAttributeServ
 
         String attributeName = request.getAttributeName();
         String attributeType = request.getAttributeType();
-        if (attributeService.attributeExists(constructorEntity, attributeName, attributeType)) {
+        if (attributeEntityService.attributeExists(constructorEntity, attributeName, attributeType)) {
             log.debug("Attribute already exists: {} of type {} for constructor {}", attributeName, attributeType, constructorSignature);
             return constructorEntityMapper.toDto(constructorEntity);
         }
 
         log.info("Creating new attribute for constructor: {} of type {}", constructorSignature, attributeType);
 
-        AttributeEntity attributeEntity = attributeService.createAttribute(attributeName, attributeType);
+        AttributeEntity attributeEntity = attributeEntityService.createAttribute(attributeName, attributeType);
         constructorEntity.getAttributeEntities().add(attributeEntity);
         ConstructorEntity savedEntity = constructorEntityRepository.save(constructorEntity);
 

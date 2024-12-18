@@ -3,7 +3,7 @@ package com.snail.sentinel.backend.service;
 import com.snail.sentinel.backend.domain.AttributeEntity;
 import com.snail.sentinel.backend.domain.ConstructorEntity;
 import com.snail.sentinel.backend.repository.AttributeEntityRepository;
-import com.snail.sentinel.backend.service.impl.AttributeServiceImpl;
+import com.snail.sentinel.backend.service.impl.AttributeEntityServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -17,17 +17,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class AttributeServiceImplTest {
+class AttributeEntityServiceImplTest {
     @Mock
     private AttributeEntityRepository attributeEntityRepository;
 
     @InjectMocks
-    private AttributeServiceImpl attributeService;
+    private AttributeEntityServiceImpl attributeService;
 
     @BeforeEach
     public void init() {
         attributeEntityRepository = mock(AttributeEntityRepository.class);
-        attributeService = new AttributeServiceImpl(attributeEntityRepository);
+        attributeService = new AttributeEntityServiceImpl(attributeEntityRepository);
     }
 
     @Test
