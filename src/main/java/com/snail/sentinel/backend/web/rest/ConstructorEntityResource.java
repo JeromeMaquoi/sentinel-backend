@@ -1,10 +1,8 @@
 package com.snail.sentinel.backend.web.rest;
 
 import com.snail.sentinel.backend.repository.ConstructorEntityRepository;
-import com.snail.sentinel.backend.service.ConstructorAttributeService;
 import com.snail.sentinel.backend.service.ConstructorEntityService;
 import com.snail.sentinel.backend.service.dto.ConstructorEntityDTO;
-import com.snail.sentinel.backend.service.dto.RegisterAttributeRequest;
 import com.snail.sentinel.backend.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -37,16 +35,12 @@ public class ConstructorEntityResource {
 
     private final ConstructorEntityRepository constructorEntityRepository;
 
-    private final ConstructorAttributeService constructorAttributeService;
-
     public ConstructorEntityResource(
         ConstructorEntityService constructorEntityService,
-        ConstructorEntityRepository constructorEntityRepository,
-        ConstructorAttributeService constructorAttributeService
+        ConstructorEntityRepository constructorEntityRepository
     ) {
         this.constructorEntityService = constructorEntityService;
         this.constructorEntityRepository = constructorEntityRepository;
-        this.constructorAttributeService = constructorAttributeService;
     }
 
     /**
@@ -60,6 +54,10 @@ public class ConstructorEntityResource {
     public ResponseEntity<ConstructorEntityDTO> createConstructorEntity(@RequestBody ConstructorEntityDTO constructorEntityDTO)
         throws URISyntaxException {
         LOG.debug("REST request to save ConstructorEntity : {}", constructorEntityDTO);
+        if (constructorEntityRepository.findBySignature(constructorEntityDTO.getSignature()).isPresent()) {
+            LOG.warn("ConstrutorEntity with signature {} already exists", constructorEntityDTO.getSignature());
+            throw new BadRequestAlertException("ConstructorEntity with this signature already exists", ENTITY_NAME, "entityexists");
+        }
         if (constructorEntityDTO.getId() != null) {
             throw new BadRequestAlertException("A new constructorEntity cannot already have an ID", ENTITY_NAME, "idexists");
         }
@@ -68,15 +66,6 @@ public class ConstructorEntityResource {
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, constructorEntityDTO.getId()))
             .body(constructorEntityDTO);
     }
-
-    /*@PostMapping("")
-    @Deprecated
-    public ResponseEntity<ConstructorEntityDTO> registerConstructorEntityAttributes(@RequestBody RegisterAttributeRequest registerAttributeRequest) throws URISyntaxException {
-        ConstructorEntityDTO constructorEntityDTO = constructorAttributeService.registerAttribute(registerAttributeRequest);
-        return ResponseEntity.created(new URI("/api/v1/constructor-entities/" + constructorEntityDTO.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, constructorEntityDTO.getId()))
-            .body(constructorEntityDTO);
-    }*/
 
     /**
      * {@code PUT  /constructor-entities/:id} : Updates an existing constructorEntity.

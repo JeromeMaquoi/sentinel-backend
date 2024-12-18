@@ -7,6 +7,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.snail.sentinel.backend.IntegrationTest;
 import com.snail.sentinel.backend.domain.ConstructorEntity;
@@ -85,6 +86,7 @@ class ConstructorEntityResourceIT {
 
     @BeforeEach
     public void initTest() {
+        constructorEntityRepository.deleteAll();
         constructorEntity = createEntity();
     }
 
@@ -117,6 +119,31 @@ class ConstructorEntityResourceIT {
         assertConstructorEntityUpdatableFieldsEquals(returnedConstructorEntity, getPersistedConstructorEntity(returnedConstructorEntity));
 
         insertedConstructorEntity = returnedConstructorEntity;
+    }
+
+    @Test
+    void createConstructorEntityThrowsError() throws Exception {
+        // Initialize the database with an existing ConstructorEntity
+        constructorEntityRepository.save(constructorEntity);
+
+        long databaseSizeBeforeCreate = getRepositoryCount();
+
+        // Create a ConstructorEntityDTO with the same signature
+        ConstructorEntityDTO constructorEntityDTO = constructorEntityMapper.toDto(constructorEntity);
+
+        // Attempt to create another ConstructorEntity with the same signature
+        restConstructorEntityMockMvc
+            .perform(post(ENTITY_API_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(om.writeValueAsBytes(constructorEntityDTO)))
+            .andExpect(status().isBadRequest()); // Expecting a 400 Conflict response
+
+        // Validate that the database size has not changed
+        assertRepositoryCountUnchanged(databaseSizeBeforeCreate);
+    }
+
+    void assertRepositoryCountUnchanged(long expectedCount) {
+        assertThat(getRepositoryCount()).isEqualTo(expectedCount);
     }
 
     @Test

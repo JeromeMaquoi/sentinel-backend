@@ -3,7 +3,6 @@ package com.snail.sentinel.backend.service.impl;
 import com.snail.sentinel.backend.domain.ConstructorEntity;
 import com.snail.sentinel.backend.repository.ConstructorEntityRepository;
 import com.snail.sentinel.backend.service.ConstructorEntityService;
-import com.snail.sentinel.backend.service.dto.AttributeEntityDTO;
 import com.snail.sentinel.backend.service.dto.ConstructorEntityDTO;
 import com.snail.sentinel.backend.service.mapper.ConstructorEntityMapper;
 import java.util.LinkedList;
