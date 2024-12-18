@@ -70,11 +70,24 @@ public class ConstructorEntityResource {
     }*/
 
     @PostMapping("")
+    @Deprecated
     public ResponseEntity<ConstructorEntityDTO> registerConstructorEntityAttributes(@RequestBody RegisterAttributeRequest registerAttributeRequest) throws URISyntaxException {
         ConstructorEntityDTO constructorEntityDTO = constructorAttributeService.registerAttribute(registerAttributeRequest);
         return ResponseEntity.created(new URI("/api/v1/constructor-entities/" + constructorEntityDTO.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, constructorEntityDTO.getId()))
             .body(constructorEntityDTO);
+    }
+
+    @PostMapping("/add-or-update")
+    public ResponseEntity<ConstructorEntityDTO> addOrUpdateConstructorEntity(@RequestBody ConstructorEntityDTO constructorEntityDTO) throws URISyntaxException {
+        LOG.debug("REST request to addOrUpdate ConstructorEntity : {}", constructorEntityDTO);
+        if (constructorEntityDTO.getId() != null) {
+            throw new BadRequestAlertException("A new ConstructorEntity cannot already have an ID", ENTITY_NAME, "idexists");
+        }
+        ConstructorEntityDTO updatedEntity = constructorEntityService.addOrUpdate(constructorEntityDTO);
+        return ResponseEntity.created(new URI("/api/v1/constructor-entities/" + updatedEntity.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, updatedEntity.getId()))
+            .body(updatedEntity);
     }
 
     /**

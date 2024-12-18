@@ -7,6 +7,7 @@ import com.snail.sentinel.backend.service.AttributeEntityService;
 import org.springframework.stereotype.Service;
 
 @Service
+@Deprecated
 public class AttributeEntityServiceImpl implements AttributeEntityService {
     private final AttributeEntityRepository attributeEntityRepository;
 

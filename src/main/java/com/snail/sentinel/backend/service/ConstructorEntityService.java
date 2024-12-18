@@ -58,4 +58,6 @@ public interface ConstructorEntityService {
     void deleteAll();
 
     ConstructorEntity getOrCreateConstructor(String signature, String name, String fileName, String className);
+
+    ConstructorEntityDTO addOrUpdate(ConstructorEntityDTO constructorEntityDTO);
 }

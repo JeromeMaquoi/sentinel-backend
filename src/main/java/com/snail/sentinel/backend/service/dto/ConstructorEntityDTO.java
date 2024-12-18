@@ -2,6 +2,7 @@ package com.snail.sentinel.backend.service.dto;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * A DTO for the {@link com.snail.sentinel.backend.domain.ConstructorEntity} entity.
@@ -18,6 +19,8 @@ public class ConstructorEntityDTO implements Serializable {
     private String className;
 
     private String fileName;
+
+    private Set<AttributeEntityDTO> attributeEntities;
 
     public String getId() {
         return id;
@@ -59,36 +62,35 @@ public class ConstructorEntityDTO implements Serializable {
         this.fileName = fileName;
     }
 
+    public Set<AttributeEntityDTO> getAttributeEntities() {
+        return attributeEntities;
+    }
+
+    public void setAttributeEntities(Set<AttributeEntityDTO> attributeEntities) {
+        this.attributeEntities = attributeEntities;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof ConstructorEntityDTO)) {
-            return false;
-        }
-
-        ConstructorEntityDTO constructorEntityDTO = (ConstructorEntityDTO) o;
-        if (this.id == null) {
-            return false;
-        }
-        return Objects.equals(this.id, constructorEntityDTO.id);
+        if (o == null || getClass() != o.getClass()) return false;
+        ConstructorEntityDTO that = (ConstructorEntityDTO) o;
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(signature, that.signature) && Objects.equals(className, that.className) && Objects.equals(fileName, that.fileName) && Objects.equals(attributeEntities, that.attributeEntities);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.id);
+        return Objects.hash(id, name, signature, className, fileName, attributeEntities);
     }
 
-    // prettier-ignore
     @Override
     public String toString() {
         return "ConstructorEntityDTO{" +
-            "id='" + getId() + "'" +
-            ", name='" + getName() + "'" +
-            ", signature='" + getSignature() + "'" +
-            ", className='" + getClassName() + "'" +
-            ", file='" + getFileName() + "'" +
-            "}";
+            "id='" + id + '\'' +
+            ", name='" + name + '\'' +
+            ", signature='" + signature + '\'' +
+            ", className='" + className + '\'' +
+            ", fileName='" + fileName + '\'' +
+            ", attributeEntities=" + attributeEntities +
+            '}';
     }
 }

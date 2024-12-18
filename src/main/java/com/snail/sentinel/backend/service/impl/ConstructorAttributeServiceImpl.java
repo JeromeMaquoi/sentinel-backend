@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
+@Deprecated
 public class ConstructorAttributeServiceImpl implements ConstructorAttributeService {
     private static final Logger log = LoggerFactory.getLogger(ConstructorAttributeServiceImpl.class);
 
