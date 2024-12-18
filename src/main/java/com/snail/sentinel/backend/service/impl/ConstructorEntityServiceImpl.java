@@ -106,28 +106,4 @@ public class ConstructorEntityServiceImpl implements ConstructorEntityService {
             return constructorEntityRepository.save(newConstructorEntity);
         });
     }
-
-    @Override
-    public ConstructorEntityDTO addOrUpdate(ConstructorEntityDTO constructorEntityDTO) {
-        return constructorEntityRepository.findBySignature(constructorEntityDTO.getSignature())
-            .map(existingEntity -> updateExistingConstructorEntityDTO(constructorEntityMapper.toDto(existingEntity), constructorEntityDTO))
-            .orElseGet(() -> save(constructorEntityDTO));
-    }
-
-    public ConstructorEntityDTO updateExistingConstructorEntityDTO(ConstructorEntityDTO existingEntity, ConstructorEntityDTO newEntity) {
-        newEntity.getAttributeEntities().forEach(attributeEntityDTO -> {
-            if (!attributeExistsInEntity(existingEntity, attributeEntityDTO)) {
-                existingEntity.getAttributeEntities().add(attributeEntityDTO);
-            }
-        });
-        ConstructorEntity savedEntity = constructorEntityMapper.toEntity(existingEntity);
-        savedEntity = constructorEntityRepository.save(savedEntity);
-        return constructorEntityMapper.toDto(savedEntity);
-    }
-
-    public boolean attributeExistsInEntity(ConstructorEntityDTO constructorEntityDTO, AttributeEntityDTO attributeEntityDTO) {
-        return constructorEntityDTO.getAttributeEntities()
-            .stream()
-            .anyMatch(existingAttr -> existingAttr.getName().equals(attributeEntityDTO.getName()) && existingAttr.getType().equals(attributeEntityDTO.getType()));
-    }
 }

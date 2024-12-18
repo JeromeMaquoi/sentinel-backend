@@ -57,7 +57,6 @@ public interface ConstructorEntityService {
 
     void deleteAll();
 
+    @Deprecated
     ConstructorEntity getOrCreateConstructor(String signature, String name, String fileName, String className);
-
-    ConstructorEntityDTO addOrUpdate(ConstructorEntityDTO constructorEntityDTO);
 }
