@@ -75,13 +75,12 @@ class ConstructorEntityServiceImplTest {
         String fileName = "fileA.java";
         String className = "ClassA";
 
-        when(constructorEntityRepository.findBySignature(signature)).thenReturn(Optional.empty());
+        when(constructorEntityRepository.findBySignatureAndClassName(signature, className)).thenReturn(Optional.empty());
         when(constructorEntityRepository.save(any(ConstructorEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         ConstructorEntity result = constructorEntityService.getOrCreateConstructor(signature, name, fileName, className);
 
         assertEquals(signature, result.getSignature());
-        assertEquals(name, result.getName());
         assertEquals(fileName, result.getFileName());
         assertEquals(className, result.getClassName());
     }
@@ -141,12 +140,14 @@ class ConstructorEntityServiceImplTest {
     @Test
     void getOrCreateConstructorWithExistingConstructorTest() {
         String signature = "TestSignature";
+        String className = "class";
         ConstructorEntity existingEntity = new ConstructorEntity();
         existingEntity.setSignature(signature);
+        existingEntity.setClassName(className);
 
-        when(constructorEntityRepository.findBySignature(signature)).thenReturn(Optional.of(existingEntity));
+        when(constructorEntityRepository.findBySignatureAndClassName(signature, className)).thenReturn(Optional.of(existingEntity));
 
-        ConstructorEntity result = constructorEntityService.getOrCreateConstructor(signature, "Name", "File", "Class");
+        ConstructorEntity result = constructorEntityService.getOrCreateConstructor(signature, "Name", "File", className);
 
         assertEquals(existingEntity, result);
     }

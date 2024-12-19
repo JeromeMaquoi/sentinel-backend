@@ -54,7 +54,7 @@ public class ConstructorEntityResource {
     public ResponseEntity<ConstructorEntityDTO> createConstructorEntity(@RequestBody ConstructorEntityDTO constructorEntityDTO)
         throws URISyntaxException {
         LOG.debug("REST request to save ConstructorEntity : {}", constructorEntityDTO);
-        if (constructorEntityRepository.findBySignature(constructorEntityDTO.getSignature()).isPresent()) {
+        if (constructorEntityRepository.findBySignatureAndClassName(constructorEntityDTO.getSignature(), constructorEntityDTO.getClassName()).isPresent()) {
             LOG.warn("ConstrutorEntity with signature {} already exists", constructorEntityDTO.getSignature());
             throw new BadRequestAlertException("ConstructorEntity with this signature already exists", ENTITY_NAME, "entityexists");
         }
@@ -75,13 +75,12 @@ public class ConstructorEntityResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated constructorEntityDTO,
      * or with status {@code 400 (Bad Request)} if the constructorEntityDTO is not valid,
      * or with status {@code 500 (Internal Server Error)} if the constructorEntityDTO couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
     public ResponseEntity<ConstructorEntityDTO> updateConstructorEntity(
         @PathVariable(value = "id", required = false) final String id,
         @RequestBody ConstructorEntityDTO constructorEntityDTO
-    ) throws URISyntaxException {
+    ) {
         LOG.debug("REST request to update ConstructorEntity : {}, {}", id, constructorEntityDTO);
         if (constructorEntityDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");

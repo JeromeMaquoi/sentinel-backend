@@ -12,8 +12,6 @@ public class ConstructorEntityDTO implements Serializable {
 
     private String id;
 
-    private String name;
-
     private String signature;
 
     private String className;
@@ -28,14 +26,6 @@ public class ConstructorEntityDTO implements Serializable {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getSignature() {
@@ -74,19 +64,18 @@ public class ConstructorEntityDTO implements Serializable {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         ConstructorEntityDTO that = (ConstructorEntityDTO) o;
-        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(signature, that.signature) && Objects.equals(className, that.className) && Objects.equals(fileName, that.fileName) && Objects.equals(attributeEntities, that.attributeEntities);
+        return Objects.equals(id, that.id) && Objects.equals(signature, that.signature) && Objects.equals(className, that.className) && Objects.equals(fileName, that.fileName) && Objects.equals(attributeEntities, that.attributeEntities);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, signature, className, fileName, attributeEntities);
+        return Objects.hash(id, signature, className, fileName, attributeEntities);
     }
 
     @Override
     public String toString() {
         return "ConstructorEntityDTO{" +
             "id='" + id + '\'' +
-            ", name='" + name + '\'' +
             ", signature='" + signature + '\'' +
             ", className='" + className + '\'' +
             ", fileName='" + fileName + '\'' +

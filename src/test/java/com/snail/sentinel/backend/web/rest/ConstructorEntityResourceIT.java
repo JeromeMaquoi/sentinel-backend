@@ -7,7 +7,6 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.snail.sentinel.backend.IntegrationTest;
 import com.snail.sentinel.backend.domain.ConstructorEntity;
@@ -71,7 +70,7 @@ class ConstructorEntityResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static ConstructorEntity createEntity() {
-        return new ConstructorEntity().name(DEFAULT_NAME).signature(DEFAULT_SIGNATURE).className(DEFAULT_PKG).file(DEFAULT_FILE);
+        return new ConstructorEntity().signature(DEFAULT_SIGNATURE).className(DEFAULT_PKG).file(DEFAULT_FILE);
     }
 
     /**
@@ -81,7 +80,7 @@ class ConstructorEntityResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static ConstructorEntity createUpdatedEntity() {
-        return new ConstructorEntity().name(UPDATED_NAME).signature(UPDATED_SIGNATURE).className(UPDATED_PKG).file(UPDATED_FILE);
+        return new ConstructorEntity().signature(UPDATED_SIGNATURE).className(UPDATED_PKG).file(UPDATED_FILE);
     }
 
     @BeforeEach
@@ -157,7 +156,6 @@ class ConstructorEntityResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(constructorEntity.getId())))
-            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
             .andExpect(jsonPath("$.[*].signature").value(hasItem(DEFAULT_SIGNATURE)))
             .andExpect(jsonPath("$.[*].className").value(hasItem(DEFAULT_PKG)))
             .andExpect(jsonPath("$.[*].fileName").value(hasItem(DEFAULT_FILE)));
@@ -174,7 +172,6 @@ class ConstructorEntityResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(constructorEntity.getId()))
-            .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
             .andExpect(jsonPath("$.signature").value(DEFAULT_SIGNATURE))
             .andExpect(jsonPath("$.className").value(DEFAULT_PKG))
             .andExpect(jsonPath("$.fileName").value(DEFAULT_FILE));
@@ -195,7 +192,7 @@ class ConstructorEntityResourceIT {
 
         // Update the constructorEntity
         ConstructorEntity updatedConstructorEntity = constructorEntityRepository.findById(constructorEntity.getId()).orElseThrow();
-        updatedConstructorEntity.name(UPDATED_NAME).signature(UPDATED_SIGNATURE).className(UPDATED_PKG).file(UPDATED_FILE);
+        updatedConstructorEntity.signature(UPDATED_SIGNATURE).className(UPDATED_PKG).file(UPDATED_FILE);
         ConstructorEntityDTO constructorEntityDTO = constructorEntityMapper.toDto(updatedConstructorEntity);
 
         restConstructorEntityMockMvc
@@ -311,7 +308,7 @@ class ConstructorEntityResourceIT {
         ConstructorEntity partialUpdatedConstructorEntity = new ConstructorEntity();
         partialUpdatedConstructorEntity.setId(constructorEntity.getId());
 
-        partialUpdatedConstructorEntity.name(UPDATED_NAME).signature(UPDATED_SIGNATURE).className(UPDATED_PKG).file(UPDATED_FILE);
+        partialUpdatedConstructorEntity.signature(UPDATED_SIGNATURE).className(UPDATED_PKG).file(UPDATED_FILE);
 
         restConstructorEntityMockMvc
             .perform(

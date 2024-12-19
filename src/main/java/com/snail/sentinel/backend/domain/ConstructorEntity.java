@@ -19,9 +19,6 @@ public class ConstructorEntity implements Serializable {
     @Id
     private String id;
 
-    @Field("name")
-    private String name;
-
     @Field("signature")
     private String signature;
 
@@ -47,19 +44,6 @@ public class ConstructorEntity implements Serializable {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public ConstructorEntity name(String name) {
-        this.setName(name);
-        return this;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getSignature() {
@@ -133,7 +117,6 @@ public class ConstructorEntity implements Serializable {
     public String toString() {
         return "ConstructorEntity{" +
             "id=" + getId() +
-            ", name='" + getName() + "'" +
             ", signature='" + getSignature() + "'" +
             ", pkg='" + getClassName() + "'" +
             ", file='" + getFileName() + "'" +
