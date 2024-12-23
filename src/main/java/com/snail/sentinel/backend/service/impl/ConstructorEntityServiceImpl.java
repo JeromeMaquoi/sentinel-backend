@@ -96,10 +96,9 @@ public class ConstructorEntityServiceImpl implements ConstructorEntityService {
     @Override
     @Transactional
     public ConstructorEntity getOrCreateConstructor(String signature, String name, String fileName, String className) {
-        return constructorEntityRepository.findBySignature(signature).orElseGet(() -> {
+        return constructorEntityRepository.findBySignatureAndClassName(signature, className).orElseGet(() -> {
             ConstructorEntity newConstructorEntity = new ConstructorEntity();
             newConstructorEntity.setSignature(signature);
-            newConstructorEntity.setName(name);
             newConstructorEntity.setFileName(fileName);
             newConstructorEntity.setClassName(className);
             return constructorEntityRepository.save(newConstructorEntity);

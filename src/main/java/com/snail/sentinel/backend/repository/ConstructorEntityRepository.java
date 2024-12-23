@@ -11,5 +11,5 @@ import java.util.Optional;
  */
 @Repository
 public interface ConstructorEntityRepository extends MongoRepository<ConstructorEntity, String> {
-    Optional<ConstructorEntity> findBySignature(String signature);
+    Optional<ConstructorEntity> findBySignatureAndClassName(String signature, String className);
 }
