@@ -5,19 +5,9 @@ import java.util.Objects;
 
 public class AttributeEntityDTO implements Serializable {
 
-    private String id;
-
     private String name;
 
     private String type;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
@@ -39,19 +29,18 @@ public class AttributeEntityDTO implements Serializable {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         AttributeEntityDTO that = (AttributeEntityDTO) o;
-        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(type, that.type);
+        return Objects.equals(name, that.name) && Objects.equals(type, that.type);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, type);
+        return Objects.hash(name, type);
     }
 
     @Override
     public String toString() {
         return "AttributeEntityDTO{" +
-            "id='" + id + '\'' +
-            ", name='" + name + '\'' +
+            "name='" + name + '\'' +
             ", type='" + type + '\'' +
             '}';
     }

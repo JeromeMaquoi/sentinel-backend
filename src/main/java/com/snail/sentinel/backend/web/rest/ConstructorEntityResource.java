@@ -55,7 +55,7 @@ public class ConstructorEntityResource {
         throws URISyntaxException {
         LOG.debug("REST request to save ConstructorEntity : {}", constructorEntityDTO);
         if (constructorEntityRepository.findBySignatureAndClassName(constructorEntityDTO.getSignature(), constructorEntityDTO.getClassName()).isPresent()) {
-            LOG.warn("ConstrutorEntity with signature {} already exists", constructorEntityDTO.getSignature());
+//            LOG.warn("ConstrutorEntity with signature {} already exists", constructorEntityDTO.getSignature());
             throw new BadRequestAlertException("ConstructorEntity with this signature already exists", ENTITY_NAME, "entityexists");
         }
         if (constructorEntityDTO.getId() != null) {
