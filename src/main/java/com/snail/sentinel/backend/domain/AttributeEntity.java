@@ -77,6 +77,11 @@ public class AttributeEntity implements Serializable {
         this.actualType = actualType;
     }
 
+    public AttributeEntity actualType(String actualType) {
+        this.setActualType(actualType);
+        return this;
+    }
+
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
