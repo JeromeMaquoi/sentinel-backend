@@ -17,6 +17,9 @@ class AttributeEntityTest {
         assertThat(attributeEntity1).isNotEqualTo(attributeEntity2);
 
         attributeEntity2.setId(attributeEntity1.getId());
+        attributeEntity2.setName(attributeEntity1.getName());
+        attributeEntity2.setType(attributeEntity1.getType());
+        attributeEntity2.setActualType(attributeEntity1.getActualType());
         assertThat(attributeEntity1).isEqualTo(attributeEntity2);
 
         attributeEntity2 = getAttributeEntitySample2();

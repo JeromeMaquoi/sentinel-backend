@@ -5,14 +5,14 @@ import java.util.UUID;
 public class AttributeEntityTestSamples {
 
     public static AttributeEntity getAttributeEntitySample1() {
-        return new AttributeEntity().id("id1").name("name1").type("type1");
+        return new AttributeEntity().id("id1").name("name1").type("type1").actualType("actualType1");
     }
 
     public static AttributeEntity getAttributeEntitySample2() {
-        return new AttributeEntity().id("id2").name("name2").type("type2");
+        return new AttributeEntity().id("id2").name("name2").type("type2").actualType("actualType2");
     }
 
     public static AttributeEntity getAttributeEntityRandomSampleGenerator() {
-        return new AttributeEntity().id(UUID.randomUUID().toString()).name(UUID.randomUUID().toString()).type(UUID.randomUUID().toString());
+        return new AttributeEntity().id(UUID.randomUUID().toString()).name(UUID.randomUUID().toString()).type(UUID.randomUUID().toString()).actualType(UUID.randomUUID().toString());
     }
 }
