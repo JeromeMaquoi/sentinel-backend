@@ -1,6 +1,8 @@
 package com.snail.sentinel.backend.domain;
 
 import java.io.Serializable;
+import java.util.Objects;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -22,6 +24,9 @@ public class AttributeEntity implements Serializable {
 
     @Field("type")
     private String type;
+
+    @Field("actualType")
+    private String actualType;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -64,33 +69,36 @@ public class AttributeEntity implements Serializable {
         this.type = type;
     }
 
+    public String getActualType() {
+        return actualType;
+    }
+
+    public void setActualType(String actualType) {
+        this.actualType = actualType;
+    }
+
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof AttributeEntity)) {
-            return false;
-        }
-        return getId() != null && getId().equals(((AttributeEntity) o).getId());
+        if (o == null || getClass() != o.getClass()) return false;
+        AttributeEntity that = (AttributeEntity) o;
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(type, that.type) && Objects.equals(actualType, that.actualType);
     }
 
     @Override
     public int hashCode() {
-        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
-        return getClass().hashCode();
+        return Objects.hash(id, name, type, actualType);
     }
 
-    // prettier-ignore
     @Override
     public String toString() {
         return "AttributeEntity{" +
-            "id=" + getId() +
-            ", name='" + getName() + "'" +
-            ", type='" + getType() + "'" +
-            "}";
+            "id='" + id + '\'' +
+            ", name='" + name + '\'' +
+            ", type='" + type + '\'' +
+            ", actualType='" + actualType + '\'' +
+            '}';
     }
 }

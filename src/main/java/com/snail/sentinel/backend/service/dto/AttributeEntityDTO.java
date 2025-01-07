@@ -9,6 +9,8 @@ public class AttributeEntityDTO implements Serializable {
 
     private String type;
 
+    private String actualType;
+
     public String getName() {
         return name;
     }
@@ -25,16 +27,24 @@ public class AttributeEntityDTO implements Serializable {
         this.type = type;
     }
 
+    public String getActualType() {
+        return actualType;
+    }
+
+    public void setActualType(String actualType) {
+        this.actualType = actualType;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         AttributeEntityDTO that = (AttributeEntityDTO) o;
-        return Objects.equals(name, that.name) && Objects.equals(type, that.type);
+        return Objects.equals(name, that.name) && Objects.equals(type, that.type) && Objects.equals(actualType, that.actualType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, type);
+        return Objects.hash(name, type, actualType);
     }
 
     @Override
@@ -42,6 +52,7 @@ public class AttributeEntityDTO implements Serializable {
         return "AttributeEntityDTO{" +
             "name='" + name + '\'' +
             ", type='" + type + '\'' +
+            ", actualType='" + actualType + '\'' +
             '}';
     }
 }
