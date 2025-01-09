@@ -1,0 +1,87 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2 id="jhi-stack-trace-element-joular-entity-heading" data-cy="StackTraceElementJoularEntityCreateUpdateHeading">
+        Create or edit a Stack Trace Element Joular Entity
+      </h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id">ID</label>
+            <input type="text" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        <div class="mb-3">
+          <label class="form-label" for="field_lineNumber">Line Number</label>
+          <input
+            type="number"
+            class="form-control"
+            name="lineNumber"
+            id="field_lineNumber"
+            data-cy="lineNumber"
+            formControlName="lineNumber"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_constructorElement">Constructor Element</label>
+          <input
+            type="text"
+            class="form-control"
+            name="constructorElement"
+            id="field_constructorElement"
+            data-cy="constructorElement"
+            formControlName="constructorElement"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_parent">Parent</label>
+          <input type="text" class="form-control" name="parent" id="field_parent" data-cy="parent" formControlName="parent" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_ancestors">Ancestors</label>
+          <input type="text" class="form-control" name="ancestors" id="field_ancestors" data-cy="ancestors" formControlName="ancestors" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_consumptionValues">Consumption Values</label>
+          <input
+            type="text"
+            class="form-control"
+            name="consumptionValues"
+            id="field_consumptionValues"
+            data-cy="consumptionValues"
+            formControlName="consumptionValues"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_commit">Commit</label>
+          <input type="text" class="form-control" name="commit" id="field_commit" data-cy="commit" formControlName="commit" />
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span>Cancel</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span>Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

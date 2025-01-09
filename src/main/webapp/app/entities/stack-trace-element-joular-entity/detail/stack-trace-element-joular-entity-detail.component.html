@@ -1,0 +1,58 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (stackTraceElementJoularEntity(); as stackTraceElementJoularEntityRef) {
+      <div>
+        <h2 data-cy="stackTraceElementJoularEntityDetailsHeading"><span>Stack Trace Element Joular Entity</span></h2>
+
+        <hr />
+
+        <jhi-alert-error></jhi-alert-error>
+
+        <jhi-alert></jhi-alert>
+
+        <dl class="row-md jh-entity-details">
+          <dt><span>ID</span></dt>
+          <dd>
+            <span>{{ stackTraceElementJoularEntityRef.id }}</span>
+          </dd>
+          <dt><span>Line Number</span></dt>
+          <dd>
+            <span>{{ stackTraceElementJoularEntityRef.lineNumber }}</span>
+          </dd>
+          <dt><span>Constructor Element</span></dt>
+          <dd>
+            <span>{{ stackTraceElementJoularEntityRef.constructorElement }}</span>
+          </dd>
+          <dt><span>Parent</span></dt>
+          <dd>
+            <span>{{ stackTraceElementJoularEntityRef.parent }}</span>
+          </dd>
+          <dt><span>Ancestors</span></dt>
+          <dd>
+            <span>{{ stackTraceElementJoularEntityRef.ancestors }}</span>
+          </dd>
+          <dt><span>Consumption Values</span></dt>
+          <dd>
+            <span>{{ stackTraceElementJoularEntityRef.consumptionValues }}</span>
+          </dd>
+          <dt><span>Commit</span></dt>
+          <dd>
+            <span>{{ stackTraceElementJoularEntityRef.commit }}</span>
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
+        </button>
+
+        <button
+          type="button"
+          [routerLink]="['/stack-trace-element-joular-entity', stackTraceElementJoularEntityRef.id, 'edit']"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

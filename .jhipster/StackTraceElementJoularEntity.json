@@ -1,0 +1,38 @@
+{
+  "annotations": {
+    "changelogDate": "20250109104256"
+  },
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "lineNumber",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "constructorElement",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "parent",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "ancestors",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "consumptionValues",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "commit",
+      "fieldType": "String"
+    }
+  ],
+  "name": "StackTraceElementJoularEntity",
+  "pagination": "no",
+  "readOnly": false,
+  "relationships": [],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}

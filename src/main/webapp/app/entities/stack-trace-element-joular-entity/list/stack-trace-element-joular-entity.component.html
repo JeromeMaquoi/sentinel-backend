@@ -1,0 +1,141 @@
+<div>
+  <h2 id="page-heading" data-cy="StackTraceElementJoularEntityHeading">
+    <span>Stack Trace Element Joular Entities</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+        <span>Refresh list</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-stack-trace-element-joular-entity"
+        [routerLink]="['/stack-trace-element-joular-entity/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span>Create a new Stack Trace Element Joular Entity</span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <jhi-alert></jhi-alert>
+
+  @if (stackTraceElementJoularEntities?.length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span>No Stack Trace Element Joular Entities found</span>
+    </div>
+  }
+
+  @if (stackTraceElementJoularEntities && stackTraceElementJoularEntities.length > 0) {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [sortState]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" jhiSortBy="id">
+              <div class="d-flex">
+                <span>ID</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="lineNumber">
+              <div class="d-flex">
+                <span>Line Number</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="constructorElement">
+              <div class="d-flex">
+                <span>Constructor Element</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="parent">
+              <div class="d-flex">
+                <span>Parent</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="ancestors">
+              <div class="d-flex">
+                <span>Ancestors</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="consumptionValues">
+              <div class="d-flex">
+                <span>Consumption Values</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="commit">
+              <div class="d-flex">
+                <span>Commit</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (stackTraceElementJoularEntity of stackTraceElementJoularEntities; track trackId(stackTraceElementJoularEntity)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/stack-trace-element-joular-entity', stackTraceElementJoularEntity.id, 'view']">{{
+                  stackTraceElementJoularEntity.id
+                }}</a>
+              </td>
+              <td>{{ stackTraceElementJoularEntity.lineNumber }}</td>
+              <td>{{ stackTraceElementJoularEntity.constructorElement }}</td>
+              <td>{{ stackTraceElementJoularEntity.parent }}</td>
+              <td>{{ stackTraceElementJoularEntity.ancestors }}</td>
+              <td>{{ stackTraceElementJoularEntity.consumptionValues }}</td>
+              <td>{{ stackTraceElementJoularEntity.commit }}</td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a
+                    [routerLink]="['/stack-trace-element-joular-entity', stackTraceElementJoularEntity.id, 'view']"
+                    class="btn btn-info btn-sm"
+                    data-cy="entityDetailsButton"
+                  >
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline">View</span>
+                  </a>
+
+                  <a
+                    [routerLink]="['/stack-trace-element-joular-entity', stackTraceElementJoularEntity.id, 'edit']"
+                    class="btn btn-primary btn-sm"
+                    data-cy="entityEditButton"
+                  >
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                    <span class="d-none d-md-inline">Edit</span>
+                  </a>
+
+                  <button
+                    type="submit"
+                    (click)="delete(stackTraceElementJoularEntity)"
+                    class="btn btn-danger btn-sm"
+                    data-cy="entityDeleteButton"
+                  >
+                    <fa-icon icon="times"></fa-icon>
+                    <span class="d-none d-md-inline">Delete</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
