@@ -1,6 +1,8 @@
 package com.snail.sentinel.backend.domain;
 
 import java.io.Serializable;
+
+import com.snail.sentinel.backend.service.dto.measurableelement.ConstructorElementDTO;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -20,8 +22,8 @@ public class StackTraceElementJoularEntity implements Serializable {
     @Field("line_number")
     private Integer lineNumber;
 
-    @Field("constructor_element")
-    private String constructorElement;
+    @Field("constructorElement")
+    private ConstructorElementDTO constructorElement;
 
     @Field("parent")
     private String parent;
@@ -29,7 +31,7 @@ public class StackTraceElementJoularEntity implements Serializable {
     @Field("ancestors")
     private String ancestors;
 
-    @Field("consumption_values")
+    @Field("consumptionValues")
     private String consumptionValues;
 
     @Field("commit")
@@ -63,16 +65,16 @@ public class StackTraceElementJoularEntity implements Serializable {
         this.lineNumber = lineNumber;
     }
 
-    public String getConstructorElement() {
+    public ConstructorElementDTO getConstructorElement() {
         return this.constructorElement;
     }
 
-    public StackTraceElementJoularEntity constructorElement(String constructorElement) {
+    public StackTraceElementJoularEntity constructorElement(ConstructorElementDTO constructorElement) {
         this.setConstructorElement(constructorElement);
         return this;
     }
 
-    public void setConstructorElement(String constructorElement) {
+    public void setConstructorElement(ConstructorElementDTO constructorElement) {
         this.constructorElement = constructorElement;
     }
 

@@ -1,5 +1,7 @@
 package com.snail.sentinel.backend.service.dto;
 
+import com.snail.sentinel.backend.service.dto.measurableelement.ConstructorElementDTO;
+
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -13,7 +15,7 @@ public class StackTraceElementJoularEntityDTO implements Serializable {
 
     private Integer lineNumber;
 
-    private String constructorElement;
+    private ConstructorElementDTO constructorElement;
 
     private String parent;
 
@@ -39,11 +41,11 @@ public class StackTraceElementJoularEntityDTO implements Serializable {
         this.lineNumber = lineNumber;
     }
 
-    public String getConstructorElement() {
+    public ConstructorElementDTO getConstructorElement() {
         return constructorElement;
     }
 
-    public void setConstructorElement(String constructorElement) {
+    public void setConstructorElement(ConstructorElementDTO constructorElement) {
         this.constructorElement = constructorElement;
     }
 

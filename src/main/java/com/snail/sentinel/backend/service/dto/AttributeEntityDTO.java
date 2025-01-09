@@ -19,6 +19,11 @@ public class AttributeEntityDTO implements Serializable {
         this.name = name;
     }
 
+    public AttributeEntityDTO withName(String name) {
+        this.name = name;
+        return this;
+    }
+
     public String getType() {
         return type;
     }
@@ -27,12 +32,22 @@ public class AttributeEntityDTO implements Serializable {
         this.type = type;
     }
 
+    public AttributeEntityDTO withType(String type) {
+        this.type = type;
+        return this;
+    }
+
     public String getActualType() {
         return actualType;
     }
 
     public void setActualType(String actualType) {
         this.actualType = actualType;
+    }
+
+    public AttributeEntityDTO withActualType(String actualType) {
+        this.actualType = actualType;
+        return this;
     }
 
     @Override

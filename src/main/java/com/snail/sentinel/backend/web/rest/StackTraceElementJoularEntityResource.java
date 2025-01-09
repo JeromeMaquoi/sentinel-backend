@@ -21,7 +21,7 @@ import tech.jhipster.web.util.ResponseUtil;
  * REST controller for managing {@link com.snail.sentinel.backend.domain.StackTraceElementJoularEntity}.
  */
 @RestController
-@RequestMapping("/api/stack-trace-element-joular-entities")
+@RequestMapping("/api/v1/stack-trace-element-joular-entities")
 public class StackTraceElementJoularEntityResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(StackTraceElementJoularEntityResource.class);
