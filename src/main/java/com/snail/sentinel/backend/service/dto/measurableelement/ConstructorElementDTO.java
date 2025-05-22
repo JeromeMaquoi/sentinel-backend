@@ -18,7 +18,7 @@ public class ConstructorElementDTO extends MeasurableElementDTO {
         this.attributes = attributes;
     }
 
-    public ConstructorElementDTO attributes(List<AttributeEntityDTO> attributes) {
+    public ConstructorElementDTO withAttributes(List<AttributeEntityDTO> attributes) {
         this.setAttributes(attributes);
         return this;
     }

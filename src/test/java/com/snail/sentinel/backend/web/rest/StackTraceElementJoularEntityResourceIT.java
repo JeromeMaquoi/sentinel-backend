@@ -39,8 +39,8 @@ class StackTraceElementJoularEntityResourceIT {
 
     private static final AttributeEntityDTO DEFAULT_ATTRIBUTE_ENTITY_DTO = new AttributeEntityDTO().withName("test").withType("type").withActualType("actualType");
     private static final AttributeEntityDTO UPDATED_ATTRIBUTE_ENTITY_DTO = new AttributeEntityDTO().withName("test_update").withType("type update").withActualType("actual type update");
-    private static final ConstructorElementDTO DEFAULT_CONSTRUCTOR_ELEMENT = new ConstructorElementDTO().attributes(List.of(DEFAULT_ATTRIBUTE_ENTITY_DTO));
-    private static final ConstructorElementDTO UPDATED_CONSTRUCTOR_ELEMENT = new ConstructorElementDTO().attributes(List.of(UPDATED_ATTRIBUTE_ENTITY_DTO));
+    private static final ConstructorElementDTO DEFAULT_CONSTRUCTOR_ELEMENT = new ConstructorElementDTO().withAttributes(List.of(DEFAULT_ATTRIBUTE_ENTITY_DTO));
+    private static final ConstructorElementDTO UPDATED_CONSTRUCTOR_ELEMENT = new ConstructorElementDTO().withAttributes(List.of(UPDATED_ATTRIBUTE_ENTITY_DTO));
 
     private static final String DEFAULT_PARENT = "AAAAAAAAAA";
     private static final String UPDATED_PARENT = "BBBBBBBBBB";
