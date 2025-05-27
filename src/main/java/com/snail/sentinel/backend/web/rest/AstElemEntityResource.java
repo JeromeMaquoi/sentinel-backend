@@ -8,10 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import tech.jhipster.web.util.HeaderUtil;
 
 import java.net.URI;
@@ -50,5 +47,12 @@ public class AstElemEntityResource {
         log.debug("REST request to bulkAddAstElemEntities : {}", astElemEntityDTOList);
         List<AstElemEntityDTO> result = astElemEntityService.bulkAdd(astElemEntityDTOList);
         return new ResponseEntity<>(result, HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("")
+    public ResponseEntity<Void> deleteAllAstElemEntities() {
+        log.debug("REST request to delete all AstElemEntities");
+        astElemEntityService.deleteAll();
+        return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, "all")).build();
     }
 }

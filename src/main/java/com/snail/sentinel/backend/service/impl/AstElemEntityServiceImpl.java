@@ -56,6 +56,6 @@ public class AstElemEntityServiceImpl implements AstElemEntityService {
 
     @Override
     public void deleteAll() {
-
+        astElemEntityRepository.deleteAll();
     }
 }
