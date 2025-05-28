@@ -13,8 +13,7 @@ public class ConstructorContextEntityDTO {
     private List<StackTraceElementDTO> stacktrace;
     private String snapshot;
 
-    public ConstructorContextEntityDTO(String id, String fileName, String className, String methodName, List<String> parameters, List<AttributeContextDTO> attributes, List<StackTraceElementDTO> stacktrace, String snapshot) {
-        this.id = id;
+    public ConstructorContextEntityDTO(String fileName, String className, String methodName, List<String> parameters, List<AttributeContextDTO> attributes, List<StackTraceElementDTO> stacktrace, String snapshot) {
         this.fileName = fileName;
         this.className = className;
         this.methodName = methodName;
@@ -91,8 +90,8 @@ public class ConstructorContextEntityDTO {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        ConstructorContextEntityDTO that = (ConstructorContextEntityDTO) o;
-        return Objects.equals(id, that.id) && Objects.equals(fileName, that.fileName) && Objects.equals(className, that.className) && Objects.equals(methodName, that.methodName) && Objects.equals(parameters, that.parameters) && Objects.equals(attributes, that.attributes) && Objects.equals(stacktrace, that.stacktrace) && Objects.equals(snapshot, that.snapshot);
+        ConstructorContextEntityDTO entityDTO = (ConstructorContextEntityDTO) o;
+        return Objects.equals(id, entityDTO.id) && Objects.equals(fileName, entityDTO.fileName) && Objects.equals(className, entityDTO.className) && Objects.equals(methodName, entityDTO.methodName) && Objects.equals(parameters, entityDTO.parameters) && Objects.equals(attributes, entityDTO.attributes) && Objects.equals(stacktrace, entityDTO.stacktrace) && Objects.equals(snapshot, entityDTO.snapshot);
     }
 
     @Override

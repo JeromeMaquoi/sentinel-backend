@@ -43,6 +43,7 @@ public class ConstructorContextResource {
             throw new BadRequestAlertException("ConstructorContext already exists", ENTITY_NAME, "entityexists");
         }
         ConstructorContextEntityDTO result = service.save(constructorContextDTO);
+        System.out.println("result: " + result);
         return ResponseEntity.created(new URI("/api/v2/constructor-contexts/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId()))
             .body(result);
