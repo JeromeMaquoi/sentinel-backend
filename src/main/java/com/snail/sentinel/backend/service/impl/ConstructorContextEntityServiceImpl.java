@@ -11,6 +11,7 @@ import com.snail.sentinel.backend.service.exceptions.ConstructorContextEntityExi
 import com.snail.sentinel.backend.service.mapper.ConstructorContextEntityMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,7 +27,7 @@ public class ConstructorContextEntityServiceImpl implements ConstructorContextEn
 
     private final ConstructorContextEntityMapper mapper;
 
-    public ConstructorContextEntityServiceImpl(ConstructorContextEntityRepository repository, StackTraceEnrichmentService enrichmentService, ConstructorContextEntityMapper mapper) {
+    public ConstructorContextEntityServiceImpl(ConstructorContextEntityRepository repository, StackTraceEnrichmentService enrichmentService, @Qualifier("constructorContextEntityMapperImpl") ConstructorContextEntityMapper mapper) {
         this.repository = repository;
         this.enrichmentService = enrichmentService;
         this.mapper = mapper;

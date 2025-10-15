@@ -23,7 +23,7 @@ public class StackTraceEnrichmentServiceImpl implements StackTraceEnrichmentServ
 
     @Override
     public List<StackTraceElementDTO> enrichStackTrace(List<StackTraceElement> elements) {
-        log.debug("Enriching stacktrace");
+        log.info("Enriching stacktrace : {}", elements);
         return elements.stream().map(element -> {
             Optional<AstElemEntityDTO> maybeAst = astElemEntityRepository.findMatchingAstElem(
                 element.getFileName(),

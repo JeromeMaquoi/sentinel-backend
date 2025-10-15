@@ -4,6 +4,7 @@ import com.snail.sentinel.backend.repository.ConstructorContextEntityRepository;
 import com.snail.sentinel.backend.service.ConstructorContextEntityService;
 import com.snail.sentinel.backend.service.dto.ConstructorContextDTO;
 import com.snail.sentinel.backend.service.dto.ConstructorContextEntityDTO;
+import com.snail.sentinel.backend.service.exceptions.ConstructorContextNotCompleteException;
 import com.snail.sentinel.backend.web.rest.errors.BadRequestAlertException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,9 @@ public class ConstructorContextResource {
     @PostMapping("")
     public ResponseEntity<ConstructorContextEntityDTO> createConstructorContext(@RequestBody ConstructorContextDTO constructorContextDTO) throws URISyntaxException {
         log.debug("REST request to save ConstructorContext : {}", constructorContextDTO);
+        if (!constructorContextDTO.isComplete()) {
+            throw new ConstructorContextNotCompleteException();
+        }
         if (repository.findByFileNameAndClassNameAndMethodNameAndParameters(constructorContextDTO.getFileName(), constructorContextDTO.getClassName(), constructorContextDTO.getMethodName(), constructorContextDTO.getParameters()).isPresent()) {
             throw new BadRequestAlertException("ConstructorContext already exists", ENTITY_NAME, "entityexists");
         }

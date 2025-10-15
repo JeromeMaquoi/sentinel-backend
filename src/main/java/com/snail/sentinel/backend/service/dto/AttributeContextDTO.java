@@ -6,15 +6,15 @@ public class AttributeContextDTO {
     private String name;
     private String type;
     private String actualType;
-    private String rhsType;
+    private String rhs;
 
     public AttributeContextDTO() {}
 
-    public AttributeContextDTO(String name, String type, String actualType, String rhsType) {
+    public AttributeContextDTO(String name, String type, String actualType, String rhs) {
         this.name = name;
         this.type = type;
         this.actualType = actualType;
-        this.rhsType = rhsType;
+        this.rhs = rhs;
     }
 
     public String getName() {
@@ -29,19 +29,29 @@ public class AttributeContextDTO {
         return actualType;
     }
 
-    public String getRhsType() {
-        return rhsType;
+    public String getRhs() {
+        return rhs;
     }
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         AttributeContextDTO that = (AttributeContextDTO) o;
-        return Objects.equals(name, that.name) && Objects.equals(type, that.type) && Objects.equals(actualType, that.actualType) && Objects.equals(rhsType, that.rhsType);
+        return Objects.equals(name, that.name) && Objects.equals(type, that.type) && Objects.equals(actualType, that.actualType) && Objects.equals(rhs, that.rhs);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, type, actualType, rhsType);
+        return Objects.hash(name, type, actualType, rhs);
+    }
+
+    @Override
+    public String toString() {
+        return "AttributeContextDTO{" +
+            "name='" + name + '\'' +
+            ", type='" + type + '\'' +
+            ", actualType='" + actualType + '\'' +
+            ", rhs='" + rhs + '\'' +
+            '}';
     }
 }

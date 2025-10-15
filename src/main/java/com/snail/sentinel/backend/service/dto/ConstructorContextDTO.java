@@ -53,6 +53,10 @@ public class ConstructorContextDTO {
         return snapshot;
     }
 
+    public boolean isComplete() {
+        return fileName != null && className != null && methodName != null && parameters != null && attributes != null && stacktrace != null;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
@@ -63,5 +67,18 @@ public class ConstructorContextDTO {
     @Override
     public int hashCode() {
         return Objects.hash(fileName, className, methodName, parameters, attributes, stacktrace, snapshot);
+    }
+
+    @Override
+    public String toString() {
+        return "ConstructorContextDTO{" +
+            "fileName='" + fileName + '\'' +
+            ", className='" + className + '\'' +
+            ", methodName='" + methodName + '\'' +
+            ", parameters=" + parameters +
+            ", attributes=" + attributes +
+            ", stacktrace=" + stacktrace +
+            ", snapshot='" + snapshot + '\'' +
+            '}';
     }
 }
