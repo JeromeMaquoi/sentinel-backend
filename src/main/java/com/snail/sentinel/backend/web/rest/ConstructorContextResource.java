@@ -5,7 +5,6 @@ import com.snail.sentinel.backend.service.ConstructorContextEntityService;
 import com.snail.sentinel.backend.service.dto.ConstructorContextDTO;
 import com.snail.sentinel.backend.service.dto.ConstructorContextEntityDTO;
 import com.snail.sentinel.backend.service.exceptions.ConstructorContextNotCompleteException;
-import com.snail.sentinel.backend.web.rest.errors.BadRequestAlertException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,9 +41,6 @@ public class ConstructorContextResource {
         log.debug("REST request to save ConstructorContext : {}", constructorContextDTO);
         if (!constructorContextDTO.isComplete()) {
             throw new ConstructorContextNotCompleteException();
-        }
-        if (repository.findByFileNameAndClassNameAndMethodNameAndParameters(constructorContextDTO.getFileName(), constructorContextDTO.getClassName(), constructorContextDTO.getMethodName(), constructorContextDTO.getParameters()).isPresent()) {
-            throw new BadRequestAlertException("ConstructorContext already exists", ENTITY_NAME, "entityexists");
         }
         ConstructorContextEntityDTO result = service.save(constructorContextDTO);
         System.out.println("result: " + result);
