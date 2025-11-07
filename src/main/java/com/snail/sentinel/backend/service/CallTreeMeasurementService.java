@@ -1,6 +1,5 @@
 package com.snail.sentinel.backend.service;
 
-import com.snail.sentinel.backend.domain.CallTreeMeasurementEntity;
 import com.snail.sentinel.backend.service.dto.CallTreeMeasurementEntityDTO;
 
 import java.util.List;

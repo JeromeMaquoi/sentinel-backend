@@ -7,22 +7,20 @@ import com.snail.sentinel.backend.service.dto.CallTreeMeasurementEntityDTO;
 import com.snail.sentinel.backend.service.mapper.CallTreeMeasurementEntityMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class CallTreeMeasurementServiceImpl implements CallTreeMeasurementService {
     private static final Logger log = LoggerFactory.getLogger(CallTreeMeasurementServiceImpl.class);
     private final CallTreeMeasurementRepository repository;
     private final CallTreeMeasurementEntityMapper mapper;
-    private final CallTreeMeasurementService service;
-    private final CallTreeMeasurementEntityDTO callTreeMeasurementEntityDTO;
 
-    public CallTreeMeasurementServiceImpl(CallTreeMeasurementRepository repository, CallTreeMeasurementEntityMapper mapper, CallTreeMeasurementService service, CallTreeMeasurementEntityDTO callTreeMeasurementEntityDTO) {
+    public CallTreeMeasurementServiceImpl(CallTreeMeasurementRepository repository, CallTreeMeasurementEntityMapper mapper) {
         this.repository = repository;
         this.mapper = mapper;
-        this.service = service;
-        this.callTreeMeasurementEntityDTO = callTreeMeasurementEntityDTO;
     }
 
     @Override
