@@ -45,6 +45,13 @@ public class CallTreeMeasurementEntityResource {
             .body(result);
     }
 
+    @PostMapping("/bulk")
+    public ResponseEntity<List<CallTreeMeasurementEntityDTO>> bulkAddCallTreeMeasurementEntities(@RequestBody List<CallTreeMeasurementEntityDTO> callTreeMeasurementEntityDTOList) {
+        log.debug("REST request to bulkAddCallTreeMeasurementEntities : {}", callTreeMeasurementEntityDTOList);
+        List<CallTreeMeasurementEntityDTO> result = service.bulkAdd(callTreeMeasurementEntityDTOList);
+        return new ResponseEntity<>(result, org.springframework.http.HttpStatus.CREATED);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<CallTreeMeasurementEntityDTO> updateCallTreeMeasurementEntity(
         @PathVariable(value = "id", required = false) final String id,
