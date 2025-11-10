@@ -1,8 +1,8 @@
 package com.snail.sentinel.backend.web.rest;
 
 import com.snail.sentinel.backend.repository.RuntimeCallTreeMeasurementRepository;
-import com.snail.sentinel.backend.service.RuntimeCallTreeMeasurementService;
 import com.snail.sentinel.backend.service.dto.RuntimeCallTreeMeasurementEntityDTO;
+import com.snail.sentinel.backend.service.impl.RuntimeCallTreeMeasurementServiceImpl;
 import com.snail.sentinel.backend.web.rest.errors.BadRequestAlertException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,10 +24,10 @@ public class RuntimeCallTreeMeasurementEntityResource {
     private static final String ENTITY_NAME = "callTreeMeasurementEntity";
     @Value("sentinelBackendApp")
     private String applicationName;
-    private final RuntimeCallTreeMeasurementService service;
+    private final RuntimeCallTreeMeasurementServiceImpl service;
     private final RuntimeCallTreeMeasurementRepository repository;
 
-    public RuntimeCallTreeMeasurementEntityResource(RuntimeCallTreeMeasurementService service, RuntimeCallTreeMeasurementRepository repository) {
+    public RuntimeCallTreeMeasurementEntityResource(RuntimeCallTreeMeasurementServiceImpl service, RuntimeCallTreeMeasurementRepository repository) {
         this.service = service;
         this.repository = repository;
     }
@@ -40,7 +40,7 @@ public class RuntimeCallTreeMeasurementEntityResource {
         }
         RuntimeCallTreeMeasurementEntityDTO result = service.save(runtimeCallTreeMeasurementEntityDTO);
         return ResponseEntity
-            .created(new URI("/api/v2/call-tree-measurements-entities/" + result.getId()))
+            .created(new URI("/api/v2/measurements/runtime/calltrees/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId()))
             .body(result);
     }

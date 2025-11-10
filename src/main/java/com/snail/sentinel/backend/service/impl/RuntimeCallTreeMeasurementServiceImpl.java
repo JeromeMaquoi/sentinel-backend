@@ -2,7 +2,7 @@ package com.snail.sentinel.backend.service.impl;
 
 import com.snail.sentinel.backend.domain.RuntimeCallTreeMeasurementEntity;
 import com.snail.sentinel.backend.repository.RuntimeCallTreeMeasurementRepository;
-import com.snail.sentinel.backend.service.RuntimeCallTreeMeasurementService;
+import com.snail.sentinel.backend.service.MeasurementService;
 import com.snail.sentinel.backend.service.dto.RuntimeCallTreeMeasurementEntityDTO;
 import com.snail.sentinel.backend.service.mapper.RuntimeCallTreeMeasurementEntityMapper;
 import org.slf4j.Logger;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class RuntimeCallTreeMeasurementServiceImpl implements RuntimeCallTreeMeasurementService {
+public class RuntimeCallTreeMeasurementServiceImpl implements MeasurementService<RuntimeCallTreeMeasurementEntityDTO> {
     private static final Logger log = LoggerFactory.getLogger(RuntimeCallTreeMeasurementServiceImpl.class);
     private final RuntimeCallTreeMeasurementRepository repository;
     private final RuntimeCallTreeMeasurementEntityMapper mapper;

@@ -2,7 +2,6 @@ package com.snail.sentinel.backend.domain;
 
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.w3c.dom.stylesheets.LinkStyle;
 
 import java.util.List;
 
