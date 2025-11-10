@@ -8,7 +8,7 @@ import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
 import java.io.Serializable;
 import java.util.List;
 
-public class CallTreeMeasurementEntityDTO implements Serializable {
+public class RuntimeCallTreeMeasurementEntityDTO implements Serializable {
     private String id;
     private Scope scope;
     private MeasurementLevel measurementLevel;
@@ -16,6 +16,7 @@ public class CallTreeMeasurementEntityDTO implements Serializable {
     private RunIterationDTO iteration;
     private CommitSimpleDTO commit;
     private Float value;
+    private long timestamp;
     private List<String> callstack;
 
     public String getId() {
@@ -74,6 +75,14 @@ public class CallTreeMeasurementEntityDTO implements Serializable {
         this.value = value;
     }
 
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+
     public List<String> getCallstack() {
         return callstack;
     }
@@ -84,14 +93,15 @@ public class CallTreeMeasurementEntityDTO implements Serializable {
 
     @Override
     public String toString() {
-        return "CallTreeMeasurementEntityDTO{" +
+        return "RuntimeCallTreeMeasurementEntityDTO{" +
             "id='" + id + '\'' +
             ", scope=" + scope +
-            ", measurementType=" + measurementLevel +
+            ", measurementLevel=" + measurementLevel +
             ", monitoringType=" + monitoringType +
             ", iteration=" + iteration +
             ", commit=" + commit +
             ", value=" + value +
+            ", timestamp=" + timestamp +
             ", callstack=" + callstack +
             '}';
     }

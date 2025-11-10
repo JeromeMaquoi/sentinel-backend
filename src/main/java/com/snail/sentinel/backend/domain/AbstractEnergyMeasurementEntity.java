@@ -31,11 +31,11 @@ public abstract class AbstractEnergyMeasurementEntity {
         this.scope = scope;
     }
 
-    public MeasurementLevel getMeasurementType() {
+    public MeasurementLevel getMeasurementLevel() {
         return measurementLevel;
     }
 
-    public void setMeasurementType(MeasurementLevel measurementLevel) {
+    public void setMeasurementLevel(MeasurementLevel measurementLevel) {
         this.measurementLevel = measurementLevel;
     }
 

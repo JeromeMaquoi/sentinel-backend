@@ -5,9 +5,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
-@Document(collection = "joular_measurements")
-@TypeAlias("calltree")
-public class CallTreeMeasurementEntityEntity extends AbstractEnergyMeasurementEntity {
+@Document(collection = "joularjx_measurements")
+@TypeAlias("runtime_calltree")
+public class RuntimeCallTreeMeasurementEntity extends RuntimeMeasurementEntity {
     private List<String> callstack;
 
     public List<String> getCallstack() {
