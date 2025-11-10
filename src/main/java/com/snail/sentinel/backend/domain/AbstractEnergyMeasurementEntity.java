@@ -5,7 +5,7 @@ import com.snail.sentinel.backend.service.dto.RunIterationDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
 import org.springframework.data.annotation.Id;
 
-public abstract class AbstractEnergyMeasurement {
+public abstract class AbstractEnergyMeasurementEntity {
     @Id
     private String id;
     private Scope scope;

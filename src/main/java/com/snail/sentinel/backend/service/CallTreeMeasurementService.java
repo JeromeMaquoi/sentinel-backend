@@ -1,12 +1,13 @@
 package com.snail.sentinel.backend.service;
 
+import com.snail.sentinel.backend.domain.CallTreeMeasurementEntityEntity;
 import com.snail.sentinel.backend.service.dto.CallTreeMeasurementEntityDTO;
 
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Service interface for managing {@link com.snail.sentinel.backend.domain.CallTreeMeasurementEntity}.
+ * Service interface for managing {@link CallTreeMeasurementEntityEntity}.
  */
 public interface CallTreeMeasurementService {
     CallTreeMeasurementEntityDTO save(CallTreeMeasurementEntityDTO callTreeMeasurementEntityDTO);

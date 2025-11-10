@@ -7,7 +7,7 @@ import java.util.List;
 
 @Document(collection = "joular_measurements")
 @TypeAlias("calltree")
-public class CallTreeMeasurementEntity extends AbstractEnergyMeasurement {
+public class CallTreeMeasurementEntityEntity extends AbstractEnergyMeasurementEntity {
     private List<String> callstack;
 
     public List<String> getCallstack() {

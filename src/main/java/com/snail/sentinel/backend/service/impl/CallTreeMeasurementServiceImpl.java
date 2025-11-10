@@ -1,6 +1,6 @@
 package com.snail.sentinel.backend.service.impl;
 
-import com.snail.sentinel.backend.domain.CallTreeMeasurementEntity;
+import com.snail.sentinel.backend.domain.CallTreeMeasurementEntityEntity;
 import com.snail.sentinel.backend.repository.CallTreeMeasurementRepository;
 import com.snail.sentinel.backend.service.CallTreeMeasurementService;
 import com.snail.sentinel.backend.service.dto.CallTreeMeasurementEntityDTO;
@@ -26,14 +26,14 @@ public class CallTreeMeasurementServiceImpl implements CallTreeMeasurementServic
     @Override
     public CallTreeMeasurementEntityDTO save(CallTreeMeasurementEntityDTO callTreeMeasurementEntityDTO) {
         log.debug("Request to save CallTreeMeasurementEntity : {}", callTreeMeasurementEntityDTO);
-        CallTreeMeasurementEntity entity = mapper.toEntity(callTreeMeasurementEntityDTO);
+        CallTreeMeasurementEntityEntity entity = mapper.toEntity(callTreeMeasurementEntityDTO);
         entity = repository.save(entity);
         return mapper.toDto(entity);
     }
 
     @Override
     public List<CallTreeMeasurementEntityDTO> bulkAdd(List<CallTreeMeasurementEntityDTO> callTreeMeasurementEntityDTOList) {
-        List<CallTreeMeasurementEntity> entities = mapper.toEntity(callTreeMeasurementEntityDTOList);
+        List<CallTreeMeasurementEntityEntity> entities = mapper.toEntity(callTreeMeasurementEntityDTOList);
         entities = repository.insert(entities);
         log.info("{} size CallTreeMeasurementEntity list inserted to the DB", entities.size());
         return mapper.toDto(entities);
@@ -42,7 +42,7 @@ public class CallTreeMeasurementServiceImpl implements CallTreeMeasurementServic
     @Override
     public CallTreeMeasurementEntityDTO update(CallTreeMeasurementEntityDTO callTreeMeasurementEntityDTO) {
         log.debug("Request to update CallTreeMeasurementEntity : {}", callTreeMeasurementEntityDTO);
-        CallTreeMeasurementEntity entity = mapper.toEntity(callTreeMeasurementEntityDTO);
+        CallTreeMeasurementEntityEntity entity = mapper.toEntity(callTreeMeasurementEntityDTO);
         entity = repository.save(entity);
         return mapper.toDto(entity);
     }
