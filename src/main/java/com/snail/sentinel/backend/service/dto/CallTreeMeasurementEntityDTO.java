@@ -1,6 +1,6 @@
 package com.snail.sentinel.backend.service.dto;
 
-import com.snail.sentinel.backend.domain.MeasurementType;
+import com.snail.sentinel.backend.domain.MeasurementLevel;
 import com.snail.sentinel.backend.domain.MonitoringType;
 import com.snail.sentinel.backend.domain.Scope;
 import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
@@ -11,7 +11,7 @@ import java.util.List;
 public class CallTreeMeasurementEntityDTO implements Serializable {
     private String id;
     private Scope scope;
-    private MeasurementType measurementType;
+    private MeasurementLevel measurementLevel;
     private MonitoringType monitoringType;
     private RunIterationDTO iteration;
     private CommitSimpleDTO commit;
@@ -34,12 +34,12 @@ public class CallTreeMeasurementEntityDTO implements Serializable {
         this.scope = scope;
     }
 
-    public MeasurementType getMeasurementType() {
-        return measurementType;
+    public MeasurementLevel getMeasurementType() {
+        return measurementLevel;
     }
 
-    public void setMeasurementType(MeasurementType measurementType) {
-        this.measurementType = measurementType;
+    public void setMeasurementType(MeasurementLevel measurementLevel) {
+        this.measurementLevel = measurementLevel;
     }
 
     public MonitoringType getMonitoringType() {
@@ -87,7 +87,7 @@ public class CallTreeMeasurementEntityDTO implements Serializable {
         return "CallTreeMeasurementEntityDTO{" +
             "id='" + id + '\'' +
             ", scope=" + scope +
-            ", measurementType=" + measurementType +
+            ", measurementType=" + measurementLevel +
             ", monitoringType=" + monitoringType +
             ", iteration=" + iteration +
             ", commit=" + commit +

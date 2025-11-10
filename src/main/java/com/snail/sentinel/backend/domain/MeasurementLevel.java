@@ -1,5 +1,5 @@
 package com.snail.sentinel.backend.domain;
 
-public enum MeasurementType {
+public enum MeasurementLevel {
     RUNTIME, TOTAL
 }
