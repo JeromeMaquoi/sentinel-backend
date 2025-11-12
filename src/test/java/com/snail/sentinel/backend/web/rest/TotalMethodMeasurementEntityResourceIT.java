@@ -2,8 +2,8 @@ package com.snail.sentinel.backend.web.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.snail.sentinel.backend.service.MeasurementService;
-import com.snail.sentinel.backend.service.dto.RuntimeCallTreeMeasurementEntityDTO;
-import com.snail.sentinel.backend.repository.RuntimeCallTreeMeasurementRepository;
+import com.snail.sentinel.backend.service.dto.TotalMethodMeasurementEntityDTO;
+import com.snail.sentinel.backend.repository.TotalMethodMeasurementRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -22,11 +22,11 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(controllers = RuntimeCallTreeMeasurementEntityResource.class)
-@AutoConfigureMockMvc(addFilters = false) // disable security filters for MVC slice tests
-class RuntimeCallTreeMeasurementEntityResourceIT {
+@WebMvcTest(controllers = TotalMethodMeasurementEntityResource.class)
+@AutoConfigureMockMvc(addFilters = false)
+public class TotalMethodMeasurementEntityResourceIT {
 
-    private static final String BASE_URL = "/api/v2/measurements/runtime/calltrees";
+    private static final String BASE_URL = "/api/v2/measurements/total/methods";
 
     @Autowired
     private MockMvc mockMvc;
@@ -35,25 +35,23 @@ class RuntimeCallTreeMeasurementEntityResourceIT {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private MeasurementService<RuntimeCallTreeMeasurementEntityDTO> service;
+    private MeasurementService<TotalMethodMeasurementEntityDTO> service;
 
     @MockBean
-    private RuntimeCallTreeMeasurementRepository repository;
+    private TotalMethodMeasurementRepository repository;
 
-    private RuntimeCallTreeMeasurementEntityDTO sampleDto;
+    private TotalMethodMeasurementEntityDTO sampleDto;
 
     @BeforeEach
     void init() {
-        sampleDto = new RuntimeCallTreeMeasurementEntityDTO();
+        sampleDto = new TotalMethodMeasurementEntityDTO();
         sampleDto.setId("1");
-        // set other fields if necessary
     }
 
     @Test
-    void createCallTreeMeasurementEntity_success() throws Exception {
-        RuntimeCallTreeMeasurementEntityDTO toCreate = new RuntimeCallTreeMeasurementEntityDTO();
-        // no id for create
-        when(service.save(ArgumentMatchers.any(RuntimeCallTreeMeasurementEntityDTO.class))).thenReturn(sampleDto);
+    public void createTotalMethodMeasurementEntity_success() throws Exception {
+        TotalMethodMeasurementEntityDTO toCreate = new TotalMethodMeasurementEntityDTO();
+        when(service.save(ArgumentMatchers.any(TotalMethodMeasurementEntityDTO.class))).thenReturn(sampleDto);
 
         mockMvc.perform(post(BASE_URL)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -62,12 +60,12 @@ class RuntimeCallTreeMeasurementEntityResourceIT {
             .andExpect(header().string("Location", BASE_URL + "/" + sampleDto.getId()))
             .andExpect(jsonPath("$.id").value(sampleDto.getId()));
 
-        verify(service, times(1)).save(ArgumentMatchers.any(RuntimeCallTreeMeasurementEntityDTO.class));
+        verify(service, times(1)).save(ArgumentMatchers.any(TotalMethodMeasurementEntityDTO.class));
     }
 
     @Test
-    void createCallTreeMeasurementEntity_withId_badRequest() throws Exception {
-        RuntimeCallTreeMeasurementEntityDTO withId = new RuntimeCallTreeMeasurementEntityDTO();
+    public void createTotalMethodMeasurementEntity_withId_badRequest() throws Exception {
+        TotalMethodMeasurementEntityDTO withId = new TotalMethodMeasurementEntityDTO();
         withId.setId("already");
 
         mockMvc.perform(post(BASE_URL)
@@ -79,8 +77,8 @@ class RuntimeCallTreeMeasurementEntityResourceIT {
     }
 
     @Test
-    void bulkAddCallTreeMeasurementEntities_success() throws Exception {
-        List<RuntimeCallTreeMeasurementEntityDTO> list = Collections.singletonList(sampleDto);
+    public void bulkAddTotalMethodMeasurementEntities_success() throws Exception {
+        List<TotalMethodMeasurementEntityDTO> list = Collections.singletonList(sampleDto);
         when(service.bulkAdd(ArgumentMatchers.anyList())).thenReturn(list);
 
         mockMvc.perform(post(BASE_URL + "/bulk")
@@ -93,11 +91,11 @@ class RuntimeCallTreeMeasurementEntityResourceIT {
     }
 
     @Test
-    void updateCallTreeMeasurementEntity_success() throws Exception {
-        RuntimeCallTreeMeasurementEntityDTO updated = new RuntimeCallTreeMeasurementEntityDTO();
+    public void updateTotalMethodMeasurementEntity_success() throws Exception {
+        TotalMethodMeasurementEntityDTO updated = new TotalMethodMeasurementEntityDTO();
         updated.setId(sampleDto.getId());
         when(repository.existsById(sampleDto.getId())).thenReturn(true);
-        when(service.update(ArgumentMatchers.any(RuntimeCallTreeMeasurementEntityDTO.class))).thenReturn(updated);
+        when(service.update(ArgumentMatchers.any(TotalMethodMeasurementEntityDTO.class))).thenReturn(updated);
 
         mockMvc.perform(put(BASE_URL + "/" + sampleDto.getId())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -105,12 +103,12 @@ class RuntimeCallTreeMeasurementEntityResourceIT {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id").value(sampleDto.getId()));
 
-        verify(service, times(1)).update(ArgumentMatchers.any(RuntimeCallTreeMeasurementEntityDTO.class));
+        verify(service, times(1)).update(ArgumentMatchers.any(TotalMethodMeasurementEntityDTO.class));
     }
 
     @Test
-    void updateCallTreeMeasurementEntity_idMismatch_badRequest() throws Exception {
-        RuntimeCallTreeMeasurementEntityDTO updated = new RuntimeCallTreeMeasurementEntityDTO();
+    public void updateTotalMethodMeasurementEntity_idMismatch_badRequest() throws Exception {
+        TotalMethodMeasurementEntityDTO updated = new TotalMethodMeasurementEntityDTO();
         updated.setId("different");
 
         mockMvc.perform(put(BASE_URL + "/1")
@@ -122,8 +120,8 @@ class RuntimeCallTreeMeasurementEntityResourceIT {
     }
 
     @Test
-    void updateCallTreeMeasurementEntity_notFound_badRequest() throws Exception {
-        RuntimeCallTreeMeasurementEntityDTO updated = new RuntimeCallTreeMeasurementEntityDTO();
+    public void updateTotalMethodMeasurementEntity_notFound_badRequest() throws Exception {
+        TotalMethodMeasurementEntityDTO updated = new TotalMethodMeasurementEntityDTO();
         updated.setId("missing");
         when(repository.existsById("missing")).thenReturn(false);
 
@@ -136,11 +134,11 @@ class RuntimeCallTreeMeasurementEntityResourceIT {
     }
 
     @Test
-    void partialUpdateCallTreeMeasurementEntity_success() throws Exception {
-        RuntimeCallTreeMeasurementEntityDTO patchDto = new RuntimeCallTreeMeasurementEntityDTO();
+    public void partialUpdateTotalMethodMeasurementEntity_success() throws Exception {
+        TotalMethodMeasurementEntityDTO patchDto = new TotalMethodMeasurementEntityDTO();
         patchDto.setId(sampleDto.getId());
         when(repository.existsById(sampleDto.getId())).thenReturn(true);
-        when(service.partialUpdate(ArgumentMatchers.any(RuntimeCallTreeMeasurementEntityDTO.class))).thenReturn(Optional.of(patchDto));
+        when(service.partialUpdate(ArgumentMatchers.any(TotalMethodMeasurementEntityDTO.class))).thenReturn(Optional.of(patchDto));
 
         mockMvc.perform(patch(BASE_URL + "/" + sampleDto.getId())
                 .contentType("application/merge-patch+json")
@@ -148,12 +146,12 @@ class RuntimeCallTreeMeasurementEntityResourceIT {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id").value(sampleDto.getId()));
 
-        verify(service, times(1)).partialUpdate(ArgumentMatchers.any(RuntimeCallTreeMeasurementEntityDTO.class));
+        verify(service, times(1)).partialUpdate(ArgumentMatchers.any(TotalMethodMeasurementEntityDTO.class));
     }
 
     @Test
-    void partialUpdateCallTreeMeasurementEntity_notFound_badRequest() throws Exception {
-        RuntimeCallTreeMeasurementEntityDTO patchDto = new RuntimeCallTreeMeasurementEntityDTO();
+    public void partialUpdateTotalMethodMeasurementEntity_notFound_badRequest() throws Exception {
+        TotalMethodMeasurementEntityDTO patchDto = new TotalMethodMeasurementEntityDTO();
         patchDto.setId("missing");
         when(repository.existsById("missing")).thenReturn(false);
 
@@ -166,7 +164,7 @@ class RuntimeCallTreeMeasurementEntityResourceIT {
     }
 
     @Test
-    void getAllCallTreeMeasurementEntities_success() throws Exception {
+    public void getAllTotalMethodMeasurementEntities_success() throws Exception {
         when(service.findAll()).thenReturn(Collections.singletonList(sampleDto));
 
         mockMvc.perform(get(BASE_URL))
@@ -177,7 +175,7 @@ class RuntimeCallTreeMeasurementEntityResourceIT {
     }
 
     @Test
-    void getCallTreeMeasurementEntity_found() throws Exception {
+    public void getTotalMethodMeasurementEntity_found() throws Exception {
         when(service.findOne(sampleDto.getId())).thenReturn(Optional.of(sampleDto));
 
         mockMvc.perform(get(BASE_URL + "/" + sampleDto.getId()))
@@ -188,7 +186,7 @@ class RuntimeCallTreeMeasurementEntityResourceIT {
     }
 
     @Test
-    void getCallTreeMeasurementEntity_notFound() throws Exception {
+    public void getTotalMethodMeasurementEntity_notFound() throws Exception {
         when(service.findOne("missing")).thenReturn(Optional.empty());
 
         mockMvc.perform(get(BASE_URL + "/missing"))
@@ -198,7 +196,7 @@ class RuntimeCallTreeMeasurementEntityResourceIT {
     }
 
     @Test
-    void deleteCallTreeMeasurementEntity_success() throws Exception {
+    public void deleteTotalMethodMeasurementEntity_success() throws Exception {
         doNothing().when(service).delete(sampleDto.getId());
 
         mockMvc.perform(delete(BASE_URL + "/" + sampleDto.getId()))
@@ -207,3 +205,4 @@ class RuntimeCallTreeMeasurementEntityResourceIT {
         verify(service, times(1)).delete(sampleDto.getId());
     }
 }
+
