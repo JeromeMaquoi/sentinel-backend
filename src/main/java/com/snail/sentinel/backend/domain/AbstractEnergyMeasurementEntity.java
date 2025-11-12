@@ -5,11 +5,11 @@ import com.snail.sentinel.backend.service.dto.RunIterationDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
 import org.springframework.data.annotation.Id;
 
-public abstract class AbstractEnergyMeasurement {
+public abstract class AbstractEnergyMeasurementEntity {
     @Id
     private String id;
     private Scope scope;
-    private MeasurementType measurementType;
+    private MeasurementLevel measurementLevel;
     private MonitoringType monitoringType;
     private RunIterationDTO iteration;
     private CommitSimpleDTO commit;
@@ -31,12 +31,12 @@ public abstract class AbstractEnergyMeasurement {
         this.scope = scope;
     }
 
-    public MeasurementType getMeasurementType() {
-        return measurementType;
+    public MeasurementLevel getMeasurementLevel() {
+        return measurementLevel;
     }
 
-    public void setMeasurementType(MeasurementType measurementType) {
-        this.measurementType = measurementType;
+    public void setMeasurementLevel(MeasurementLevel measurementLevel) {
+        this.measurementLevel = measurementLevel;
     }
 
     public MonitoringType getMonitoringType() {

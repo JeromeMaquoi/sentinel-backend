@@ -1,22 +1,18 @@
 package com.snail.sentinel.backend.service.dto;
 
-import com.snail.sentinel.backend.domain.MeasurementType;
+import com.snail.sentinel.backend.domain.MeasurementLevel;
 import com.snail.sentinel.backend.domain.MonitoringType;
 import com.snail.sentinel.backend.domain.Scope;
 import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
 
-import java.io.Serializable;
-import java.util.List;
-
-public class CallTreeMeasurementEntityDTO implements Serializable {
+public class BaseMeasurementDTO {
     private String id;
     private Scope scope;
-    private MeasurementType measurementType;
+    private MeasurementLevel measurementLevel;
     private MonitoringType monitoringType;
     private RunIterationDTO iteration;
     private CommitSimpleDTO commit;
     private Float value;
-    private List<String> callstack;
 
     public String getId() {
         return id;
@@ -34,12 +30,12 @@ public class CallTreeMeasurementEntityDTO implements Serializable {
         this.scope = scope;
     }
 
-    public MeasurementType getMeasurementType() {
-        return measurementType;
+    public MeasurementLevel getMeasurementLevel() {
+        return measurementLevel;
     }
 
-    public void setMeasurementType(MeasurementType measurementType) {
-        this.measurementType = measurementType;
+    public void setMeasurementLevel(MeasurementLevel measurementLevel) {
+        this.measurementLevel = measurementLevel;
     }
 
     public MonitoringType getMonitoringType() {
@@ -72,27 +68,5 @@ public class CallTreeMeasurementEntityDTO implements Serializable {
 
     public void setValue(Float value) {
         this.value = value;
-    }
-
-    public List<String> getCallstack() {
-        return callstack;
-    }
-
-    public void setCallstack(List<String> callstack) {
-        this.callstack = callstack;
-    }
-
-    @Override
-    public String toString() {
-        return "CallTreeMeasurementEntityDTO{" +
-            "id='" + id + '\'' +
-            ", scope=" + scope +
-            ", measurementType=" + measurementType +
-            ", monitoringType=" + monitoringType +
-            ", iteration=" + iteration +
-            ", commit=" + commit +
-            ", value=" + value +
-            ", callstack=" + callstack +
-            '}';
     }
 }
