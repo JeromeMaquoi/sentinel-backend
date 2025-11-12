@@ -1,4 +1,4 @@
 package com.snail.sentinel.backend.service.dto;
 
-public class TotalMeasurementEntityDTO {
+public class TotalMeasurementEntityDTO extends BaseMeasurementDTO {
 }

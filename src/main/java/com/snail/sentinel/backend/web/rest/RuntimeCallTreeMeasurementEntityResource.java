@@ -1,12 +1,13 @@
 package com.snail.sentinel.backend.web.rest;
 
 import com.snail.sentinel.backend.repository.RuntimeCallTreeMeasurementRepository;
+import com.snail.sentinel.backend.service.MeasurementService;
 import com.snail.sentinel.backend.service.dto.RuntimeCallTreeMeasurementEntityDTO;
-import com.snail.sentinel.backend.service.impl.RuntimeCallTreeMeasurementServiceImpl;
 import com.snail.sentinel.backend.web.rest.errors.BadRequestAlertException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tech.jhipster.web.util.HeaderUtil;
@@ -24,10 +25,10 @@ public class RuntimeCallTreeMeasurementEntityResource {
     private static final String ENTITY_NAME = "callTreeMeasurementEntity";
     @Value("sentinelBackendApp")
     private String applicationName;
-    private final RuntimeCallTreeMeasurementServiceImpl service;
+    private final MeasurementService<RuntimeCallTreeMeasurementEntityDTO> service;
     private final RuntimeCallTreeMeasurementRepository repository;
 
-    public RuntimeCallTreeMeasurementEntityResource(RuntimeCallTreeMeasurementServiceImpl service, RuntimeCallTreeMeasurementRepository repository) {
+    public RuntimeCallTreeMeasurementEntityResource( MeasurementService<RuntimeCallTreeMeasurementEntityDTO> service, RuntimeCallTreeMeasurementRepository repository) {
         this.service = service;
         this.repository = repository;
     }
@@ -49,14 +50,14 @@ public class RuntimeCallTreeMeasurementEntityResource {
     public ResponseEntity<List<RuntimeCallTreeMeasurementEntityDTO>> bulkAddCallTreeMeasurementEntities(@RequestBody List<RuntimeCallTreeMeasurementEntityDTO> runtimeCallTreeMeasurementEntityDTOList) {
         log.debug("REST request to bulkAddCallTreeMeasurementEntities : {}", runtimeCallTreeMeasurementEntityDTOList);
         List<RuntimeCallTreeMeasurementEntityDTO> result = service.bulkAdd(runtimeCallTreeMeasurementEntityDTOList);
-        return new ResponseEntity<>(result, org.springframework.http.HttpStatus.CREATED);
+        return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<RuntimeCallTreeMeasurementEntityDTO> updateCallTreeMeasurementEntity(
         @PathVariable(value = "id", required = false) final String id,
         @RequestBody RuntimeCallTreeMeasurementEntityDTO runtimeCallTreeMeasurementEntityDTO
-    ) throws URISyntaxException {
+    ) {
         log.debug("REST request to update CallTreeMeasurementEntity : {}, {}", id, runtimeCallTreeMeasurementEntityDTO);
         if (runtimeCallTreeMeasurementEntityDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
@@ -78,7 +79,7 @@ public class RuntimeCallTreeMeasurementEntityResource {
     public ResponseEntity<RuntimeCallTreeMeasurementEntityDTO> partialUpdateCallTreeMeasurementEntity(
         @PathVariable(value = "id", required = false) final String id,
         @RequestBody RuntimeCallTreeMeasurementEntityDTO runtimeCallTreeMeasurementEntityDTO
-    ) throws URISyntaxException {
+    ) {
         log.debug("REST request to partial update CallTreeMeasurementEntity : {}, {}", id, runtimeCallTreeMeasurementEntityDTO);
         if (runtimeCallTreeMeasurementEntityDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
@@ -98,7 +99,7 @@ public class RuntimeCallTreeMeasurementEntityResource {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<RuntimeCallTreeMeasurementEntityDTO>> getAllCallTreeMeasurementEntitys() {
+    public ResponseEntity<List<RuntimeCallTreeMeasurementEntityDTO>> getAllCallTreeMeasurementEntities() {
         log.debug("REST request to get all CallTreeMeasurementEntities");
         List<RuntimeCallTreeMeasurementEntityDTO> list = service.findAll();
         return ResponseEntity.ok().body(list);
