@@ -93,8 +93,8 @@ class TotalMethodMeasurementServiceImplTest {
 
         Optional<TotalMethodMeasurementEntityDTO> result = service.partialUpdate(dto);
 
-        assertTrue(result.isPresent());
-        assertEquals(dto, result.get());
+        assertThat(result).isPresent();
+        assertEquals(dto, result.orElseThrow());
         verify(repository).findById("id1");
         verify(repository).save(entity);
     }
@@ -105,7 +105,7 @@ class TotalMethodMeasurementServiceImplTest {
 
         Optional<TotalMethodMeasurementEntityDTO> result = service.partialUpdate(dto);
 
-        assertTrue(result.isEmpty());
+        assertThat(result).isEmpty();
         verify(repository).findById("id1");
         verify(repository, never()).save(any());
     }
@@ -130,8 +130,8 @@ class TotalMethodMeasurementServiceImplTest {
 
         Optional<TotalMethodMeasurementEntityDTO> result = service.findOne("id1");
 
-        assertTrue(result.isPresent());
-        assertEquals(dto, result.get());
+        assertThat(result).isPresent();
+        assertEquals(dto, result.orElseThrow());
         verify(repository).findById("id1");
     }
 
