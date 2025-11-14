@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ConstructorContextEntityServiceImpl implements ConstructorContextEntityService {
@@ -36,13 +35,15 @@ public class ConstructorContextEntityServiceImpl implements ConstructorContextEn
     @Override
     public ConstructorContextEntityDTO save(ConstructorContextDTO dto) {
         log.debug("Saving constructorContextEntityDTO: {}", dto);
-        Optional<ConstructorContextEntityDTO> existing = repository.findByFileNameAndClassNameAndMethodNameAndParameters(dto.getFileName(), dto.getClassName(), dto.getMethodName(), dto.getParameters());
-
-        if (existing.isPresent()) {
-            throw new ConstructorContextEntityExistsException("ConstructorContextEntity already exists");
-        }
+        List<ConstructorContextEntityDTO> candidates = repository.findByFileNameAndClassNameAndMethodNameAndParameters(dto.getFileName(), dto.getClassName(), dto.getMethodName(), dto.getParameters());
 
         List<StackTraceElementDTO> enrichedStacktrace = enrichmentService.enrichStackTrace(dto.getStacktrace());
+
+        boolean exists = candidates.stream().anyMatch(entity -> entity.getStacktrace().equals(enrichedStacktrace));
+
+        if (exists) {
+            throw new ConstructorContextEntityExistsException("ConstructorContextEntity already exists");
+        }
 
         ConstructorContextEntityDTO entityDTO = new ConstructorContextEntityDTO(
             dto.getFileName(),

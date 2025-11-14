@@ -1,6 +1,5 @@
 package com.snail.sentinel.backend.web.rest;
 
-import com.snail.sentinel.backend.repository.ConstructorContextEntityRepository;
 import com.snail.sentinel.backend.service.ConstructorContextEntityService;
 import com.snail.sentinel.backend.service.dto.ConstructorContextDTO;
 import com.snail.sentinel.backend.service.dto.ConstructorContextEntityDTO;
@@ -27,12 +26,9 @@ public class ConstructorContextResource {
     @Value("sentinelBackendApp")
     private String applicationName;
 
-    private final ConstructorContextEntityRepository repository;
-
     private final ConstructorContextEntityService service;
 
-    public ConstructorContextResource(ConstructorContextEntityRepository repository, ConstructorContextEntityService service) {
-        this.repository = repository;
+    public ConstructorContextResource(ConstructorContextEntityService service) {
         this.service = service;
     }
 
@@ -43,7 +39,7 @@ public class ConstructorContextResource {
             throw new ConstructorContextNotCompleteException();
         }
         ConstructorContextEntityDTO result = service.save(constructorContextDTO);
-        System.out.println("result: " + result);
+        log.info("Created ConstructorContext with id: {}", result.getId());
         return ResponseEntity.created(new URI("/api/v2/constructor-contexts/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId()))
             .body(result);
