@@ -23,7 +23,7 @@ public class StackTraceEnrichmentServiceImpl implements StackTraceEnrichmentServ
 
     @Override
     public List<StackTraceElementDTO> enrichStackTrace(List<StackTraceElement> elements) {
-        log.info("Enriching stacktrace : {}", elements);
+        log.debug("Enriching stacktrace : {}", elements);
         return elements.stream().map(element -> {
             Optional<AstElemEntityDTO> maybeAst = astElemEntityRepository.findMatchingAstElem(
                 element.getFileName(),
@@ -32,7 +32,7 @@ public class StackTraceEnrichmentServiceImpl implements StackTraceEnrichmentServ
                 element.getLineNumber()
             );
 
-            log.info("found AstElemEntityDTO: {}", maybeAst.isPresent());
+            log.debug("found AstElemEntityDTO: {}", maybeAst.isPresent());
 
             List<String> params = maybeAst.map(AstElemEntityDTO::getParameters).orElse(List.of());
 
