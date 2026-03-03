@@ -10,6 +10,8 @@ import org.mapstruct.Mapper;
 public interface ConstructorContextEntityMapper extends EntityMapper<ConstructorContextEntityDTO, ConstructorContextEntity> {
     ConstructorContextEntityDTO toDto(ConstructorContextDTO entity);
 
+    ConstructorContextEntity toEntity(ConstructorContextDTO dto);
+
     default StackTraceElementDTO map(StackTraceElement element) {
         if (element == null) {
             return null;

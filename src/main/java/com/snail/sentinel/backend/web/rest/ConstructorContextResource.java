@@ -16,6 +16,7 @@ import tech.jhipster.web.util.HeaderUtil;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v2/constructor-contexts")
@@ -43,5 +44,14 @@ public class ConstructorContextResource {
         return ResponseEntity.created(new URI("/api/v2/constructor-contexts/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId()))
             .body(result);
+    }
+
+    @PostMapping("/batch")
+    public ResponseEntity<Void> createConstructorContextsBatch(@RequestBody List<ConstructorContextDTO> constructorContextDTOs) throws URISyntaxException {
+        log.info("REST request to save batch of ConstructorContexts: {}", constructorContextDTOs.size());
+        service.saveBatch(constructorContextDTOs);
+        return ResponseEntity.created(new URI("/api/v2/constructor-contexts/batch"))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, "batch"))
+            .build();
     }
 }
