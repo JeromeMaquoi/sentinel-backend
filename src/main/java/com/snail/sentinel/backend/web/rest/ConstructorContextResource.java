@@ -34,12 +34,12 @@ public class ConstructorContextResource {
 
     @PostMapping("")
     public ResponseEntity<ConstructorContextEntityDTO> createConstructorContext(@RequestBody ConstructorContextDTO constructorContextDTO) throws URISyntaxException {
-        log.debug("REST request to save ConstructorContext : {}", constructorContextDTO);
+        log.info("REST request to save ConstructorContext : {}", constructorContextDTO);
         if (!constructorContextDTO.isComplete()) {
             throw new ConstructorContextNotCompleteException();
         }
         ConstructorContextEntityDTO result = service.save(constructorContextDTO);
-        log.info("Created ConstructorContext with id: {}", result.getId());
+        log.debug("Created ConstructorContext with id: {}", result.getId());
         return ResponseEntity.created(new URI("/api/v2/constructor-contexts/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId()))
             .body(result);

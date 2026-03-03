@@ -6,7 +6,6 @@ import com.snail.sentinel.backend.service.ConstructorContextEntityService;
 import com.snail.sentinel.backend.service.StackTraceEnrichmentService;
 import com.snail.sentinel.backend.service.dto.ConstructorContextDTO;
 import com.snail.sentinel.backend.service.dto.ConstructorContextEntityDTO;
-import com.snail.sentinel.backend.service.dto.StackTraceElementDTO;
 import com.snail.sentinel.backend.service.exceptions.ConstructorContextEntityExistsException;
 import com.snail.sentinel.backend.service.mapper.ConstructorContextEntityMapper;
 import org.slf4j.Logger;
@@ -37,23 +36,14 @@ public class ConstructorContextEntityServiceImpl implements ConstructorContextEn
         log.debug("Saving constructorContextEntityDTO: {}", dto);
         List<ConstructorContextEntityDTO> candidates = repository.findByFileNameAndClassNameAndMethodNameAndParameters(dto.getFileName(), dto.getClassName(), dto.getMethodName(), dto.getParameters());
 
-        List<StackTraceElementDTO> enrichedStacktrace = enrichmentService.enrichStackTrace(dto.getStacktrace());
-
-        boolean exists = candidates.stream().anyMatch(entity -> entity.getStacktrace().equals(enrichedStacktrace));
+        ConstructorContextEntityDTO entityDTO = mapper.toDto(dto);
+        boolean exists = candidates.stream().anyMatch(entity -> entity.getStacktrace().equals(entityDTO.getStacktrace()));
 
         if (exists) {
+//            log.warn("ConstructorContextEntity already exists for fileName: {}, className: {}, methodName: {}, parameters: {} and stacktrace: {}", dto.getFileName(), dto.getClassName(), dto.getMethodName(), dto.getParameters(), dto.getStacktrace());
             throw new ConstructorContextEntityExistsException("ConstructorContextEntity already exists");
         }
 
-        ConstructorContextEntityDTO entityDTO = new ConstructorContextEntityDTO(
-            dto.getFileName(),
-            dto.getClassName(),
-            dto.getMethodName(),
-            dto.getParameters(),
-            dto.getAttributes(),
-            enrichedStacktrace,
-            dto.getSnapshot()
-        );
         ConstructorContextEntity constructorContextEntity = mapper.toEntity(entityDTO);
         constructorContextEntity = repository.save(constructorContextEntity);
         return mapper.toDto(constructorContextEntity);

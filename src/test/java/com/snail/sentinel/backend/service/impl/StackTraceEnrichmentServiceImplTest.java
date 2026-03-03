@@ -50,6 +50,5 @@ class StackTraceEnrichmentServiceImplTest {
         assertThat(dto.getClassName()).isEqualTo("com.example.MyClass");
         assertThat(dto.getLineNumber()).isEqualTo("1");
         assertThat(dto.getFileName()).isEqualTo("testClass.java");
-        assertThat(dto.getParameters()).containsExactly("param1", "param2");
     }
 }

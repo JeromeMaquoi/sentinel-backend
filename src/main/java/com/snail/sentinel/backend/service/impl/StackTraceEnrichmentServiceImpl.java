@@ -40,8 +40,7 @@ public class StackTraceEnrichmentServiceImpl implements StackTraceEnrichmentServ
                 element.getFileName(),
                 element.getClassName(),
                 element.getMethodName(),
-                String.valueOf(element.getLineNumber()),
-                params
+                element.getLineNumber()
             );
         }).toList();
     }
