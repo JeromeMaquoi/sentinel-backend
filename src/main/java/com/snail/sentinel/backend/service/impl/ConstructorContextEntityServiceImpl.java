@@ -11,6 +11,8 @@ import com.snail.sentinel.backend.service.mapper.ConstructorContextEntityMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.mongodb.core.BulkOperations;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,9 +26,12 @@ public class ConstructorContextEntityServiceImpl implements ConstructorContextEn
 
     private final ConstructorContextEntityMapper mapper;
 
-    public ConstructorContextEntityServiceImpl(ConstructorContextEntityRepository repository, @Qualifier("constructorContextEntityMapperImpl") ConstructorContextEntityMapper mapper) {
+    private final MongoTemplate mongoTemplate;
+
+    public ConstructorContextEntityServiceImpl(ConstructorContextEntityRepository repository, @Qualifier("constructorContextEntityMapperImpl") ConstructorContextEntityMapper mapper, MongoTemplate mongoTemplate) {
         this.repository = repository;
         this.mapper = mapper;
+        this.mongoTemplate = mongoTemplate;
     }
 
     @Override
@@ -64,9 +69,12 @@ public class ConstructorContextEntityServiceImpl implements ConstructorContextEn
             .toList();
 
         try {
-            repository.saveAll(entities);
+            mongoTemplate
+                .bulkOps(BulkOperations.BulkMode.UNORDERED, ConstructorContextEntity.class)
+                .insert(entities)
+                .execute();
         } catch (DuplicateKeyException e) {
-            log.warn("Duplicate key exception when saving constructorContextEntityDTOs: {}", dtos);
+            log.warn("Batch contained duplicates. Batch size={}", entities.size());
         } catch (Exception e) {
             log.error("Failed to save constructor context batch", e);
             throw e;

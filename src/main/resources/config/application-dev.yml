@@ -33,6 +33,7 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017/sentinelBackend
+      auto-index-creation: true
   mail:
     host: localhost
     port: 25
