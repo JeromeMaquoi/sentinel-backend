@@ -1,6 +1,5 @@
 package com.snail.sentinel.backend.service.impl;
 
-import com.mongodb.DuplicateKeyException;
 import com.snail.sentinel.backend.domain.ConstructorContextEntity;
 import com.snail.sentinel.backend.repository.ConstructorContextEntityRepository;
 import com.snail.sentinel.backend.service.ConstructorContextEntityService;
@@ -11,6 +10,7 @@ import com.snail.sentinel.backend.service.mapper.ConstructorContextEntityMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.mongodb.BulkOperationException;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
@@ -73,8 +73,11 @@ public class ConstructorContextEntityServiceImpl implements ConstructorContextEn
                 .bulkOps(BulkOperations.BulkMode.UNORDERED, ConstructorContextEntity.class)
                 .insert(entities)
                 .execute();
-        } catch (DuplicateKeyException e) {
-            log.warn("Batch contained duplicates. Batch size={}", entities.size());
+        } catch (BulkOperationException e) {
+            long duplicateCount = e.getErrors().stream()
+                .filter(error -> error.getCode() == 11000)
+                .count();
+            log.warn("Ignored {} duplicates in batch of {}", duplicateCount, entities.size());
         } catch (Exception e) {
             log.error("Failed to save constructor context batch", e);
             throw e;
