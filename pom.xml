@@ -17,7 +17,6 @@
         -->
         <sonar.organization>jeromemaquoi</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <sonar.projectKey>JeromeMaquoi_sentinel-backend</sonar.projectKey>
         <maven.version>3.2.5</maven.version>
         <java.version>17</java.version>
         <node.version>v18.16.1</node.version>
