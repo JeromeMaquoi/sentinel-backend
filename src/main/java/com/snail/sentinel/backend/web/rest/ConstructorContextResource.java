@@ -54,4 +54,8 @@ public class ConstructorContextResource {
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, "batch"))
             .build();
     }
+
+    public void setApplicationName(String applicationName) {
+        this.applicationName = applicationName;
+    }
 }
