@@ -48,7 +48,7 @@ class StackTraceEnrichmentServiceImplTest {
         assertThat(dto.getFileName()).isEqualTo("testClass.java");
         assertThat(dto.getMethodName()).isEqualTo("testMethod");
         assertThat(dto.getClassName()).isEqualTo("com.example.MyClass");
-        assertThat(dto.getLineNumber()).isEqualTo("1");
+        assertThat(dto.getLineNumber()).isEqualTo(1);
         assertThat(dto.getFileName()).isEqualTo("testClass.java");
     }
 }
