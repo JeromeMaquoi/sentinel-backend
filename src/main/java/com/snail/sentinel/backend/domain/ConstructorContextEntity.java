@@ -3,14 +3,21 @@ package com.snail.sentinel.backend.domain;
 import com.snail.sentinel.backend.service.dto.AttributeContextDTO;
 import com.snail.sentinel.backend.service.dto.StackTraceElementDTO;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+import org.apache.commons.codec.digest.DigestUtils;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
 @Document(collection = "constructor_context_entity")
+@CompoundIndex(
+    name = "unique_constructor_context",
+    def = "{'file': 1, 'class': 1, 'method': 1, 'parameters': 1, 'stacktraceHash': 1}",
+    unique = true
+)
 public class ConstructorContextEntity implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -27,8 +34,19 @@ public class ConstructorContextEntity implements Serializable {
     private List<AttributeContextDTO> attributes;
     @Field("stacktrace")
     private List<StackTraceElementDTO> stacktrace;
+    @Field("stacktraceHash")
+    private String stacktraceHash;
     @Field("snapshot")
     private String snapshot;
+
+    public void computeStacktraceHash() {
+        if (stacktrace != null) {
+            String serialized = stacktrace.stream()
+                .map(StackTraceElementDTO::toString)
+                .reduce("", (a, b) -> a+ "|" + b);
+            this.stacktraceHash = DigestUtils.sha256Hex(serialized);
+        }
+    }
 
     public String getId() {
         return id;

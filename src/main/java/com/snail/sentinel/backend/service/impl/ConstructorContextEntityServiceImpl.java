@@ -3,16 +3,18 @@ package com.snail.sentinel.backend.service.impl;
 import com.snail.sentinel.backend.domain.ConstructorContextEntity;
 import com.snail.sentinel.backend.repository.ConstructorContextEntityRepository;
 import com.snail.sentinel.backend.service.ConstructorContextEntityService;
-import com.snail.sentinel.backend.service.StackTraceEnrichmentService;
 import com.snail.sentinel.backend.service.dto.ConstructorContextDTO;
 import com.snail.sentinel.backend.service.dto.ConstructorContextEntityDTO;
-import com.snail.sentinel.backend.service.dto.StackTraceElementDTO;
 import com.snail.sentinel.backend.service.exceptions.ConstructorContextEntityExistsException;
 import com.snail.sentinel.backend.service.mapper.ConstructorContextEntityMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.mongodb.BulkOperationException;
+import org.springframework.data.mongodb.core.BulkOperations;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,14 +24,14 @@ public class ConstructorContextEntityServiceImpl implements ConstructorContextEn
 
     private final ConstructorContextEntityRepository repository;
 
-    private final StackTraceEnrichmentService enrichmentService;
-
     private final ConstructorContextEntityMapper mapper;
 
-    public ConstructorContextEntityServiceImpl(ConstructorContextEntityRepository repository, StackTraceEnrichmentService enrichmentService, @Qualifier("constructorContextEntityMapperImpl") ConstructorContextEntityMapper mapper) {
+    private final MongoTemplate mongoTemplate;
+
+    public ConstructorContextEntityServiceImpl(ConstructorContextEntityRepository repository, @Qualifier("constructorContextEntityMapperImpl") ConstructorContextEntityMapper mapper, MongoTemplate mongoTemplate) {
         this.repository = repository;
-        this.enrichmentService = enrichmentService;
         this.mapper = mapper;
+        this.mongoTemplate = mongoTemplate;
     }
 
     @Override
@@ -37,25 +39,48 @@ public class ConstructorContextEntityServiceImpl implements ConstructorContextEn
         log.debug("Saving constructorContextEntityDTO: {}", dto);
         List<ConstructorContextEntityDTO> candidates = repository.findByFileNameAndClassNameAndMethodNameAndParameters(dto.getFileName(), dto.getClassName(), dto.getMethodName(), dto.getParameters());
 
-        List<StackTraceElementDTO> enrichedStacktrace = enrichmentService.enrichStackTrace(dto.getStacktrace());
-
-        boolean exists = candidates.stream().anyMatch(entity -> entity.getStacktrace().equals(enrichedStacktrace));
+        ConstructorContextEntityDTO entityDTO = mapper.toDto(dto);
+        boolean exists = candidates.stream().anyMatch(entity -> entity.getStacktrace().equals(entityDTO.getStacktrace()));
 
         if (exists) {
+//            log.warn("ConstructorContextEntity already exists for fileName: {}, className: {}, methodName: {}, parameters: {} and stacktrace: {}", dto.getFileName(), dto.getClassName(), dto.getMethodName(), dto.getParameters(), dto.getStacktrace());
             throw new ConstructorContextEntityExistsException("ConstructorContextEntity already exists");
         }
 
-        ConstructorContextEntityDTO entityDTO = new ConstructorContextEntityDTO(
-            dto.getFileName(),
-            dto.getClassName(),
-            dto.getMethodName(),
-            dto.getParameters(),
-            dto.getAttributes(),
-            enrichedStacktrace,
-            dto.getSnapshot()
-        );
         ConstructorContextEntity constructorContextEntity = mapper.toEntity(entityDTO);
         constructorContextEntity = repository.save(constructorContextEntity);
         return mapper.toDto(constructorContextEntity);
+    }
+
+    @Override
+    @Transactional
+    public void saveBatch(List<ConstructorContextDTO> dtos) {
+        if (dtos == null || dtos.isEmpty()) {
+            log.warn("Received empty batch of ConstructorContextDTOs");
+            return;
+        }
+
+        log.debug("Saving batch of constructorContextEntityDTOs: {}", dtos.size());
+
+        List<ConstructorContextEntity> entities = dtos.stream()
+            .filter(ConstructorContextDTO::isComplete)
+            .map(mapper::toEntity)
+            .peek(ConstructorContextEntity::computeStacktraceHash)
+            .toList();
+
+        try {
+            mongoTemplate
+                .bulkOps(BulkOperations.BulkMode.UNORDERED, ConstructorContextEntity.class)
+                .insert(entities)
+                .execute();
+        } catch (BulkOperationException e) {
+            long duplicateCount = e.getErrors().stream()
+                .filter(error -> error.getCode() == 11000)
+                .count();
+            log.warn("Ignored {} duplicates in batch of {}", duplicateCount, entities.size());
+        } catch (Exception e) {
+            log.error("Failed to save constructor context batch", e);
+            throw e;
+        }
     }
 }

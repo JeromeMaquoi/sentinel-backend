@@ -16,6 +16,7 @@ import tech.jhipster.web.util.HeaderUtil;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v2/constructor-contexts")
@@ -34,14 +35,27 @@ public class ConstructorContextResource {
 
     @PostMapping("")
     public ResponseEntity<ConstructorContextEntityDTO> createConstructorContext(@RequestBody ConstructorContextDTO constructorContextDTO) throws URISyntaxException {
-        log.debug("REST request to save ConstructorContext : {}", constructorContextDTO);
+        log.info("REST request to save ConstructorContext : {}", constructorContextDTO);
         if (!constructorContextDTO.isComplete()) {
             throw new ConstructorContextNotCompleteException();
         }
         ConstructorContextEntityDTO result = service.save(constructorContextDTO);
-        log.info("Created ConstructorContext with id: {}", result.getId());
+        log.debug("Created ConstructorContext with id: {}", result.getId());
         return ResponseEntity.created(new URI("/api/v2/constructor-contexts/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId()))
             .body(result);
+    }
+
+    @PostMapping("/batch")
+    public ResponseEntity<Void> createConstructorContextsBatch(@RequestBody List<ConstructorContextDTO> constructorContextDTOs) throws URISyntaxException {
+        log.info("REST request to save batch of ConstructorContexts: {}", constructorContextDTOs.size());
+        service.saveBatch(constructorContextDTOs);
+        return ResponseEntity.created(new URI("/api/v2/constructor-contexts/batch"))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, "batch"))
+            .build();
+    }
+
+    public void setApplicationName(String applicationName) {
+        this.applicationName = applicationName;
     }
 }
