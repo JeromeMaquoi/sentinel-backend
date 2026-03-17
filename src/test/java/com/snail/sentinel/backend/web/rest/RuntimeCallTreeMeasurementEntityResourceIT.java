@@ -1,7 +1,7 @@
 package com.snail.sentinel.backend.web.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.snail.sentinel.backend.service.MeasurementService;
+import com.snail.sentinel.backend.service.RuntimeCallTreeMeasurementService;
 import com.snail.sentinel.backend.service.dto.RuntimeCallTreeMeasurementEntityDTO;
 import com.snail.sentinel.backend.repository.RuntimeCallTreeMeasurementRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +35,7 @@ class RuntimeCallTreeMeasurementEntityResourceIT {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private MeasurementService<RuntimeCallTreeMeasurementEntityDTO> service;
+    private RuntimeCallTreeMeasurementService service;
 
     @MockBean
     private RuntimeCallTreeMeasurementRepository repository;
@@ -45,8 +45,7 @@ class RuntimeCallTreeMeasurementEntityResourceIT {
     @BeforeEach
     void init() {
         sampleDto = new RuntimeCallTreeMeasurementEntityDTO();
-        sampleDto.setId("1");
-        // set other fields if necessary
+        sampleDto.setId("1");;
     }
 
     @Test

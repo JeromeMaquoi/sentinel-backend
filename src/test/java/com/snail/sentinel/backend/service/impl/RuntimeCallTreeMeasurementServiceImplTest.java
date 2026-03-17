@@ -2,7 +2,9 @@ package com.snail.sentinel.backend.service.impl;
 
 import com.snail.sentinel.backend.domain.RuntimeCallTreeMeasurementEntity;
 import com.snail.sentinel.backend.repository.RuntimeCallTreeMeasurementRepository;
+import com.snail.sentinel.backend.repository.filter.MeasurementAggregationFilter;
 import com.snail.sentinel.backend.service.dto.RuntimeCallTreeMeasurementEntityDTO;
+import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementDTO;
 import com.snail.sentinel.backend.service.mapper.RuntimeCallTreeMeasurementEntityMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,6 +12,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,8 +39,10 @@ class RuntimeCallTreeMeasurementServiceImplTest {
         MockitoAnnotations.openMocks(this);
         entity = new RuntimeCallTreeMeasurementEntity();
         entity.setId("id1");
+        entity.setValue(0.5f);
         dto = new RuntimeCallTreeMeasurementEntityDTO();
         dto.setId("id1");
+        dto.setValue(0.5f);
     }
 
     @Test
@@ -139,5 +145,89 @@ class RuntimeCallTreeMeasurementServiceImplTest {
         doNothing().when(repository).deleteById("id1");
         service.delete("id1");
         verify(repository).deleteById("id1");
+    }
+
+    @Test
+    void aggregateByCallstackCallsRepositoryMethodTest() {
+        AggregatedRuntimeCallTreeMeasurementDTO aggregatedDTO = new AggregatedRuntimeCallTreeMeasurementDTO();
+        List<AggregatedRuntimeCallTreeMeasurementDTO> expectedResult = Collections.singletonList(aggregatedDTO);
+        when(repository.aggregateByCallstack()).thenReturn(expectedResult);
+
+        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateByCallstack();
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(aggregatedDTO, result.get(0));
+        verify(repository, times(1)).aggregateByCallstack();
+    }
+
+    @Test
+    void aggregateByCallstackForCommitCallsRepositoryWithCommitShaTest() {
+        String commitSha = "123abc123";
+        AggregatedRuntimeCallTreeMeasurementDTO aggregatedDTO = new AggregatedRuntimeCallTreeMeasurementDTO();
+        List<AggregatedRuntimeCallTreeMeasurementDTO> expectedResult = Collections.singletonList(aggregatedDTO);
+        when(repository.aggregateByCallstackAndCommitSha(commitSha)).thenReturn(expectedResult);
+
+        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateByCallstackForCommit(commitSha);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(aggregatedDTO, result.get(0));
+        verify(repository, times(1)).aggregateByCallstackAndCommitSha(commitSha);
+    }
+
+    @Test
+    void aggregateByCallstackForRepositoryCallsRepositoryWithRepositoryNameTest() {
+        String repoName = "commons-lang";
+        AggregatedRuntimeCallTreeMeasurementDTO aggregatedDto = new AggregatedRuntimeCallTreeMeasurementDTO();
+        List<AggregatedRuntimeCallTreeMeasurementDTO> expectedResult = Collections.singletonList(aggregatedDto);
+        when(repository.aggregateByCallstackAndRepositoryName(repoName)).thenReturn(expectedResult);
+
+        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateByCallstackForRepository(repoName);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(aggregatedDto, result.get(0));
+        verify(repository, times(1)).aggregateByCallstackAndRepositoryName(repoName);
+    }
+
+    @Test
+    void aggregateByCallstackWithFilterCallsRepositoryWithFilterTest() {
+        MeasurementAggregationFilter filter = MeasurementAggregationFilter.byCommitSha("def456");
+        AggregatedRuntimeCallTreeMeasurementDTO aggregatedDto = new AggregatedRuntimeCallTreeMeasurementDTO();
+        List<AggregatedRuntimeCallTreeMeasurementDTO> expectedResult = Collections.singletonList(aggregatedDto);
+        when(repository.aggregateByCallstack(filter)).thenReturn(expectedResult);
+
+        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateByCallstack(filter);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(aggregatedDto, result.get(0));
+        verify(repository, times(1)).aggregateByCallstack(filter);
+    }
+
+    @Test
+    void aggregateByCallStackReturnsMultipleAggregationsTest() {
+        AggregatedRuntimeCallTreeMeasurementDTO aggregated1 = new AggregatedRuntimeCallTreeMeasurementDTO();
+        AggregatedRuntimeCallTreeMeasurementDTO aggregated2 = new AggregatedRuntimeCallTreeMeasurementDTO();
+        List<AggregatedRuntimeCallTreeMeasurementDTO> expectedResult = Arrays.asList(aggregated1, aggregated2);
+        when(repository.aggregateByCallstack()).thenReturn(expectedResult);
+
+        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateByCallstack();
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        verify(repository, times(1)).aggregateByCallstack();
+    }
+
+    @Test
+    void aggregateByCallstackReturnsEmptyListWhenNoResultsTest() {
+        when(repository.aggregateByCallstack()).thenReturn(Collections.emptyList());
+
+        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateByCallstack();
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        verify(repository, times(1)).aggregateByCallstack();
     }
 }
