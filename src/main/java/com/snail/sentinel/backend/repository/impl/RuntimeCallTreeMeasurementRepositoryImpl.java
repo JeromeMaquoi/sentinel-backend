@@ -16,6 +16,7 @@ import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
 public class RuntimeCallTreeMeasurementRepositoryImpl implements RuntimeCallTreeMeasurementRepositoryCustom {
     private static final Logger log = LoggerFactory.getLogger(RuntimeCallTreeMeasurementRepositoryImpl.class);
+    private static final String RUNTIME_CALLTREE_CLASS = "runtime_calltree";
     private final MongoTemplate mongoTemplate;
 
     public RuntimeCallTreeMeasurementRepositoryImpl(MongoTemplate mongoTemplate) {
@@ -34,14 +35,25 @@ public class RuntimeCallTreeMeasurementRepositoryImpl implements RuntimeCallTree
         log.debug("Aggregating RuntimeCallTreeMeasurements by callstack with filter {}", filter.getFilterType());
 
         List<AggregationOperation> operations = new ArrayList<>();
+        operations.add(match(Criteria.where("_class").is(RUNTIME_CALLTREE_CLASS)));
+
         if (filter.hasFilter()) {
             operations.add(buildMatchOperation(filter));
         }
         operations.add(buildGroupOperation());
 
-        Aggregation aggregation = newAggregation(operations);
-        AggregationResults<AggregatedRuntimeCallTreeMeasurementDTO> results = mongoTemplate.aggregate(aggregation, "joularjx_measurements", AggregatedRuntimeCallTreeMeasurementDTO.class);
-        return results.getMappedResults();
+        Aggregation aggregation = newAggregation(operations)
+            .withOptions(AggregationOptions.builder()
+                .allowDiskUse(true)
+                .cursorBatchSize(1000)
+            .build());
+        try {
+            AggregationResults<AggregatedRuntimeCallTreeMeasurementDTO> results = mongoTemplate.aggregate(aggregation, "joularjx_measurements", AggregatedRuntimeCallTreeMeasurementDTO.class);
+            return results.getMappedResults();
+        } catch (Exception e) {
+            log.error("Error during aggregation: {}", e.getMessage(), e);
+            throw e;
+        }
     }
 
     @Override

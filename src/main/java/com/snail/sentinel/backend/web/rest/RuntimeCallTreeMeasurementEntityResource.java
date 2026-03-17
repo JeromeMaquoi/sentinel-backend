@@ -124,19 +124,6 @@ public class RuntimeCallTreeMeasurementEntityResource {
     }
 
     /**
-     * {@code GET /api/v2/measurements/runtime/calltrees/aggregate}
-     * Aggregate measurements by callstack without any filter
-     *
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and aggregated measurements in body
-     */
-    @GetMapping("/aggregate")
-    public ResponseEntity<List<AggregatedRuntimeCallTreeMeasurementDTO>> aggregateByCallstack() {
-        log.debug("REST request to aggregate CallTreeMeasurements by callstack without filter");
-        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateByCallstack();
-        return new ResponseEntity<>(result, HttpStatus.OK);
-    }
-
-    /**
      * {@code GET /api/v2/measurements/runtime/calltrees/aggregate/commit/{commitSha}}
      * Aggregate measurements by callstack for a specific commit
      *
@@ -161,6 +148,19 @@ public class RuntimeCallTreeMeasurementEntityResource {
     public ResponseEntity<List<AggregatedRuntimeCallTreeMeasurementDTO>> aggregateByCallstackForRepository(@PathVariable String repoName) {
         log.debug("REST request to aggregate CallTreeMeasurements by callstack for repository {}", repoName);
         List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateByCallstackForRepository(repoName);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    /**
+     * {@code GET /api/v2/measurements/runtime/calltrees/aggregate}
+     * Aggregate measurements by callstack without any filter
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and aggregated measurements in body
+     */
+    @GetMapping("/aggregate")
+    public ResponseEntity<List<AggregatedRuntimeCallTreeMeasurementDTO>> aggregateByCallstack() {
+        log.debug("REST request to aggregate CallTreeMeasurements by callstack without filter");
+        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateByCallstack();
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

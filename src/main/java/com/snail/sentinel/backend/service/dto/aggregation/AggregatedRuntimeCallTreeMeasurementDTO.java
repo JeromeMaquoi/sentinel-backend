@@ -6,9 +6,8 @@ public class AggregatedRuntimeCallTreeMeasurementDTO {
     private List<String> callstack;
     private String type;
     private CommitAggregateDTO commit;
-    private AggregatedValuesDTO aggregatedValues;
+    private List<Double> values;
     private List<Long> timestamps;
-    private List<Float> values;
 
     public List<String> getCallstack() {
         return callstack;
@@ -34,12 +33,12 @@ public class AggregatedRuntimeCallTreeMeasurementDTO {
         this.commit = commit;
     }
 
-    public AggregatedValuesDTO getAggregatedValues() {
-        return aggregatedValues;
+    public List<Double> getValues() {
+        return values;
     }
 
-    public void setAggregatedValues(AggregatedValuesDTO aggregatedValues) {
-        this.aggregatedValues = aggregatedValues;
+    public void setValues(List<Double> values) {
+        this.values = values;
     }
 
     public List<Long> getTimestamps() {
@@ -48,13 +47,5 @@ public class AggregatedRuntimeCallTreeMeasurementDTO {
 
     public void setTimestamps(List<Long> timestamps) {
         this.timestamps = timestamps;
-    }
-
-    public List<Float> getValues() {
-        return values;
-    }
-
-    public void setValues(List<Float> values) {
-        this.values = values;
     }
 }

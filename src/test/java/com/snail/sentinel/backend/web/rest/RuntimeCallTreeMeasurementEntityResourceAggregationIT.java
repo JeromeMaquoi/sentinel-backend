@@ -42,7 +42,7 @@ public class RuntimeCallTreeMeasurementEntityResourceAggregationIT {
         sampleAggregatedDto.setType("runtime_calltree");
         sampleAggregatedDto.setCallstack(Arrays.asList("method1", "method2", "method3"));
         sampleAggregatedDto.setTimestamps(Arrays.asList(1000L, 2000L, 3000L));
-        sampleAggregatedDto.setValues(Arrays.asList(0.5f, 0.7f, 0.9f));
+        sampleAggregatedDto.setValues(Arrays.asList(0.5d, 0.7d, 0.9d));
     }
 
     @Test
