@@ -2,7 +2,7 @@ package com.snail.sentinel.backend.service.dto.aggregation;
 
 import java.util.List;
 
-public class AggregatedRuntimeCallTreeDTO {
+public class AggregatedRuntimeCallTreeMeasurementDTO {
     private List<String> callstack;
     private String type;
     private CommitAggregateDTO commit;
