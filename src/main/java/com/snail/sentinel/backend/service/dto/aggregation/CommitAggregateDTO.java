@@ -21,4 +21,12 @@ public class CommitAggregateDTO {
     public void setRepository(RepositorySimpleDTO repository) {
         this.repository = repository;
     }
+
+    @Override
+    public String toString() {
+        return "CommitAggregateDTO{" +
+            "sha='" + sha + '\'' +
+            ", repository=" + repository +
+            '}';
+    }
 }
