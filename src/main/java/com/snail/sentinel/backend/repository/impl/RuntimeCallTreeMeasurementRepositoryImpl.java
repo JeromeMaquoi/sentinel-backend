@@ -86,7 +86,8 @@ public class RuntimeCallTreeMeasurementRepositoryImpl implements RuntimeCallTree
         return group("callstack")
             .push("timestamp").as("timestamps")
             .first("callstack").as("callstack")
-            .push("iteration").as("iterations")
+            .first("iteration").as("iteration")
+            .first("scope").as("scope")
             .first("commit").as("commit")
             .push("value").as("values")
             .first("_class").as("type");
