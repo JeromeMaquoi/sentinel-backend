@@ -84,12 +84,12 @@ public class RuntimeCallTreeMeasurementRepositoryImpl implements RuntimeCallTree
 
     protected GroupOperation buildGroupOperation() {
         return group("callstack")
-            .push("timestamp").as("timestamps")
             .first("callstack").as("callstack")
             .first("iteration").as("iteration")
             .first("scope").as("scope")
             .first("commit").as("commit")
-            .push("value").as("values")
-            .first("_class").as("type");
+            .first("_class").as("type")
+            .push("value").as("runtimeValues.values")
+            .push("timestamp").as("timestamps.timestamps");
     }
 }

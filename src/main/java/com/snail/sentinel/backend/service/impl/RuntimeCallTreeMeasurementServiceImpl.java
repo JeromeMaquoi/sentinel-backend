@@ -6,13 +6,17 @@ import com.snail.sentinel.backend.repository.filter.MeasurementAggregationFilter
 import com.snail.sentinel.backend.service.RuntimeCallTreeMeasurementService;
 import com.snail.sentinel.backend.service.dto.RuntimeCallTreeMeasurementEntityDTO;
 import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementByIterationDTO;
+import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementDTO;
+import com.snail.sentinel.backend.service.dto.aggregation.IterationRuntimeMeasurementsDTO;
+import com.snail.sentinel.backend.service.dto.runtime.RuntimeValuesDTO;
+import com.snail.sentinel.backend.service.dto.runtime.TimestampsDTO;
 import com.snail.sentinel.backend.service.mapper.RuntimeCallTreeMeasurementEntityMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class RuntimeCallTreeMeasurementServiceImpl implements RuntimeCallTreeMeasurementService {
@@ -116,5 +120,100 @@ public class RuntimeCallTreeMeasurementServiceImpl implements RuntimeCallTreeMea
     public List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> aggregateByCallstack(MeasurementAggregationFilter filter) {
         log.debug("Service request to aggregate CallTreeMeasurements by callstack with filter type {}", filter.getFilterType());
         return repository.aggregateByCallstack(filter);
+    }
+
+    @Override
+    public List<AggregatedRuntimeCallTreeMeasurementDTO> aggregateAcrossIterationsByCallstack() {
+        log.debug("Service request to aggregate CallTreeMeasurements across all iterations by callstack");
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> byIteration = aggregateByCallstack();
+        return aggregateAcrossIterations(byIteration);
+    }
+
+    @Override
+    public List<AggregatedRuntimeCallTreeMeasurementDTO> aggregateAcrossIterationsByCallstackForCommit(String commitSha) {
+        log.debug("Service request to aggregate CallTreeMeasurements across all iterations by callstack for commit {}", commitSha);
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> byIteration = aggregateByCallstackForCommit(commitSha);
+        return aggregateAcrossIterations(byIteration);
+    }
+
+    @Override
+    public List<AggregatedRuntimeCallTreeMeasurementDTO> aggregateAcrossIterationsByCallstackForRepository(String repoName) {
+        log.debug("Service request to aggregate CallTreeMeasurements across all iterations by callstack for repository {}", repoName);
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> byIteration = aggregateByCallstackForRepository(repoName);
+        return aggregateAcrossIterations(byIteration);
+    }
+
+    /**
+     * Aggregates measurements across all iterations for each callstack
+     * @param byIteration List of measurements aggregated by iteration
+     * @return List of aggregated measurements across all iterations
+     */
+    private List<AggregatedRuntimeCallTreeMeasurementDTO> aggregateAcrossIterations(List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> byIteration) {
+        // Group by callstack to aggregate across iterations
+        Map<String, List<AggregatedRuntimeCallTreeMeasurementByIterationDTO>> groupedByCallstack = byIteration.stream()
+            .collect(Collectors.groupingBy(m -> String.join(".", m.getCallstack())));
+
+        return groupedByCallstack.values().stream()
+            .map(measurements -> {
+                if (measurements.isEmpty()) {
+                    return null;
+                }
+
+                // Get the first measurement to extract common properties
+                AggregatedRuntimeCallTreeMeasurementByIterationDTO firstMeasurement = measurements.get(0);
+
+                // Create the aggregated DTO
+                AggregatedRuntimeCallTreeMeasurementDTO aggregated = new AggregatedRuntimeCallTreeMeasurementDTO();
+                aggregated.setCallstack(firstMeasurement.getCallstack());
+                aggregated.setScope(firstMeasurement.getScope());
+                aggregated.setType(firstMeasurement.getType());
+                aggregated.setCommit(firstMeasurement.getCommit());
+
+                // Aggregate measurements across iterations
+                IterationRuntimeMeasurementsDTO aggregatedMeasurements = aggregateMeasurements(measurements);
+                aggregated.setMeasurements(aggregatedMeasurements);
+
+                return aggregated;
+            })
+            .filter(Objects::nonNull)
+            .toList();
+    }
+
+    /**
+     * Aggregates runtime measurements by combining values and timestamps from multiple iterations
+     * @param measurements List of measurements for a single callstack across multiple iterations
+     * @return Aggregated measurements
+     */
+    private IterationRuntimeMeasurementsDTO aggregateMeasurements(List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> measurements) {
+        IterationRuntimeMeasurementsDTO result = new IterationRuntimeMeasurementsDTO();
+
+        // Collect all values from all iterations
+        List<Double> allValues = measurements.stream()
+            .flatMap(m -> m.getValues().getValues().stream())
+            .collect(Collectors.toList());
+
+        // Collect all timestamps from all iterations
+        List<Long> allTimestamps = measurements.stream()
+            .flatMap(m -> m.getTimestamps().getTimestamps().stream())
+            .collect(Collectors.toList());
+
+        // Aggregate total energy
+        Double totalEnergy = measurements.stream()
+            .flatMap(m -> m.getValues().getValues().stream())
+            .reduce(0.0, Double::sum);
+
+        // Set the aggregated values
+        RuntimeValuesDTO aggregatedValues = new RuntimeValuesDTO();
+        aggregatedValues.setValues(allValues);
+        result.setRuntimeValues(aggregatedValues);
+
+        TimestampsDTO aggregatedTimestamps = new TimestampsDTO();
+        aggregatedTimestamps.setTimestamps(allTimestamps);
+        result.setTimestamps(aggregatedTimestamps);
+
+        result.setTotalEnergy(totalEnergy);
+        // Note: iteration field is set to null since we're aggregating across all iterations
+
+        return result;
     }
 }
