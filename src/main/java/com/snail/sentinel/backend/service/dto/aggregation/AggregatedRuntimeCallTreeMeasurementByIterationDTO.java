@@ -2,24 +2,19 @@ package com.snail.sentinel.backend.service.dto.aggregation;
 
 import com.snail.sentinel.backend.service.dto.RunIterationDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
+import com.snail.sentinel.backend.service.dto.runtime.RuntimeValuesDTO;
+import com.snail.sentinel.backend.service.dto.runtime.TimestampsDTO;
 
 import java.util.List;
 
-/**
- * DTO for aggregated runtime call tree measurements grouped by callstack.
- * Contains per-iteration data with normalized and resampled time series values,
- * as well as aggregated values across all iterations on a fixed time grid.
- */
 public class AggregatedRuntimeCallTreeMeasurementByIterationDTO {
     private List<String> callstack;
     String scope;
     private String type;
     private RunIterationDTO iteration;
     private CommitSimpleDTO commit;
-    private List<Double> values;
-    private List<Long> timestamps;
-
-    public AggregatedRuntimeCallTreeMeasurementByIterationDTO() {}
+    private RuntimeValuesDTO values;
+    private TimestampsDTO timestamps;
 
     public List<String> getCallstack() {
         return callstack;
@@ -45,19 +40,19 @@ public class AggregatedRuntimeCallTreeMeasurementByIterationDTO {
         this.commit = commit;
     }
 
-    public List<Double> getValues() {
+    public RuntimeValuesDTO getValues() {
         return values;
     }
 
-    public void setValues(List<Double> values) {
+    public void setValues(RuntimeValuesDTO values) {
         this.values = values;
     }
 
-    public List<Long> getTimestamps() {
+    public TimestampsDTO getTimestamps() {
         return timestamps;
     }
 
-    public void setTimestamps(List<Long> timestamps) {
+    public void setTimestamps(TimestampsDTO timestamps) {
         this.timestamps = timestamps;
     }
 

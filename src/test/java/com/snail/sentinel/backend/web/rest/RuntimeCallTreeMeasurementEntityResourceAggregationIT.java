@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.snail.sentinel.backend.repository.RuntimeCallTreeMeasurementRepository;
 import com.snail.sentinel.backend.service.RuntimeCallTreeMeasurementService;
 import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementByIterationDTO;
+import com.snail.sentinel.backend.service.dto.runtime.RuntimeValuesDTO;
+import com.snail.sentinel.backend.service.dto.runtime.TimestampsDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,8 +43,10 @@ public class RuntimeCallTreeMeasurementEntityResourceAggregationIT {
         sampleAggregatedDto = new AggregatedRuntimeCallTreeMeasurementByIterationDTO();
         sampleAggregatedDto.setType("runtime_calltree");
         sampleAggregatedDto.setCallstack(Arrays.asList("method1", "method2", "method3"));
-        sampleAggregatedDto.setTimestamps(Arrays.asList(1000L, 2000L, 3000L));
-        sampleAggregatedDto.setValues(Arrays.asList(0.5d, 0.7d, 0.9d));
+        TimestampsDTO timestamps =  new TimestampsDTO().withTimestamps(Arrays.asList(1000L, 2000L, 3000L));
+        sampleAggregatedDto.setTimestamps(timestamps);
+        RuntimeValuesDTO values = new RuntimeValuesDTO().withValues(Arrays.asList(0.5d, 0.7d, 0.9d));
+        sampleAggregatedDto.setValues(values);
     }
 
     @Test

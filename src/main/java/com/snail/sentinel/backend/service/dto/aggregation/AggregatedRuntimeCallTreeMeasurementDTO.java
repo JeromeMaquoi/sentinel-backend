@@ -9,9 +9,7 @@ public class AggregatedRuntimeCallTreeMeasurementDTO {
     private String scope;
     private String type;
     private CommitSimpleDTO commit;
-    private List<IterationAggregateDTO> iterations;
-    private List<Double> values;
-    private List<Long> timestamps;
+    private IterationRuntimeMeasurementsDTO measurements;
 
     public List<String> getCallstack() {
         return callstack;
@@ -45,28 +43,12 @@ public class AggregatedRuntimeCallTreeMeasurementDTO {
         this.commit = commit;
     }
 
-    public List<IterationAggregateDTO> getIterations() {
-        return iterations;
+    public IterationRuntimeMeasurementsDTO getMeasurements() {
+        return measurements;
     }
 
-    public void setIterations(List<IterationAggregateDTO> iterations) {
-        this.iterations = iterations;
-    }
-
-    public List<Double> getValues() {
-        return values;
-    }
-
-    public void setValues(List<Double> values) {
-        this.values = values;
-    }
-
-    public List<Long> getTimestamps() {
-        return timestamps;
-    }
-
-    public void setTimestamps(List<Long> timestamps) {
-        this.timestamps = timestamps;
+    public void setMeasurements(IterationRuntimeMeasurementsDTO measurements) {
+        this.measurements = measurements;
     }
 
     @Override
@@ -76,9 +58,7 @@ public class AggregatedRuntimeCallTreeMeasurementDTO {
             ", scope='" + scope + '\'' +
             ", type='" + type + '\'' +
             ", commit=" + commit +
-            ", iterations=" + iterations +
-            ", values=" + values +
-            ", timestamps=" + timestamps +
+            ", measurements=" + measurements +
             '}';
     }
 }
