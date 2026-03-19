@@ -1,11 +1,9 @@
 package com.snail.sentinel.backend.web.rest;
 
 import com.snail.sentinel.backend.repository.RuntimeCallTreeMeasurementRepository;
-import com.snail.sentinel.backend.service.RuntimeCallTreeAggregationPostProcessor;
 import com.snail.sentinel.backend.service.RuntimeCallTreeMeasurementService;
 import com.snail.sentinel.backend.service.dto.RuntimeCallTreeMeasurementEntityDTO;
 import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementByIterationDTO;
-import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementDTO;
 import com.snail.sentinel.backend.web.rest.errors.BadRequestAlertException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,15 +28,12 @@ public class RuntimeCallTreeMeasurementEntityResource {
     private String applicationName;
     private final RuntimeCallTreeMeasurementService service;
     private final RuntimeCallTreeMeasurementRepository repository;
-    private final RuntimeCallTreeAggregationPostProcessor postProcessor;
 
     public RuntimeCallTreeMeasurementEntityResource(
             RuntimeCallTreeMeasurementService service,
-            RuntimeCallTreeMeasurementRepository repository,
-            RuntimeCallTreeAggregationPostProcessor postProcessor) {
+            RuntimeCallTreeMeasurementRepository repository) {
         this.service = service;
         this.repository = repository;
-        this.postProcessor = postProcessor;
     }
 
     @PostMapping("")
@@ -171,85 +166,4 @@ public class RuntimeCallTreeMeasurementEntityResource {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    /**
-     * {@code GET /api/v2/measurements/runtime/calltrees/aggregate/normalized}}
-     * Aggregate measurements by callstack and normalize time series to a fixed grid.
-     * Each iteration's time series is resampled to the same time grid for comparison.
-     *
-     * @param gridPoints Optional: number of points in the target time grid (default: 100, max: 500)
-     * @param limit Optional: maximum number of call stacks to return (default: 100, max: 500)
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and aggregated + resampled measurements
-     */
-    @GetMapping("/aggregate/normalized")
-    public ResponseEntity<List<AggregatedRuntimeCallTreeMeasurementDTO>> aggregateByCallstackNormalized(
-            @RequestParam(name = "gridPoints", required = false, defaultValue = "100") int gridPoints,
-            @RequestParam(name = "limit", required = false, defaultValue = "100") int limit) {
-        validateResponseSizeParameters(gridPoints, limit);
-        log.debug("REST request to aggregate and normalize CallTreeMeasurements by callstack (gridPoints={}, limit={})", gridPoints, limit);
-        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> result = service.aggregateByCallstack();
-        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> limitedResult = result.size() > limit ? result.subList(0, limit) : result;
-        List<AggregatedRuntimeCallTreeMeasurementDTO> normalizedResult = postProcessor.processAggregations(limitedResult, gridPoints);
-        return new ResponseEntity<>(normalizedResult, HttpStatus.OK);
-    }
-
-    /**
-     * {@code GET /api/v2/measurements/runtime/calltrees/aggregate/commit/{commitSha}/normalized}}
-     * Aggregate measurements by callstack for a specific commit and normalize time series.
-     *
-     * @param commitSha the commit SHA to filter by
-     * @param gridPoints Optional: number of points in the target time grid (default: 100, max: 500)
-     * @param limit Optional: maximum number of call stacks to return (default: 200, max: 500)
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and aggregated + resampled measurements
-     */
-    @GetMapping("/aggregate/commit/{commitSha}/normalized")
-    public ResponseEntity<List<AggregatedRuntimeCallTreeMeasurementDTO>> aggregateByCallstackForCommitNormalized(
-            @PathVariable String commitSha,
-            @RequestParam(name = "gridPoints", required = false, defaultValue = "100") int gridPoints,
-            @RequestParam(name = "limit", required = false, defaultValue = "200") int limit) {
-        validateResponseSizeParameters(gridPoints, limit);
-        log.debug("REST request to aggregate and normalize CallTreeMeasurements for commit {} (gridPoints={}, limit={})", commitSha, gridPoints, limit);
-        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> result = service.aggregateByCallstackForCommit(commitSha);
-        log.info("result 1 : {}", result.get(0));
-        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> limitedResult = result.size() > limit ? result.subList(0, limit) : result;
-        List<AggregatedRuntimeCallTreeMeasurementDTO> normalizedResult = postProcessor.processAggregations(limitedResult, gridPoints);
-        return new ResponseEntity<>(normalizedResult, HttpStatus.OK);
-    }
-
-    /**
-     * {@code GET /api/v2/measurements/runtime/calltrees/aggregate/repository/{repositoryName}/normalized}}
-     * Aggregate measurements by callstack for a specific repository and normalize time series.
-     *
-     * @param repoName the repository name to filter by
-     * @param gridPoints Optional: number of points in the target time grid (default: 100, max: 500)
-     * @param limit Optional: maximum number of call stacks to return (default: 200, max: 500)
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and aggregated + resampled measurements
-     */
-    @GetMapping("/aggregate/repository/{repoName}/normalized")
-    public ResponseEntity<List<AggregatedRuntimeCallTreeMeasurementDTO>> aggregateByCallstackForRepositoryNormalized(
-            @PathVariable String repoName,
-            @RequestParam(name = "gridPoints", required = false, defaultValue = "100") int gridPoints,
-            @RequestParam(name = "limit", required = false, defaultValue = "200") int limit) {
-        validateResponseSizeParameters(gridPoints, limit);
-        log.debug("REST request to aggregate and normalize CallTreeMeasurements for repository {} (gridPoints={}, limit={})", repoName, gridPoints, limit);
-        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> result = service.aggregateByCallstackForRepository(repoName);
-        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> limitedResult = result.size() > limit ? result.subList(0, limit) : result;
-        List<AggregatedRuntimeCallTreeMeasurementDTO> normalizedResult = postProcessor.processAggregations(limitedResult, gridPoints);
-        return new ResponseEntity<>(normalizedResult, HttpStatus.OK);
-    }
-
-    /**
-     * Validates request parameters to prevent excessive response sizes.
-     *
-     * @param gridPoints number of points in the target time grid
-     * @param limit maximum number of call stacks to return
-     * @throws BadRequestAlertException if parameters exceed safe limits
-     */
-    private void validateResponseSizeParameters(int gridPoints, int limit) {
-        if (gridPoints <= 0 || gridPoints > 500) {
-            throw new BadRequestAlertException("gridPoints must be between 1 and 500", ENTITY_NAME, "invalid_grid_points");
-        }
-        if (limit <= 0 || limit > 500) {
-            throw new BadRequestAlertException("limit must be between 1 and 500", ENTITY_NAME, "invalid_limit");
-        }
-    }
 }
