@@ -7,7 +7,7 @@ import java.util.List;
  * Contains per-iteration data with normalized and resampled time series values,
  * as well as aggregated values across all iterations on a fixed time grid.
  */
-public class AggregatedRuntimeCallTreeMeasurementDTO {
+public class AggregatedRuntimeCallTreeMeasurementByIterationDTO {
     private List<String> callstack;
     private String type;
     private CommitAggregateDTO commit;
@@ -21,7 +21,7 @@ public class AggregatedRuntimeCallTreeMeasurementDTO {
     // Fixed time grid (normalized timestamps)
     private List<Long> timestamps;
 
-    public AggregatedRuntimeCallTreeMeasurementDTO() {}
+    public AggregatedRuntimeCallTreeMeasurementByIterationDTO() {}
 
     public List<String> getCallstack() {
         return callstack;

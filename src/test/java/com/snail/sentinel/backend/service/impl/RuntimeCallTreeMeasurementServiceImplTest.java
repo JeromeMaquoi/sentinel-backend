@@ -4,7 +4,7 @@ import com.snail.sentinel.backend.domain.RuntimeCallTreeMeasurementEntity;
 import com.snail.sentinel.backend.repository.RuntimeCallTreeMeasurementRepository;
 import com.snail.sentinel.backend.repository.filter.MeasurementAggregationFilter;
 import com.snail.sentinel.backend.service.dto.RuntimeCallTreeMeasurementEntityDTO;
-import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementDTO;
+import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementByIterationDTO;
 import com.snail.sentinel.backend.service.mapper.RuntimeCallTreeMeasurementEntityMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -149,11 +149,11 @@ class RuntimeCallTreeMeasurementServiceImplTest {
 
     @Test
     void aggregateByCallstackCallsRepositoryMethodTest() {
-        AggregatedRuntimeCallTreeMeasurementDTO aggregatedDTO = new AggregatedRuntimeCallTreeMeasurementDTO();
-        List<AggregatedRuntimeCallTreeMeasurementDTO> expectedResult = Collections.singletonList(aggregatedDTO);
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO aggregatedDTO = new AggregatedRuntimeCallTreeMeasurementByIterationDTO();
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> expectedResult = Collections.singletonList(aggregatedDTO);
         when(repository.aggregateByCallstack()).thenReturn(expectedResult);
 
-        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateByCallstack();
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> result = service.aggregateByCallstack();
 
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -164,11 +164,11 @@ class RuntimeCallTreeMeasurementServiceImplTest {
     @Test
     void aggregateByCallstackForCommitCallsRepositoryWithCommitShaTest() {
         String commitSha = "123abc123";
-        AggregatedRuntimeCallTreeMeasurementDTO aggregatedDTO = new AggregatedRuntimeCallTreeMeasurementDTO();
-        List<AggregatedRuntimeCallTreeMeasurementDTO> expectedResult = Collections.singletonList(aggregatedDTO);
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO aggregatedDTO = new AggregatedRuntimeCallTreeMeasurementByIterationDTO();
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> expectedResult = Collections.singletonList(aggregatedDTO);
         when(repository.aggregateByCallstackAndCommitSha(commitSha)).thenReturn(expectedResult);
 
-        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateByCallstackForCommit(commitSha);
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> result = service.aggregateByCallstackForCommit(commitSha);
 
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -179,11 +179,11 @@ class RuntimeCallTreeMeasurementServiceImplTest {
     @Test
     void aggregateByCallstackForRepositoryCallsRepositoryWithRepositoryNameTest() {
         String repoName = "commons-lang";
-        AggregatedRuntimeCallTreeMeasurementDTO aggregatedDto = new AggregatedRuntimeCallTreeMeasurementDTO();
-        List<AggregatedRuntimeCallTreeMeasurementDTO> expectedResult = Collections.singletonList(aggregatedDto);
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO aggregatedDto = new AggregatedRuntimeCallTreeMeasurementByIterationDTO();
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> expectedResult = Collections.singletonList(aggregatedDto);
         when(repository.aggregateByCallstackAndRepositoryName(repoName)).thenReturn(expectedResult);
 
-        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateByCallstackForRepository(repoName);
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> result = service.aggregateByCallstackForRepository(repoName);
 
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -194,11 +194,11 @@ class RuntimeCallTreeMeasurementServiceImplTest {
     @Test
     void aggregateByCallstackWithFilterCallsRepositoryWithFilterTest() {
         MeasurementAggregationFilter filter = MeasurementAggregationFilter.byCommitSha("def456");
-        AggregatedRuntimeCallTreeMeasurementDTO aggregatedDto = new AggregatedRuntimeCallTreeMeasurementDTO();
-        List<AggregatedRuntimeCallTreeMeasurementDTO> expectedResult = Collections.singletonList(aggregatedDto);
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO aggregatedDto = new AggregatedRuntimeCallTreeMeasurementByIterationDTO();
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> expectedResult = Collections.singletonList(aggregatedDto);
         when(repository.aggregateByCallstack(filter)).thenReturn(expectedResult);
 
-        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateByCallstack(filter);
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> result = service.aggregateByCallstack(filter);
 
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -208,12 +208,12 @@ class RuntimeCallTreeMeasurementServiceImplTest {
 
     @Test
     void aggregateByCallStackReturnsMultipleAggregationsTest() {
-        AggregatedRuntimeCallTreeMeasurementDTO aggregated1 = new AggregatedRuntimeCallTreeMeasurementDTO();
-        AggregatedRuntimeCallTreeMeasurementDTO aggregated2 = new AggregatedRuntimeCallTreeMeasurementDTO();
-        List<AggregatedRuntimeCallTreeMeasurementDTO> expectedResult = Arrays.asList(aggregated1, aggregated2);
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO aggregated1 = new AggregatedRuntimeCallTreeMeasurementByIterationDTO();
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO aggregated2 = new AggregatedRuntimeCallTreeMeasurementByIterationDTO();
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> expectedResult = Arrays.asList(aggregated1, aggregated2);
         when(repository.aggregateByCallstack()).thenReturn(expectedResult);
 
-        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateByCallstack();
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> result = service.aggregateByCallstack();
 
         assertNotNull(result);
         assertEquals(2, result.size());
@@ -224,7 +224,7 @@ class RuntimeCallTreeMeasurementServiceImplTest {
     void aggregateByCallstackReturnsEmptyListWhenNoResultsTest() {
         when(repository.aggregateByCallstack()).thenReturn(Collections.emptyList());
 
-        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateByCallstack();
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> result = service.aggregateByCallstack();
 
         assertNotNull(result);
         assertTrue(result.isEmpty());

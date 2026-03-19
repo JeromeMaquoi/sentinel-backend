@@ -2,7 +2,7 @@ package com.snail.sentinel.backend.service;
 
 import com.snail.sentinel.backend.repository.filter.MeasurementAggregationFilter;
 import com.snail.sentinel.backend.service.dto.RuntimeCallTreeMeasurementEntityDTO;
-import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementDTO;
+import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementByIterationDTO;
 
 import java.util.List;
 
@@ -11,26 +11,26 @@ public interface RuntimeCallTreeMeasurementService extends MeasurementService<Ru
      * Aggregates all measurements by callstack
      * @return A list of aggregated measurements
      */
-    List<AggregatedRuntimeCallTreeMeasurementDTO> aggregateByCallstack();
+    List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> aggregateByCallstack();
 
     /**
      * Aggregates measurements by callstack for a specific commit SHA
      * @param commitSha commit sha used to filter the measurements
      * @return A list of aggregated measurements for the commit
      */
-    List<AggregatedRuntimeCallTreeMeasurementDTO> aggregateByCallstackForCommit(String commitSha);
+    List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> aggregateByCallstackForCommit(String commitSha);
 
     /**
      * Aggregates measurements by callstack for a specific repository
      * @param repoName Name of the repository
      * @return A list of aggregated measurements for the repository
      */
-    List<AggregatedRuntimeCallTreeMeasurementDTO> aggregateByCallstackForRepository(String repoName);
+    List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> aggregateByCallstackForRepository(String repoName);
 
     /**
      * Aggregates measurements by callstack with flexible filtering
      * @param filter The aggregation filter criteria
      * @return A list of aggregated measurements matching the filter
      */
-    List<AggregatedRuntimeCallTreeMeasurementDTO> aggregateByCallstack(MeasurementAggregationFilter filter);
+    List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> aggregateByCallstack(MeasurementAggregationFilter filter);
 }

@@ -5,7 +5,7 @@ import com.snail.sentinel.backend.repository.RuntimeCallTreeMeasurementRepositor
 import com.snail.sentinel.backend.repository.filter.MeasurementAggregationFilter;
 import com.snail.sentinel.backend.service.RuntimeCallTreeMeasurementService;
 import com.snail.sentinel.backend.service.dto.RuntimeCallTreeMeasurementEntityDTO;
-import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementDTO;
+import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementByIterationDTO;
 import com.snail.sentinel.backend.service.mapper.RuntimeCallTreeMeasurementEntityMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,7 +88,7 @@ public class RuntimeCallTreeMeasurementServiceImpl implements RuntimeCallTreeMea
      * Aggregates all measurements by callstack
      * @return A list of aggregated measurements, where each entry represents a unique callstack and contains aggregated data for that callstack
      */
-    public List<AggregatedRuntimeCallTreeMeasurementDTO> aggregateByCallstack() {
+    public List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> aggregateByCallstack() {
         log.debug("Service request to aggregate CallTreeMeasurements by callstack");
         return repository.aggregateByCallstack();
     }
@@ -98,7 +98,7 @@ public class RuntimeCallTreeMeasurementServiceImpl implements RuntimeCallTreeMea
      * @param commitSha commit sha used to filter the measurements before aggregation. Only measurements associated with this commit sha will be included in the aggregation
      * @return A list of aggregated measurements, where each entry represents a unique callstack and contains aggregated data for that callstack and a specific commit sha
      */
-    public List<AggregatedRuntimeCallTreeMeasurementDTO> aggregateByCallstackForCommit(String commitSha) {
+    public List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> aggregateByCallstackForCommit(String commitSha) {
         log.debug("Service request to aggregate CallTreeMeasurements by callstack for commit {}", commitSha);
         return repository.aggregateByCallstackAndCommitSha(commitSha);
     }
@@ -108,12 +108,12 @@ public class RuntimeCallTreeMeasurementServiceImpl implements RuntimeCallTreeMea
      * @param repoName Name of the repository
      * @return A list of aggregated measurements
      */
-    public List<AggregatedRuntimeCallTreeMeasurementDTO> aggregateByCallstackForRepository(String repoName) {
+    public List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> aggregateByCallstackForRepository(String repoName) {
         log.debug("Service request to aggregate CallTreeMeasurements by callstack for repository {}", repoName);
         return repository.aggregateByCallstackAndRepositoryName(repoName);
     }
 
-    public List<AggregatedRuntimeCallTreeMeasurementDTO> aggregateByCallstack(MeasurementAggregationFilter filter) {
+    public List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> aggregateByCallstack(MeasurementAggregationFilter filter) {
         log.debug("Service request to aggregate CallTreeMeasurements by callstack with filter type {}", filter.getFilterType());
         return repository.aggregateByCallstack(filter);
     }

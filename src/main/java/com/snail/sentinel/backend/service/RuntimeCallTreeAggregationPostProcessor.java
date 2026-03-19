@@ -1,6 +1,6 @@
 package com.snail.sentinel.backend.service;
 
-import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementDTO;
+import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementByIterationDTO;
 import com.snail.sentinel.backend.service.dto.aggregation.IterationAggregateDTO;
 import com.snail.sentinel.backend.service.util.TimeSeriesResampler;
 import org.slf4j.Logger;
@@ -44,8 +44,8 @@ public class RuntimeCallTreeAggregationPostProcessor {
      * @throws IllegalArgumentException if gridPoints is invalid
      * @throws NullPointerException if aggregatedResults is null
      */
-    public List<AggregatedRuntimeCallTreeMeasurementDTO> processAggregations(
-            List<AggregatedRuntimeCallTreeMeasurementDTO> aggregatedResults,
+    public List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> processAggregations(
+            List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> aggregatedResults,
             int gridPoints) {
 
         Objects.requireNonNull(aggregatedResults, "aggregatedResults cannot be null");
@@ -75,8 +75,8 @@ public class RuntimeCallTreeAggregationPostProcessor {
      * @throws IllegalArgumentException if gridPoints is invalid
      * @throws NullPointerException if aggregated is null
      */
-    public AggregatedRuntimeCallTreeMeasurementDTO processAggregation(
-            AggregatedRuntimeCallTreeMeasurementDTO aggregated,
+    public AggregatedRuntimeCallTreeMeasurementByIterationDTO processAggregation(
+            AggregatedRuntimeCallTreeMeasurementByIterationDTO aggregated,
             int gridPoints) {
 
         Objects.requireNonNull(aggregated, "aggregated measurement cannot be null");
@@ -127,7 +127,7 @@ public class RuntimeCallTreeAggregationPostProcessor {
      *
      * @param aggregated The aggregated measurement to update
      */
-    private void setMetadataFields(AggregatedRuntimeCallTreeMeasurementDTO aggregated) {
+    private void setMetadataFields(AggregatedRuntimeCallTreeMeasurementByIterationDTO aggregated) {
         aggregated.setType(MEASUREMENT_TYPE);
     }
 
@@ -137,7 +137,7 @@ public class RuntimeCallTreeAggregationPostProcessor {
      * @param aggregated The aggregated measurement to validate
      * @return true if data is valid and sufficient for processing
      */
-    private boolean isValidAggregationData(AggregatedRuntimeCallTreeMeasurementDTO aggregated) {
+    private boolean isValidAggregationData(AggregatedRuntimeCallTreeMeasurementByIterationDTO aggregated) {
         List<Long> timestamps = aggregated.getTimestamps();
         List<Double> values = aggregated.getValues();
         List<?> iterations = aggregated.getIterations();
@@ -238,7 +238,7 @@ public class RuntimeCallTreeAggregationPostProcessor {
      * @param iterationKeys The iteration keys in order
      */
     private void populateResampledData(
-            AggregatedRuntimeCallTreeMeasurementDTO aggregated,
+            AggregatedRuntimeCallTreeMeasurementByIterationDTO aggregated,
             TimeSeriesResampler.ResamplingResult result,
             Set<String> iterationKeys) {
 

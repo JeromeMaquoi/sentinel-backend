@@ -2,7 +2,7 @@ package com.snail.sentinel.backend.repository.impl;
 
 import com.snail.sentinel.backend.repository.RuntimeCallTreeMeasurementRepositoryCustom;
 import com.snail.sentinel.backend.repository.filter.MeasurementAggregationFilter;
-import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementDTO;
+import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementByIterationDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -24,14 +24,14 @@ public class RuntimeCallTreeMeasurementRepositoryImpl implements RuntimeCallTree
     }
 
     @Override
-    public List<AggregatedRuntimeCallTreeMeasurementDTO> aggregateByCallstack() {
+    public List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> aggregateByCallstack() {
         log.debug("Aggregating RuntimeCallTreeMeasurements by callstack without filter");
         MeasurementAggregationFilter filter = new MeasurementAggregationFilter();
         return aggregateByCallstack(filter);
     }
 
     @Override
-    public List<AggregatedRuntimeCallTreeMeasurementDTO> aggregateByCallstack(MeasurementAggregationFilter filter) {
+    public List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> aggregateByCallstack(MeasurementAggregationFilter filter) {
         log.debug("Aggregating RuntimeCallTreeMeasurements by callstack with filter {}", filter.getFilterType());
 
         List<AggregationOperation> operations = new ArrayList<>();
@@ -48,7 +48,7 @@ public class RuntimeCallTreeMeasurementRepositoryImpl implements RuntimeCallTree
                 .cursorBatchSize(1000)
             .build());
         try {
-            AggregationResults<AggregatedRuntimeCallTreeMeasurementDTO> results = mongoTemplate.aggregate(aggregation, "joularjx_measurements", AggregatedRuntimeCallTreeMeasurementDTO.class);
+            AggregationResults<AggregatedRuntimeCallTreeMeasurementByIterationDTO> results = mongoTemplate.aggregate(aggregation, "joularjx_measurements", AggregatedRuntimeCallTreeMeasurementByIterationDTO.class);
             return results.getMappedResults();
         } catch (Exception e) {
             log.error("Error during aggregation: {}", e.getMessage(), e);
@@ -57,13 +57,13 @@ public class RuntimeCallTreeMeasurementRepositoryImpl implements RuntimeCallTree
     }
 
     @Override
-    public List<AggregatedRuntimeCallTreeMeasurementDTO> aggregateByCallstackAndCommitSha(String commitSha) {
+    public List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> aggregateByCallstackAndCommitSha(String commitSha) {
         log.debug("Aggregating RuntimeCallTreeMeasurements by callstack and commit SHA {}", commitSha);
         return aggregateByCallstack(MeasurementAggregationFilter.byCommitSha(commitSha));
     }
 
     @Override
-    public List<AggregatedRuntimeCallTreeMeasurementDTO> aggregateByCallstackAndRepositoryName(String repoName) {
+    public List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> aggregateByCallstackAndRepositoryName(String repoName) {
         log.debug("Aggregating RuntimeCallTreeMeasurements by callstack and repository name {}", repoName);
         return aggregateByCallstack(MeasurementAggregationFilter.byRepositoryName(repoName));
     }

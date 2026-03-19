@@ -4,7 +4,7 @@ import com.snail.sentinel.backend.repository.RuntimeCallTreeMeasurementRepositor
 import com.snail.sentinel.backend.service.RuntimeCallTreeAggregationPostProcessor;
 import com.snail.sentinel.backend.service.RuntimeCallTreeMeasurementService;
 import com.snail.sentinel.backend.service.dto.RuntimeCallTreeMeasurementEntityDTO;
-import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementDTO;
+import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementByIterationDTO;
 import com.snail.sentinel.backend.web.rest.errors.BadRequestAlertException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -137,9 +137,9 @@ public class RuntimeCallTreeMeasurementEntityResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and aggregated measurements in body
      */
     @GetMapping("/aggregate/commit/{commitSha}")
-    public ResponseEntity<List<AggregatedRuntimeCallTreeMeasurementDTO>> aggregateByCallstackForCommit(@PathVariable String commitSha) {
+    public ResponseEntity<List<AggregatedRuntimeCallTreeMeasurementByIterationDTO>> aggregateByCallstackForCommit(@PathVariable String commitSha) {
         log.debug("REST request to aggregate CallTreeMeasurements by callstack for commit {}", commitSha);
-        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateByCallstackForCommit(commitSha);
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> result = service.aggregateByCallstackForCommit(commitSha);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -151,9 +151,9 @@ public class RuntimeCallTreeMeasurementEntityResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and aggregated measurements in body
      */
     @GetMapping("/aggregate/repository/{repoName}")
-    public ResponseEntity<List<AggregatedRuntimeCallTreeMeasurementDTO>> aggregateByCallstackForRepository(@PathVariable String repoName) {
+    public ResponseEntity<List<AggregatedRuntimeCallTreeMeasurementByIterationDTO>> aggregateByCallstackForRepository(@PathVariable String repoName) {
         log.debug("REST request to aggregate CallTreeMeasurements by callstack for repository {}", repoName);
-        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateByCallstackForRepository(repoName);
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> result = service.aggregateByCallstackForRepository(repoName);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -164,9 +164,9 @@ public class RuntimeCallTreeMeasurementEntityResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and aggregated measurements in body
      */
     @GetMapping("/aggregate")
-    public ResponseEntity<List<AggregatedRuntimeCallTreeMeasurementDTO>> aggregateByCallstack() {
+    public ResponseEntity<List<AggregatedRuntimeCallTreeMeasurementByIterationDTO>> aggregateByCallstack() {
         log.debug("REST request to aggregate CallTreeMeasurements by callstack without filter");
-        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateByCallstack();
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> result = service.aggregateByCallstack();
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -180,14 +180,14 @@ public class RuntimeCallTreeMeasurementEntityResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and aggregated + resampled measurements
      */
     @GetMapping("/aggregate/normalized")
-    public ResponseEntity<List<AggregatedRuntimeCallTreeMeasurementDTO>> aggregateByCallstackNormalized(
+    public ResponseEntity<List<AggregatedRuntimeCallTreeMeasurementByIterationDTO>> aggregateByCallstackNormalized(
             @RequestParam(name = "gridPoints", required = false, defaultValue = "100") int gridPoints,
             @RequestParam(name = "limit", required = false, defaultValue = "100") int limit) {
         validateResponseSizeParameters(gridPoints, limit);
         log.debug("REST request to aggregate and normalize CallTreeMeasurements by callstack (gridPoints={}, limit={})", gridPoints, limit);
-        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateByCallstack();
-        List<AggregatedRuntimeCallTreeMeasurementDTO> limitedResult = result.size() > limit ? result.subList(0, limit) : result;
-        List<AggregatedRuntimeCallTreeMeasurementDTO> normalizedResult = postProcessor.processAggregations(limitedResult, gridPoints);
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> result = service.aggregateByCallstack();
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> limitedResult = result.size() > limit ? result.subList(0, limit) : result;
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> normalizedResult = postProcessor.processAggregations(limitedResult, gridPoints);
         return new ResponseEntity<>(normalizedResult, HttpStatus.OK);
     }
 
@@ -201,16 +201,16 @@ public class RuntimeCallTreeMeasurementEntityResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and aggregated + resampled measurements
      */
     @GetMapping("/aggregate/commit/{commitSha}/normalized")
-    public ResponseEntity<List<AggregatedRuntimeCallTreeMeasurementDTO>> aggregateByCallstackForCommitNormalized(
+    public ResponseEntity<List<AggregatedRuntimeCallTreeMeasurementByIterationDTO>> aggregateByCallstackForCommitNormalized(
             @PathVariable String commitSha,
             @RequestParam(name = "gridPoints", required = false, defaultValue = "100") int gridPoints,
             @RequestParam(name = "limit", required = false, defaultValue = "200") int limit) {
         validateResponseSizeParameters(gridPoints, limit);
         log.debug("REST request to aggregate and normalize CallTreeMeasurements for commit {} (gridPoints={}, limit={})", commitSha, gridPoints, limit);
-        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateByCallstackForCommit(commitSha);
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> result = service.aggregateByCallstackForCommit(commitSha);
         log.info("result 1 : {}", result.get(0));
-        List<AggregatedRuntimeCallTreeMeasurementDTO> limitedResult = result.size() > limit ? result.subList(0, limit) : result;
-        List<AggregatedRuntimeCallTreeMeasurementDTO> normalizedResult = postProcessor.processAggregations(limitedResult, gridPoints);
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> limitedResult = result.size() > limit ? result.subList(0, limit) : result;
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> normalizedResult = postProcessor.processAggregations(limitedResult, gridPoints);
         return new ResponseEntity<>(normalizedResult, HttpStatus.OK);
     }
 
@@ -224,15 +224,15 @@ public class RuntimeCallTreeMeasurementEntityResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and aggregated + resampled measurements
      */
     @GetMapping("/aggregate/repository/{repoName}/normalized")
-    public ResponseEntity<List<AggregatedRuntimeCallTreeMeasurementDTO>> aggregateByCallstackForRepositoryNormalized(
+    public ResponseEntity<List<AggregatedRuntimeCallTreeMeasurementByIterationDTO>> aggregateByCallstackForRepositoryNormalized(
             @PathVariable String repoName,
             @RequestParam(name = "gridPoints", required = false, defaultValue = "100") int gridPoints,
             @RequestParam(name = "limit", required = false, defaultValue = "200") int limit) {
         validateResponseSizeParameters(gridPoints, limit);
         log.debug("REST request to aggregate and normalize CallTreeMeasurements for repository {} (gridPoints={}, limit={})", repoName, gridPoints, limit);
-        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateByCallstackForRepository(repoName);
-        List<AggregatedRuntimeCallTreeMeasurementDTO> limitedResult = result.size() > limit ? result.subList(0, limit) : result;
-        List<AggregatedRuntimeCallTreeMeasurementDTO> normalizedResult = postProcessor.processAggregations(limitedResult, gridPoints);
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> result = service.aggregateByCallstackForRepository(repoName);
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> limitedResult = result.size() > limit ? result.subList(0, limit) : result;
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> normalizedResult = postProcessor.processAggregations(limitedResult, gridPoints);
         return new ResponseEntity<>(normalizedResult, HttpStatus.OK);
     }
 

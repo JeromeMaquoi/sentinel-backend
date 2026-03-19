@@ -3,7 +3,7 @@ package com.snail.sentinel.backend.web.rest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.snail.sentinel.backend.repository.RuntimeCallTreeMeasurementRepository;
 import com.snail.sentinel.backend.service.RuntimeCallTreeMeasurementService;
-import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementDTO;
+import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementByIterationDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,11 +34,11 @@ public class RuntimeCallTreeMeasurementEntityResourceAggregationIT {
     private RuntimeCallTreeMeasurementService service;
     @MockBean
     private RuntimeCallTreeMeasurementRepository repository;
-    private AggregatedRuntimeCallTreeMeasurementDTO sampleAggregatedDto;
+    private AggregatedRuntimeCallTreeMeasurementByIterationDTO sampleAggregatedDto;
 
     @BeforeEach
     void init() {
-        sampleAggregatedDto = new AggregatedRuntimeCallTreeMeasurementDTO();
+        sampleAggregatedDto = new AggregatedRuntimeCallTreeMeasurementByIterationDTO();
         sampleAggregatedDto.setType("runtime_calltree");
         sampleAggregatedDto.setCallstack(Arrays.asList("method1", "method2", "method3"));
         sampleAggregatedDto.setTimestamps(Arrays.asList(1000L, 2000L, 3000L));
@@ -47,7 +47,7 @@ public class RuntimeCallTreeMeasurementEntityResourceAggregationIT {
 
     @Test
     void aggregateByCalstackSuccessTest() throws Exception {
-        List<AggregatedRuntimeCallTreeMeasurementDTO> expectedResult = Collections.singletonList(sampleAggregatedDto);
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> expectedResult = Collections.singletonList(sampleAggregatedDto);
         when(service.aggregateByCallstack()).thenReturn(expectedResult);
 
         // Act & Assert
@@ -77,15 +77,15 @@ public class RuntimeCallTreeMeasurementEntityResourceAggregationIT {
 
     @Test
     void aggregateByCallstackMultipleResultsTest() throws Exception {
-        AggregatedRuntimeCallTreeMeasurementDTO aggregated1 = new AggregatedRuntimeCallTreeMeasurementDTO();
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO aggregated1 = new AggregatedRuntimeCallTreeMeasurementByIterationDTO();
         aggregated1.setType("runtime_calltree");
         aggregated1.setCallstack(Arrays.asList("method1", "method2"));
 
-        AggregatedRuntimeCallTreeMeasurementDTO aggregated2 = new AggregatedRuntimeCallTreeMeasurementDTO();
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO aggregated2 = new AggregatedRuntimeCallTreeMeasurementByIterationDTO();
         aggregated2.setType("runtime_calltree");
         aggregated2.setCallstack(Arrays.asList("method3", "method4"));
 
-        List<AggregatedRuntimeCallTreeMeasurementDTO> expectedResult = Arrays.asList(aggregated1, aggregated2);
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> expectedResult = Arrays.asList(aggregated1, aggregated2);
         when(service.aggregateByCallstack()).thenReturn(expectedResult);
 
         mockMvc.perform(get(BASE_URL + "/aggregate")
@@ -101,7 +101,7 @@ public class RuntimeCallTreeMeasurementEntityResourceAggregationIT {
     @Test
     void aggregateByCallstackForCommitSuccessTest() throws Exception {
         String commitSha = "abc123def456";
-        List<AggregatedRuntimeCallTreeMeasurementDTO> expectedResult = Collections.singletonList(sampleAggregatedDto);
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> expectedResult = Collections.singletonList(sampleAggregatedDto);
         when(service.aggregateByCallstackForCommit(commitSha)).thenReturn(expectedResult);
 
         mockMvc.perform(get(BASE_URL + "/aggregate/commit/" + commitSha)
@@ -129,7 +129,7 @@ public class RuntimeCallTreeMeasurementEntityResourceAggregationIT {
     @Test
     void aggregateByCallstackForRepositorySuccessTest() throws Exception {
         String repositoryName = "commons-lang";
-        List<AggregatedRuntimeCallTreeMeasurementDTO> expectedResult = Collections.singletonList(sampleAggregatedDto);
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> expectedResult = Collections.singletonList(sampleAggregatedDto);
         when(service.aggregateByCallstackForRepository(repositoryName)).thenReturn(expectedResult);
 
         mockMvc.perform(get(BASE_URL + "/aggregate/repository/" + repositoryName)
@@ -157,13 +157,13 @@ public class RuntimeCallTreeMeasurementEntityResourceAggregationIT {
     @Test
     void aggregateByCallstackForRepositoryMultipleResultsTest() throws Exception {
         String repositoryName = "spring-framework";
-        AggregatedRuntimeCallTreeMeasurementDTO aggregated1 = new AggregatedRuntimeCallTreeMeasurementDTO();
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO aggregated1 = new AggregatedRuntimeCallTreeMeasurementByIterationDTO();
         aggregated1.setType("runtime_calltree");
 
-        AggregatedRuntimeCallTreeMeasurementDTO aggregated2 = new AggregatedRuntimeCallTreeMeasurementDTO();
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO aggregated2 = new AggregatedRuntimeCallTreeMeasurementByIterationDTO();
         aggregated2.setType("runtime_calltree");
 
-        List<AggregatedRuntimeCallTreeMeasurementDTO> expectedResult = Arrays.asList(aggregated1, aggregated2);
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> expectedResult = Arrays.asList(aggregated1, aggregated2);
         when(service.aggregateByCallstackForRepository(repositoryName)).thenReturn(expectedResult);
 
         mockMvc.perform(get(BASE_URL + "/aggregate/repository/" + repositoryName)

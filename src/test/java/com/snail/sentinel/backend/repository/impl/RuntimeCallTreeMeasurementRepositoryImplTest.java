@@ -1,7 +1,7 @@
 package com.snail.sentinel.backend.repository.impl;
 
 import com.snail.sentinel.backend.repository.filter.MeasurementAggregationFilter;
-import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementDTO;
+import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementByIterationDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +25,7 @@ class RuntimeCallTreeMeasurementRepositoryImplTest {
     @Mock
     private MongoTemplate mongoTemplate;
     @Mock
-    private AggregationResults<AggregatedRuntimeCallTreeMeasurementDTO> aggregationResults;
+    private AggregationResults<AggregatedRuntimeCallTreeMeasurementByIterationDTO> aggregationResults;
     private RuntimeCallTreeMeasurementRepositoryImpl repository;
 
     @BeforeEach
@@ -35,11 +35,11 @@ class RuntimeCallTreeMeasurementRepositoryImplTest {
 
     @Test
     void aggregateByCallstackWithouFilterCallsMongoTemplateTest() {
-        List<AggregatedRuntimeCallTreeMeasurementDTO> expectedResults = Collections.singletonList(new AggregatedRuntimeCallTreeMeasurementDTO());
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> expectedResults = Collections.singletonList(new AggregatedRuntimeCallTreeMeasurementByIterationDTO());
         when(aggregationResults.getMappedResults()).thenReturn(expectedResults);
-        when(mongoTemplate.aggregate(any(Aggregation.class), eq("joularjx_measurements"), eq(AggregatedRuntimeCallTreeMeasurementDTO.class))).thenReturn(aggregationResults);
+        when(mongoTemplate.aggregate(any(Aggregation.class), eq("joularjx_measurements"), eq(AggregatedRuntimeCallTreeMeasurementByIterationDTO.class))).thenReturn(aggregationResults);
 
-        List<AggregatedRuntimeCallTreeMeasurementDTO> results = repository.aggregateByCallstack();
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> results = repository.aggregateByCallstack();
 
         assertNotNull(results);
         assertEquals(1, results.size());
@@ -49,11 +49,11 @@ class RuntimeCallTreeMeasurementRepositoryImplTest {
     @Test
     void aggregateByCallStackWithNoFilterCallsMongoTemplateTest() {
         MeasurementAggregationFilter filter = new MeasurementAggregationFilter();
-        List<AggregatedRuntimeCallTreeMeasurementDTO> expectedResults = Collections.singletonList(new AggregatedRuntimeCallTreeMeasurementDTO());
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> expectedResults = Collections.singletonList(new AggregatedRuntimeCallTreeMeasurementByIterationDTO());
         when(aggregationResults.getMappedResults()).thenReturn(expectedResults);
-        when(mongoTemplate.aggregate(any(Aggregation.class), eq("joularjx_measurements"), eq(AggregatedRuntimeCallTreeMeasurementDTO.class))).thenReturn(aggregationResults);
+        when(mongoTemplate.aggregate(any(Aggregation.class), eq("joularjx_measurements"), eq(AggregatedRuntimeCallTreeMeasurementByIterationDTO.class))).thenReturn(aggregationResults);
 
-        List<AggregatedRuntimeCallTreeMeasurementDTO> results =  repository.aggregateByCallstack(filter);
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> results =  repository.aggregateByCallstack(filter);
 
         assertNotNull(results);
         assertEquals(1, results.size());
@@ -64,14 +64,14 @@ class RuntimeCallTreeMeasurementRepositoryImplTest {
     void aggregateByCallstackWithCommitShaFilterCallsMongoTemplateWithFilterTest() {
         String commitSha = "123abc123";
         MeasurementAggregationFilter filter = MeasurementAggregationFilter.byCommitSha(commitSha);
-        List<AggregatedRuntimeCallTreeMeasurementDTO> expectedResults = Arrays.asList(
-            new AggregatedRuntimeCallTreeMeasurementDTO(),
-            new AggregatedRuntimeCallTreeMeasurementDTO()
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> expectedResults = Arrays.asList(
+            new AggregatedRuntimeCallTreeMeasurementByIterationDTO(),
+            new AggregatedRuntimeCallTreeMeasurementByIterationDTO()
         );
         when(aggregationResults.getMappedResults()).thenReturn(expectedResults);
-        when(mongoTemplate.aggregate(any(Aggregation.class), eq("joularjx_measurements"), eq(AggregatedRuntimeCallTreeMeasurementDTO.class))).thenReturn(aggregationResults);
+        when(mongoTemplate.aggregate(any(Aggregation.class), eq("joularjx_measurements"), eq(AggregatedRuntimeCallTreeMeasurementByIterationDTO.class))).thenReturn(aggregationResults);
 
-        List<AggregatedRuntimeCallTreeMeasurementDTO> results =  repository.aggregateByCallstack(filter);
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> results =  repository.aggregateByCallstack(filter);
 
         assertNotNull(results);
         assertEquals(2,  results.size());
@@ -82,15 +82,15 @@ class RuntimeCallTreeMeasurementRepositoryImplTest {
     void aggregateByCallstackWithRepositoryNameFilterCallsMongoTemplateWithFilterTest() {
         String repoName = "repo-name";
         MeasurementAggregationFilter filter = MeasurementAggregationFilter.byRepositoryName(repoName);
-        List<AggregatedRuntimeCallTreeMeasurementDTO> expectedResult = Collections.singletonList(
-            new AggregatedRuntimeCallTreeMeasurementDTO()
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> expectedResult = Collections.singletonList(
+            new AggregatedRuntimeCallTreeMeasurementByIterationDTO()
         );
         when(aggregationResults.getMappedResults()).thenReturn(expectedResult);
         when(mongoTemplate.aggregate(any(Aggregation.class), eq("joularjx_measurements"),
-            eq(AggregatedRuntimeCallTreeMeasurementDTO.class)))
+            eq(AggregatedRuntimeCallTreeMeasurementByIterationDTO.class)))
             .thenReturn(aggregationResults);
 
-        List<AggregatedRuntimeCallTreeMeasurementDTO> result = repository.aggregateByCallstack(filter);
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> result = repository.aggregateByCallstack(filter);
 
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -100,15 +100,15 @@ class RuntimeCallTreeMeasurementRepositoryImplTest {
     @Test
     void aggregateByCallstackAndCommitShatCallsRepositoryWithCommitShaFilterTest() {
         String commitSha = "def456";
-        List<AggregatedRuntimeCallTreeMeasurementDTO> expectedResult = Collections.singletonList(
-            new AggregatedRuntimeCallTreeMeasurementDTO()
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> expectedResult = Collections.singletonList(
+            new AggregatedRuntimeCallTreeMeasurementByIterationDTO()
         );
         when(aggregationResults.getMappedResults()).thenReturn(expectedResult);
         when(mongoTemplate.aggregate(any(Aggregation.class), eq("joularjx_measurements"),
-            eq(AggregatedRuntimeCallTreeMeasurementDTO.class)))
+            eq(AggregatedRuntimeCallTreeMeasurementByIterationDTO.class)))
             .thenReturn(aggregationResults);
 
-        List<AggregatedRuntimeCallTreeMeasurementDTO> result = repository.aggregateByCallstackAndCommitSha(commitSha);
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> result = repository.aggregateByCallstackAndCommitSha(commitSha);
 
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -118,15 +118,15 @@ class RuntimeCallTreeMeasurementRepositoryImplTest {
     @Test
     void aggregateByCallstackAndRepositoryNameCallsRepositoryWithRepositoryNameFilterTest() {
         String repoName = "spring-framework";
-        List<AggregatedRuntimeCallTreeMeasurementDTO> expectedResult = Collections.singletonList(
-            new AggregatedRuntimeCallTreeMeasurementDTO()
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> expectedResult = Collections.singletonList(
+            new AggregatedRuntimeCallTreeMeasurementByIterationDTO()
         );
         when(aggregationResults.getMappedResults()).thenReturn(expectedResult);
         when(mongoTemplate.aggregate(any(Aggregation.class), eq("joularjx_measurements"),
-            eq(AggregatedRuntimeCallTreeMeasurementDTO.class)))
+            eq(AggregatedRuntimeCallTreeMeasurementByIterationDTO.class)))
             .thenReturn(aggregationResults);
 
-        List<AggregatedRuntimeCallTreeMeasurementDTO> result = repository.aggregateByCallstackAndRepositoryName(repoName);
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> result = repository.aggregateByCallstackAndRepositoryName(repoName);
 
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -137,10 +137,10 @@ class RuntimeCallTreeMeasurementRepositoryImplTest {
     void aggregateByCallstackEmptyResultReturnsEmptyListTest() {
         when(aggregationResults.getMappedResults()).thenReturn(Collections.emptyList());
         when(mongoTemplate.aggregate(any(Aggregation.class), eq("joularjx_measurements"),
-            eq(AggregatedRuntimeCallTreeMeasurementDTO.class)))
+            eq(AggregatedRuntimeCallTreeMeasurementByIterationDTO.class)))
             .thenReturn(aggregationResults);
 
-        List<AggregatedRuntimeCallTreeMeasurementDTO> result = repository.aggregateByCallstack();
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> result = repository.aggregateByCallstack();
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
