@@ -1,7 +1,7 @@
 package com.snail.sentinel.backend.service;
 
 import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementByIterationDTO;
-import com.snail.sentinel.backend.service.dto.aggregation.IterationAggregateDTO;
+import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementDTO;
 import com.snail.sentinel.backend.service.util.TimeSeriesResampler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +44,7 @@ public class RuntimeCallTreeAggregationPostProcessor {
      * @throws IllegalArgumentException if gridPoints is invalid
      * @throws NullPointerException if aggregatedResults is null
      */
-    public List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> processAggregations(
+    public List<AggregatedRuntimeCallTreeMeasurementDTO> processAggregations(
             List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> aggregatedResults,
             int gridPoints) {
 
@@ -75,51 +75,52 @@ public class RuntimeCallTreeAggregationPostProcessor {
      * @throws IllegalArgumentException if gridPoints is invalid
      * @throws NullPointerException if aggregated is null
      */
-    public AggregatedRuntimeCallTreeMeasurementByIterationDTO processAggregation(
+    public AggregatedRuntimeCallTreeMeasurementDTO processAggregation(
             AggregatedRuntimeCallTreeMeasurementByIterationDTO aggregated,
             int gridPoints) {
 
-        Objects.requireNonNull(aggregated, "aggregated measurement cannot be null");
-        validateGridPoints(gridPoints);
-
-        setMetadataFields(aggregated);
-
-        // Validate and extract input data
-        if (!isValidAggregationData(aggregated)) {
-            log.debug("Skipping processing - insufficient or invalid data for callstack: {}",
-                    aggregated.getCallstack());
-            return aggregated;
-        }
-
-        List<Long> timestamps = aggregated.getTimestamps();
-        List<Double> values = aggregated.getValues();
-        List<?> rawIterations = aggregated.getIterations();
-
-        // Ensure consistent array lengths
-        int dataLength = getConsistentDataLength(timestamps, values, rawIterations);
-
-        if (dataLength < MINIMUM_DATA_POINTS) {
-            log.debug("Insufficient data points ({}) for resampling, skipping processing", dataLength);
-            return aggregated;
-        }
-
-        // Process time series data
-        Map<String, List<MeasurementPoint>> pointsByIteration =
-                groupMeasurementsByIteration(timestamps, values, rawIterations, dataLength);
-
-        List<TimeSeriesResampler.TimeSeries> timeSeriesList =
-                buildTimeSeriesFromGroups(pointsByIteration);
-
-        TimeSeriesResampler.ResamplingResult resamplingResult =
-                TimeSeriesResampler.resampleToFixedGrid(timeSeriesList, gridPoints);
-
-        // Populate results
-        populateResampledData(aggregated, resamplingResult, pointsByIteration.keySet());
-
-        log.debug("Successfully processed aggregation with {} iterations and {} grid points",
-                pointsByIteration.size(), gridPoints);
-
-        return aggregated;
+//        Objects.requireNonNull(aggregated, "aggregated measurement cannot be null");
+//        validateGridPoints(gridPoints);
+//
+//        setMetadataFields(aggregated);
+//
+//        // Validate and extract input data
+//        if (!isValidAggregationData(aggregated)) {
+//            log.debug("Skipping processing - insufficient or invalid data for callstack: {}",
+//                    aggregated.getCallstack());
+//            return aggregated;
+//        }
+//
+//        List<Long> timestamps = aggregated.getTimestamps();
+//        List<Double> values = aggregated.getValues();
+//        List<?> rawIterations = aggregated.getIterations();
+//
+//        // Ensure consistent array lengths
+//        int dataLength = getConsistentDataLength(timestamps, values, rawIterations);
+//
+//        if (dataLength < MINIMUM_DATA_POINTS) {
+//            log.debug("Insufficient data points ({}) for resampling, skipping processing", dataLength);
+//            return aggregated;
+//        }
+//
+//        // Process time series data
+//        Map<String, List<MeasurementPoint>> pointsByIteration =
+//                groupMeasurementsByIteration(timestamps, values, rawIterations, dataLength);
+//
+//        List<TimeSeriesResampler.TimeSeries> timeSeriesList =
+//                buildTimeSeriesFromGroups(pointsByIteration);
+//
+//        TimeSeriesResampler.ResamplingResult resamplingResult =
+//                TimeSeriesResampler.resampleToFixedGrid(timeSeriesList, gridPoints);
+//
+//        // Populate results
+//        populateResampledData(aggregated, resamplingResult, pointsByIteration.keySet());
+//
+//        log.debug("Successfully processed aggregation with {} iterations and {} grid points",
+//                pointsByIteration.size(), gridPoints);
+//
+//        return aggregated;
+        return null;
     }
 
     /**
@@ -138,13 +139,14 @@ public class RuntimeCallTreeAggregationPostProcessor {
      * @return true if data is valid and sufficient for processing
      */
     private boolean isValidAggregationData(AggregatedRuntimeCallTreeMeasurementByIterationDTO aggregated) {
-        List<Long> timestamps = aggregated.getTimestamps();
-        List<Double> values = aggregated.getValues();
-        List<?> iterations = aggregated.getIterations();
-
-        return timestamps != null && !timestamps.isEmpty() &&
-                values != null && !values.isEmpty() &&
-                iterations != null && !iterations.isEmpty();
+//        List<Long> timestamps = aggregated.getTimestamps();
+//        List<Double> values = aggregated.getValues();
+//        List<?> iterations = aggregated.getIterations();
+//
+//        return timestamps != null && !timestamps.isEmpty() &&
+//                values != null && !values.isEmpty() &&
+//                iterations != null && !iterations.isEmpty();
+        return false;
     }
 
     /**
@@ -242,23 +244,23 @@ public class RuntimeCallTreeAggregationPostProcessor {
             TimeSeriesResampler.ResamplingResult result,
             Set<String> iterationKeys) {
 
-        // Set normalized timestamps
-        aggregated.setTimestamps(result.getFixedTimestamps());
-
-        // Create per-iteration aggregates
-        List<IterationAggregateDTO> iterations = new ArrayList<>();
-        List<String> keys = new ArrayList<>(iterationKeys);
-
-        for (int i = 0; i < result.getResampledValues().size(); i++) {
-            String description = keys.get(i);
-            List<Double> resampledValues = result.getResampledValues().get(i);
-            iterations.add(new IterationAggregateDTO(description, resampledValues));
-        }
-
-        aggregated.setIterations(iterations);
-
-        // Compute and set aggregated values
-        aggregated.setValues(computeAggregatedValues(result.getResampledValues()));
+//        // Set normalized timestamps
+//        aggregated.setTimestamps(result.getFixedTimestamps());
+//
+//        // Create per-iteration aggregates
+//        List<IterationAggregateDTO> iterations = new ArrayList<>();
+//        List<String> keys = new ArrayList<>(iterationKeys);
+//
+//        for (int i = 0; i < result.getResampledValues().size(); i++) {
+//            String description = keys.get(i);
+//            List<Double> resampledValues = result.getResampledValues().get(i);
+//            iterations.add(new IterationAggregateDTO(description, resampledValues));
+//        }
+//
+//        aggregated.setIterations(iterations);
+//
+//        // Compute and set aggregated values
+//        aggregated.setValues(computeAggregatedValues(result.getResampledValues()));
     }
 
     /**

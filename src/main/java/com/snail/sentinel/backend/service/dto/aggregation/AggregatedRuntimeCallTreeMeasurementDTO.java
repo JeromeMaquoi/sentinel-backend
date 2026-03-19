@@ -1,25 +1,17 @@
 package com.snail.sentinel.backend.service.dto.aggregation;
 
-import com.snail.sentinel.backend.service.dto.RunIterationDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
 
 import java.util.List;
 
-/**
- * DTO for aggregated runtime call tree measurements grouped by callstack.
- * Contains per-iteration data with normalized and resampled time series values,
- * as well as aggregated values across all iterations on a fixed time grid.
- */
-public class AggregatedRuntimeCallTreeMeasurementByIterationDTO {
+public class AggregatedRuntimeCallTreeMeasurementDTO {
     private List<String> callstack;
-    String scope;
+    private String scope;
     private String type;
-    private RunIterationDTO iteration;
     private CommitSimpleDTO commit;
+    private List<IterationAggregateDTO> iterations;
     private List<Double> values;
     private List<Long> timestamps;
-
-    public AggregatedRuntimeCallTreeMeasurementByIterationDTO() {}
 
     public List<String> getCallstack() {
         return callstack;
@@ -27,6 +19,14 @@ public class AggregatedRuntimeCallTreeMeasurementByIterationDTO {
 
     public void setCallstack(List<String> callstack) {
         this.callstack = callstack;
+    }
+
+    public String getScope() {
+        return scope;
+    }
+
+    public void setScope(String scope) {
+        this.scope = scope;
     }
 
     public String getType() {
@@ -45,6 +45,14 @@ public class AggregatedRuntimeCallTreeMeasurementByIterationDTO {
         this.commit = commit;
     }
 
+    public List<IterationAggregateDTO> getIterations() {
+        return iterations;
+    }
+
+    public void setIterations(List<IterationAggregateDTO> iterations) {
+        this.iterations = iterations;
+    }
+
     public List<Double> getValues() {
         return values;
     }
@@ -61,30 +69,14 @@ public class AggregatedRuntimeCallTreeMeasurementByIterationDTO {
         this.timestamps = timestamps;
     }
 
-    public String getScope() {
-        return scope;
-    }
-
-    public void setScope(String scope) {
-        this.scope = scope;
-    }
-
-    public RunIterationDTO getIteration() {
-        return iteration;
-    }
-
-    public void setIteration(RunIterationDTO iteration) {
-        this.iteration = iteration;
-    }
-
     @Override
     public String toString() {
-        return "AggregatedRuntimeCallTreeMeasurementByIterationDTO{" +
+        return "AggregatedRuntimeCallTreeMeasurementDTO{" +
             "callstack=" + callstack +
             ", scope='" + scope + '\'' +
             ", type='" + type + '\'' +
-            ", iteration=" + iteration +
             ", commit=" + commit +
+            ", iterations=" + iterations +
             ", values=" + values +
             ", timestamps=" + timestamps +
             '}';
