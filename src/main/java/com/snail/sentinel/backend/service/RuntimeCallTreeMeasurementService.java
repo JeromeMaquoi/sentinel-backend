@@ -42,6 +42,13 @@ public interface RuntimeCallTreeMeasurementService extends MeasurementService<Ru
     List<AggregatedRuntimeCallTreeMeasurementDTO> aggregateAcrossIterationsByCallstack();
 
     /**
+     * Aggregates all measurements across all iterations by callstack with optional minimum iteration count filtering
+     * @param minIterations optional minimum number of iterations required (null means no minimum filter)
+     * @return A list of aggregated measurements filtered by minimum iteration count
+     */
+    List<AggregatedRuntimeCallTreeMeasurementDTO> aggregateAcrossIterationsByCallstack(Integer minIterations);
+
+    /**
      * Aggregates measurements across all iterations by callstack for a specific commit SHA
      * @param commitSha commit sha used to filter the measurements
      * @return A list of aggregated measurements for the commit, aggregated across all iterations
@@ -49,9 +56,25 @@ public interface RuntimeCallTreeMeasurementService extends MeasurementService<Ru
     List<AggregatedRuntimeCallTreeMeasurementDTO> aggregateAcrossIterationsByCallstackForCommit(String commitSha);
 
     /**
+     * Aggregates measurements across all iterations by callstack for a specific commit SHA with optional minimum iteration count filtering
+     * @param commitSha commit sha used to filter the measurements
+     * @param minIterations optional minimum number of iterations required (null means no minimum filter)
+     * @return A list of aggregated measurements filtered by minimum iteration count
+     */
+    List<AggregatedRuntimeCallTreeMeasurementDTO> aggregateAcrossIterationsByCallstackForCommit(String commitSha, Integer minIterations);
+
+    /**
      * Aggregates measurements across all iterations by callstack for a specific repository
      * @param repoName Name of the repository
      * @return A list of aggregated measurements for the repository, aggregated across all iterations
      */
     List<AggregatedRuntimeCallTreeMeasurementDTO> aggregateAcrossIterationsByCallstackForRepository(String repoName);
+
+    /**
+     * Aggregates measurements across all iterations by callstack for a specific repository with optional minimum iteration count filtering
+     * @param repoName Name of the repository
+     * @param minIterations optional minimum number of iterations required (null means no minimum filter)
+     * @return A list of aggregated measurements filtered by minimum iteration count
+     */
+    List<AggregatedRuntimeCallTreeMeasurementDTO> aggregateAcrossIterationsByCallstackForRepository(String repoName, Integer minIterations);
 }

@@ -128,6 +128,14 @@ public class RuntimeCallTreeMeasurementServiceImpl implements RuntimeCallTreeMea
     }
 
     @Override
+    public List<AggregatedRuntimeCallTreeMeasurementDTO> aggregateAcrossIterationsByCallstack(Integer minIterations) {
+        log.debug("Service request to aggregate CallTreeMeasurements across all iterations by callstack with minIterations={}", minIterations);
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> byIteration = aggregateByCallstack();
+        List<AggregatedRuntimeCallTreeMeasurementDTO> aggregated = aggregateAcrossIterations(byIteration);
+        return filterByMinIterations(aggregated, minIterations);
+    }
+
+    @Override
     public List<AggregatedRuntimeCallTreeMeasurementDTO> aggregateAcrossIterationsByCallstackForCommit(String commitSha) {
         log.debug("Service request to aggregate CallTreeMeasurements across all iterations by callstack for commit {}", commitSha);
         List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> byIteration = aggregateByCallstackForCommit(commitSha);
@@ -135,10 +143,28 @@ public class RuntimeCallTreeMeasurementServiceImpl implements RuntimeCallTreeMea
     }
 
     @Override
+    public List<AggregatedRuntimeCallTreeMeasurementDTO> aggregateAcrossIterationsByCallstackForCommit(String commitSha, Integer minIterations) {
+        log.debug("Service request to aggregate CallTreeMeasurements across all iterations by callstack for commit {} with minIterations={}",
+            commitSha, minIterations);
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> byIteration = aggregateByCallstackForCommit(commitSha);
+        List<AggregatedRuntimeCallTreeMeasurementDTO> aggregated = aggregateAcrossIterations(byIteration);
+        return filterByMinIterations(aggregated, minIterations);
+    }
+
+    @Override
     public List<AggregatedRuntimeCallTreeMeasurementDTO> aggregateAcrossIterationsByCallstackForRepository(String repoName) {
         log.debug("Service request to aggregate CallTreeMeasurements across all iterations by callstack for repository {}", repoName);
         List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> byIteration = aggregateByCallstackForRepository(repoName);
         return aggregateAcrossIterations(byIteration);
+    }
+
+    @Override
+    public List<AggregatedRuntimeCallTreeMeasurementDTO> aggregateAcrossIterationsByCallstackForRepository(String repoName, Integer minIterations) {
+        log.debug("Service request to aggregate CallTreeMeasurements across all iterations by callstack for repository {} with minIterations={}",
+            repoName, minIterations);
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> byIteration = aggregateByCallstackForRepository(repoName);
+        List<AggregatedRuntimeCallTreeMeasurementDTO> aggregated = aggregateAcrossIterations(byIteration);
+        return filterByMinIterations(aggregated, minIterations);
     }
 
     /**
@@ -204,5 +230,28 @@ public class RuntimeCallTreeMeasurementServiceImpl implements RuntimeCallTreeMea
         result.setTotalEnergy(totalEnergy);
 
         return result;
+    }
+
+    /**
+     * Filters aggregated measurements by minimum number of iterations (measurements count)
+     * @param aggregates List of aggregated measurements to filter
+     * @param minIterations Minimum number of iterations required (null means no filter)
+     * @return Filtered list of aggregates matching the minimum iteration count criteria
+     */
+    private List<AggregatedRuntimeCallTreeMeasurementDTO> filterByMinIterations(
+        List<AggregatedRuntimeCallTreeMeasurementDTO> aggregates,
+        Integer minIterations) {
+
+        // If no minimum filter is specified, return all aggregates
+        if (minIterations == null) {
+            return aggregates;
+        }
+
+        return aggregates.stream()
+            .filter(agg -> {
+                int measurementCount = agg.getMeasurements() != null ? agg.getMeasurements().size() : 0;
+                return measurementCount >= minIterations;
+            })
+            .toList();
     }
 }

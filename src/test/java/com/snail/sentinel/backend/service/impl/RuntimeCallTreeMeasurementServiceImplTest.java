@@ -443,6 +443,267 @@ class RuntimeCallTreeMeasurementServiceImplTest {
         assertEquals("test-repo", resultCommit.getRepository().getName());
     }
 
+
+    @Test
+    void aggregateAcrossIterationsByCallstackWithMinIterationsNullTest() {
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO measurement1 = createMeasurementByIteration("iter1", 1000L, Arrays.asList(1.0));
+        measurement1.setCallstack(Arrays.asList("method1"));
+
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO measurement2 = createMeasurementByIteration("iter2", 2000L, Arrays.asList(2.0));
+        measurement2.setCallstack(Arrays.asList("method1"));
+
+        when(repository.aggregateByCallstack()).thenReturn(Arrays.asList(measurement1, measurement2));
+
+        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateAcrossIterationsByCallstack(null);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(2, result.get(0).getMeasurements().size());
+        verify(repository).aggregateByCallstack();
+    }
+
+    @Test
+    void aggregateAcrossIterationsByCallstackWithMinIterationsOneTest() {
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO measurement1 = createMeasurementByIteration("iter1", 1000L, Arrays.asList(1.0));
+        measurement1.setCallstack(Arrays.asList("method1"));
+
+        when(repository.aggregateByCallstack()).thenReturn(Collections.singletonList(measurement1));
+
+        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateAcrossIterationsByCallstack(1);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(1, result.get(0).getMeasurements().size());
+        verify(repository).aggregateByCallstack();
+    }
+
+    @Test
+    void aggregateAcrossIterationsByCallstackWithMinIterationsTwoTest() {
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO measurement1 = createMeasurementByIteration("iter1", 1000L, Arrays.asList(1.0));
+        measurement1.setCallstack(Arrays.asList("method1"));
+
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO measurement2 = createMeasurementByIteration("iter2", 2000L, Arrays.asList(2.0));
+        measurement2.setCallstack(Arrays.asList("method1"));
+
+        when(repository.aggregateByCallstack()).thenReturn(Arrays.asList(measurement1, measurement2));
+
+        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateAcrossIterationsByCallstack(2);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(2, result.get(0).getMeasurements().size());
+        verify(repository).aggregateByCallstack();
+    }
+
+    @Test
+    void aggregateAcrossIterationsByCallstackWithMinIterationsFiltersOutTest() {
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO measurement1 = createMeasurementByIteration("iter1", 1000L, Arrays.asList(1.0));
+        measurement1.setCallstack(Arrays.asList("method1"));
+
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO measurement2 = createMeasurementByIteration("iter2", 2000L, Arrays.asList(2.0));
+        measurement2.setCallstack(Arrays.asList("method2"));
+
+        when(repository.aggregateByCallstack()).thenReturn(Arrays.asList(measurement1, measurement2));
+
+        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateAcrossIterationsByCallstack(5);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        verify(repository).aggregateByCallstack();
+    }
+
+    @Test
+    void aggregateAcrossIterationsByCallstackWithMinIterationsZeroTest() {
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO measurement = createMeasurementByIteration("iter1", 1000L, Arrays.asList(1.0));
+        measurement.setCallstack(Arrays.asList("method"));
+
+        when(repository.aggregateByCallstack()).thenReturn(Collections.singletonList(measurement));
+
+        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateAcrossIterationsByCallstack(0);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        verify(repository).aggregateByCallstack();
+    }
+
+    @Test
+    void aggregateAcrossIterationsByCallstackForCommitWithMinIterationsNullTest() {
+        String commitSha = "abc123";
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO measurement = createMeasurementByIteration("iter1", 1000L, Arrays.asList(1.0));
+        measurement.setCallstack(Arrays.asList("method"));
+
+        when(repository.aggregateByCallstackAndCommitSha(commitSha)).thenReturn(Collections.singletonList(measurement));
+
+        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateAcrossIterationsByCallstackForCommit(commitSha, null);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        verify(repository).aggregateByCallstackAndCommitSha(commitSha);
+    }
+
+    @Test
+    void aggregateAcrossIterationsByCallstackForCommitWithMinIterationsOneTest() {
+        String commitSha = "abc123";
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO measurement = createMeasurementByIteration("iter1", 1000L, Arrays.asList(0.5));
+        measurement.setCallstack(Arrays.asList("method"));
+
+        when(repository.aggregateByCallstackAndCommitSha(commitSha)).thenReturn(Collections.singletonList(measurement));
+
+        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateAcrossIterationsByCallstackForCommit(commitSha, 1);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(1, result.get(0).getMeasurements().size());
+        verify(repository).aggregateByCallstackAndCommitSha(commitSha);
+    }
+
+    @Test
+    void aggregateAcrossIterationsByCallstackForCommitWithMinIterationsThreeTest() {
+        String commitSha = "abc123";
+
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO measurement1 = createMeasurementByIteration("iter1", 1000L, Arrays.asList(1.0));
+        measurement1.setCallstack(Arrays.asList("method"));
+
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO measurement2 = createMeasurementByIteration("iter2", 2000L, Arrays.asList(2.0));
+        measurement2.setCallstack(Arrays.asList("method"));
+
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO measurement3 = createMeasurementByIteration("iter3", 3000L, Arrays.asList(3.0));
+        measurement3.setCallstack(Arrays.asList("method"));
+
+        when(repository.aggregateByCallstackAndCommitSha(commitSha)).thenReturn(Arrays.asList(measurement1, measurement2, measurement3));
+
+        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateAcrossIterationsByCallstackForCommit(commitSha, 3);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(3, result.get(0).getMeasurements().size());
+        verify(repository).aggregateByCallstackAndCommitSha(commitSha);
+    }
+
+    @Test
+    void aggregateAcrossIterationsByCallstackForCommitWithMinIterationsFiltersTest() {
+        String commitSha = "abc123";
+
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO measurement1 = createMeasurementByIteration("iter1", 1000L, Arrays.asList(1.0));
+        measurement1.setCallstack(Arrays.asList("method1"));
+
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO measurement2 = createMeasurementByIteration("iter2", 2000L, Arrays.asList(2.0));
+        measurement2.setCallstack(Arrays.asList("method1"));
+
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO measurement3 = createMeasurementByIteration("iter3", 3000L, Arrays.asList(3.0));
+        measurement3.setCallstack(Arrays.asList("method2"));
+
+        when(repository.aggregateByCallstackAndCommitSha(commitSha)).thenReturn(Arrays.asList(measurement1, measurement2, measurement3));
+
+        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateAcrossIterationsByCallstackForCommit(commitSha, 2);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(2, result.get(0).getMeasurements().size());
+        verify(repository).aggregateByCallstackAndCommitSha(commitSha);
+    }
+
+    @Test
+    void aggregateAcrossIterationsByCallstackForRepositoryWithMinIterationsNullTest() {
+        String repoName = "test-repo";
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO measurement = createMeasurementByIteration("iter1", 1000L, Arrays.asList(1.0));
+        measurement.setCallstack(Arrays.asList("method"));
+
+        when(repository.aggregateByCallstackAndRepositoryName(repoName)).thenReturn(Collections.singletonList(measurement));
+
+        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateAcrossIterationsByCallstackForRepository(repoName, null);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        verify(repository).aggregateByCallstackAndRepositoryName(repoName);
+    }
+
+    @Test
+    void aggregateAcrossIterationsByCallstackForRepositoryWithMinIterationsOneTest() {
+        String repoName = "test-repo";
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO measurement = createMeasurementByIteration("iter1", 1000L, Arrays.asList(1.5));
+        measurement.setCallstack(Arrays.asList("method"));
+
+        when(repository.aggregateByCallstackAndRepositoryName(repoName)).thenReturn(Collections.singletonList(measurement));
+
+        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateAcrossIterationsByCallstackForRepository(repoName, 1);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(1, result.get(0).getMeasurements().size());
+        assertEquals(1.5, result.get(0).getMeasurements().get(0).getTotalEnergy());
+        verify(repository).aggregateByCallstackAndRepositoryName(repoName);
+    }
+
+    @Test
+    void aggregateAcrossIterationsByCallstackForRepositoryWithMinIterationsFiveTest() {
+        String repoName = "test-repo";
+
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> measurements = new java.util.ArrayList<>();
+        for (int i = 1; i <= 5; i++) {
+            AggregatedRuntimeCallTreeMeasurementByIterationDTO measurement = createMeasurementByIteration("iter" + i, i * 1000L, Arrays.asList((double) i));
+            measurement.setCallstack(Arrays.asList("method1"));
+            measurements.add(measurement);
+        }
+
+        for (int i = 1; i <= 2; i++) {
+            AggregatedRuntimeCallTreeMeasurementByIterationDTO measurement = createMeasurementByIteration("iter" + (5 + i), (5 + i) * 1000L, Arrays.asList((double) (5 + i)));
+            measurement.setCallstack(Arrays.asList("method2"));
+            measurements.add(measurement);
+        }
+
+        when(repository.aggregateByCallstackAndRepositoryName(repoName)).thenReturn(measurements);
+
+        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateAcrossIterationsByCallstackForRepository(repoName, 5);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(5, result.get(0).getMeasurements().size());
+        verify(repository).aggregateByCallstackAndRepositoryName(repoName);
+    }
+
+    @Test
+    void aggregateAcrossIterationsByCallstackForRepositoryWithMinIterationsHighTest() {
+        String repoName = "test-repo";
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO measurement = createMeasurementByIteration("iter1", 1000L, Arrays.asList(1.0));
+        measurement.setCallstack(Arrays.asList("method"));
+
+        when(repository.aggregateByCallstackAndRepositoryName(repoName)).thenReturn(Collections.singletonList(measurement));
+
+        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateAcrossIterationsByCallstackForRepository(repoName, 10);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        verify(repository).aggregateByCallstackAndRepositoryName(repoName);
+    }
+
+    @Test
+    void aggregateAcrossIterationsByCallstackForRepositoryWithMinIterationsMultipleCallstacksTest() {
+        String repoName = "test-repo";
+
+        List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> measurements = new java.util.ArrayList<>();
+        for (int i = 1; i <= 3; i++) {
+            AggregatedRuntimeCallTreeMeasurementByIterationDTO measurement = createMeasurementByIteration("iter" + i, i * 1000L, Arrays.asList((double) i));
+            measurement.setCallstack(Arrays.asList("method1"));
+            measurements.add(measurement);
+        }
+
+        for (int i = 1; i <= 2; i++) {
+            AggregatedRuntimeCallTreeMeasurementByIterationDTO measurement = createMeasurementByIteration("iter" + (3 + i), (3 + i) * 1000L, Arrays.asList((double) (3 + i)));
+            measurement.setCallstack(Arrays.asList("method2"));
+            measurements.add(measurement);
+        }
+
+        when(repository.aggregateByCallstackAndRepositoryName(repoName)).thenReturn(measurements);
+
+        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateAcrossIterationsByCallstackForRepository(repoName, 3);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(3, result.get(0).getMeasurements().size());
+        verify(repository).aggregateByCallstackAndRepositoryName(repoName);
+    }
+
     private AggregatedRuntimeCallTreeMeasurementByIterationDTO createMeasurementByIteration(String iterationId, long timestamp, List<Double> values) {
         AggregatedRuntimeCallTreeMeasurementByIterationDTO measurement = new AggregatedRuntimeCallTreeMeasurementByIterationDTO();
 

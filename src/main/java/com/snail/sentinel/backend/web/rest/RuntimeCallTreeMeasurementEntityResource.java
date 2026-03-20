@@ -130,12 +130,16 @@ public class RuntimeCallTreeMeasurementEntityResource {
      * Aggregate measurements by callstack across all iterations for a specific commit
      *
      * @param commitSha the commit SHA to filter by
+     * @param minIterations optional minimum number of iterations (measurements count)
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and aggregated measurements in body
      */
     @GetMapping("/aggregate/commit/{commitSha}")
-    public ResponseEntity<List<AggregatedRuntimeCallTreeMeasurementDTO>> aggregateByCallstackForCommit(@PathVariable String commitSha) {
-        log.debug("REST request to aggregate CallTreeMeasurements across all iterations by callstack for commit {}", commitSha);
-        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateAcrossIterationsByCallstackForCommit(commitSha);
+    public ResponseEntity<List<AggregatedRuntimeCallTreeMeasurementDTO>> aggregateByCallstackForCommit(
+        @PathVariable String commitSha,
+        @RequestParam(required = false) Integer minIterations) {
+        log.debug("REST request to aggregate CallTreeMeasurements across all iterations by callstack for commit {} with minIterations={}",
+            commitSha, minIterations);
+        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateAcrossIterationsByCallstackForCommit(commitSha, minIterations);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -144,12 +148,16 @@ public class RuntimeCallTreeMeasurementEntityResource {
      * Aggregate measurements by callstack across all iterations for a specific repository
      *
      * @param repoName the repository name to filter by
+     * @param minIterations optional minimum number of iterations (measurements count)
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and aggregated measurements in body
      */
     @GetMapping("/aggregate/repository/{repoName}")
-    public ResponseEntity<List<AggregatedRuntimeCallTreeMeasurementDTO>> aggregateByCallstackForRepository(@PathVariable String repoName) {
-        log.debug("REST request to aggregate CallTreeMeasurements across all iterations by callstack for repository {}", repoName);
-        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateAcrossIterationsByCallstackForRepository(repoName);
+    public ResponseEntity<List<AggregatedRuntimeCallTreeMeasurementDTO>> aggregateByCallstackForRepository(
+        @PathVariable String repoName,
+        @RequestParam(required = false) Integer minIterations) {
+        log.debug("REST request to aggregate CallTreeMeasurements across all iterations by callstack for repository {} with minIterations={}",
+            repoName, minIterations);
+        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateAcrossIterationsByCallstackForRepository(repoName, minIterations);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -157,12 +165,15 @@ public class RuntimeCallTreeMeasurementEntityResource {
      * {@code GET /api/v2/measurements/runtime/calltrees/aggregate}
      * Aggregate measurements by callstack across all iterations without any filter
      *
+     * @param minIterations optional minimum number of iterations (measurements count)
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and aggregated measurements in body
      */
     @GetMapping("/aggregate")
-    public ResponseEntity<List<AggregatedRuntimeCallTreeMeasurementDTO>> aggregateByCallstack() {
-        log.debug("REST request to aggregate CallTreeMeasurements across all iterations by callstack without filter");
-        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateAcrossIterationsByCallstack();
+    public ResponseEntity<List<AggregatedRuntimeCallTreeMeasurementDTO>> aggregateByCallstack(
+        @RequestParam(required = false) Integer minIterations) {
+        log.debug("REST request to aggregate CallTreeMeasurements across all iterations by callstack without filter with minIterations={}",
+            minIterations);
+        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateAcrossIterationsByCallstack(minIterations);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }
