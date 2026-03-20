@@ -4,6 +4,7 @@ import com.snail.sentinel.backend.repository.RuntimeCallTreeMeasurementRepositor
 import com.snail.sentinel.backend.service.RuntimeCallTreeMeasurementService;
 import com.snail.sentinel.backend.service.dto.RuntimeCallTreeMeasurementEntityDTO;
 import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementDTO;
+import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeWithConstructorsDTO;
 import com.snail.sentinel.backend.web.rest.errors.BadRequestAlertException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -174,6 +175,57 @@ public class RuntimeCallTreeMeasurementEntityResource {
         log.debug("REST request to aggregate CallTreeMeasurements across all iterations by callstack without filter with minIterations={}",
             minIterations);
         List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateAcrossIterationsByCallstack(minIterations);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    /**
+     * {@code GET /api/v2/measurements/runtime/calltrees/constructors}
+     * Find constructors in aggregated callstacks across all iterations without any filter
+     *
+     * @param minIterations optional minimum number of iterations (measurements count)
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and aggregated measurements with matched constructors in body
+     */
+    @GetMapping("/constructors")
+    public ResponseEntity<List<AggregatedRuntimeCallTreeWithConstructorsDTO>> findConstructorsInAggregatedCallstacks(
+        @RequestParam(required = false) Integer minIterations) {
+        log.debug("REST request to find constructors in aggregated CallTreeMeasurements with minIterations={}", minIterations);
+        List<AggregatedRuntimeCallTreeWithConstructorsDTO> result = service.findConstructorsInAggregatedCallstacks(minIterations);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    /**
+     * {@code GET /api/v2/measurements/runtime/calltrees/constructors/commit/{commitSha}}
+     * Find constructors in aggregated callstacks for a specific commit
+     *
+     * @param commitSha the commit SHA to filter by
+     * @param minIterations optional minimum number of iterations (measurements count)
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and aggregated measurements with matched constructors in body
+     */
+    @GetMapping("/constructors/commit/{commitSha}")
+    public ResponseEntity<List<AggregatedRuntimeCallTreeWithConstructorsDTO>> findConstructorsInAggregatedCallstacksForCommit(
+        @PathVariable String commitSha,
+        @RequestParam(required = false) Integer minIterations) {
+        log.debug("REST request to find constructors in aggregated CallTreeMeasurements for commit {} with minIterations={}",
+            commitSha, minIterations);
+        List<AggregatedRuntimeCallTreeWithConstructorsDTO> result = service.findConstructorsInAggregatedCallstacksForCommit(commitSha, minIterations);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    /**
+     * {@code GET /api/v2/measurements/runtime/calltrees/constructors/repository/{repositoryName}}
+     * Find constructors in aggregated callstacks for a specific repository
+     *
+     * @param repositoryName the repository name to filter by
+     * @param minIterations optional minimum number of iterations (measurements count)
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and aggregated measurements with matched constructors in body
+     */
+    @GetMapping("/constructors/repository/{repositoryName}")
+    public ResponseEntity<List<AggregatedRuntimeCallTreeWithConstructorsDTO>> findConstructorsInAggregatedCallstacksForRepository(
+        @PathVariable String repositoryName,
+        @RequestParam(required = false) Integer minIterations) {
+        log.debug("REST request to find constructors in aggregated CallTreeMeasurements for repository {} with minIterations={}",
+            repositoryName, minIterations);
+        List<AggregatedRuntimeCallTreeWithConstructorsDTO> result = service.findConstructorsInAggregatedCallstacksForRepository(repositoryName, minIterations);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

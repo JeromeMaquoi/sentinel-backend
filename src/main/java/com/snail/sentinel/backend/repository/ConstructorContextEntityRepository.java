@@ -8,4 +8,11 @@ import java.util.List;
 
 public interface ConstructorContextEntityRepository extends MongoRepository<ConstructorContextEntity, String> {
     List<ConstructorContextEntityDTO> findByFileNameAndClassNameAndMethodNameAndParameters(String fileName, String className, String methodName, List<String> parameters);
+
+    /**
+     * Find all ConstructorContextEntity documents with the given class name
+     * @param className the fully qualified class name
+     * @return list of matching constructor context entities
+     */
+    List<ConstructorContextEntity> findByClassName(String className);
 }

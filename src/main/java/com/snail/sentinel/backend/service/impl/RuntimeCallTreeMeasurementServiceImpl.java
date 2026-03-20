@@ -3,10 +3,12 @@ package com.snail.sentinel.backend.service.impl;
 import com.snail.sentinel.backend.domain.RuntimeCallTreeMeasurementEntity;
 import com.snail.sentinel.backend.repository.RuntimeCallTreeMeasurementRepository;
 import com.snail.sentinel.backend.repository.filter.MeasurementAggregationFilter;
+import com.snail.sentinel.backend.service.ConstructorCallstackMatcher;
 import com.snail.sentinel.backend.service.RuntimeCallTreeMeasurementService;
 import com.snail.sentinel.backend.service.dto.RuntimeCallTreeMeasurementEntityDTO;
 import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementByIterationDTO;
 import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementDTO;
+import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeWithConstructorsDTO;
 import com.snail.sentinel.backend.service.dto.aggregation.IterationRuntimeMeasurementsDTO;
 import com.snail.sentinel.backend.service.mapper.RuntimeCallTreeMeasurementEntityMapper;
 import org.slf4j.Logger;
@@ -21,10 +23,15 @@ public class RuntimeCallTreeMeasurementServiceImpl implements RuntimeCallTreeMea
     private static final Logger log = LoggerFactory.getLogger(RuntimeCallTreeMeasurementServiceImpl.class);
     private final RuntimeCallTreeMeasurementRepository repository;
     private final RuntimeCallTreeMeasurementEntityMapper mapper;
+    private final ConstructorCallstackMatcher constructorCallstackMatcher;
 
-    public RuntimeCallTreeMeasurementServiceImpl(RuntimeCallTreeMeasurementRepository repository, RuntimeCallTreeMeasurementEntityMapper mapper) {
+    public RuntimeCallTreeMeasurementServiceImpl(
+            RuntimeCallTreeMeasurementRepository repository,
+            RuntimeCallTreeMeasurementEntityMapper mapper,
+            ConstructorCallstackMatcher constructorCallstackMatcher) {
         this.repository = repository;
         this.mapper = mapper;
+        this.constructorCallstackMatcher = constructorCallstackMatcher;
     }
 
     @Override
@@ -86,30 +93,16 @@ public class RuntimeCallTreeMeasurementServiceImpl implements RuntimeCallTreeMea
         repository.deleteById(id);
     }
 
-    /**
-     * Aggregates all measurements by callstack
-     * @return A list of aggregated measurements, where each entry represents a unique callstack and contains aggregated data for that callstack
-     */
     public List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> aggregateByCallstack() {
         log.debug("Service request to aggregate CallTreeMeasurements by callstack");
         return repository.aggregateByCallstack();
     }
 
-    /**
-     * Aggregates measurements by callstack for a specific commit SHA
-     * @param commitSha commit sha used to filter the measurements before aggregation. Only measurements associated with this commit sha will be included in the aggregation
-     * @return A list of aggregated measurements, where each entry represents a unique callstack and contains aggregated data for that callstack and a specific commit sha
-     */
     public List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> aggregateByCallstackForCommit(String commitSha) {
         log.debug("Service request to aggregate CallTreeMeasurements by callstack for commit {}", commitSha);
         return repository.aggregateByCallstackAndCommitSha(commitSha);
     }
 
-    /**
-     * Aggregates measurements by callstack for a specific repository
-     * @param repoName Name of the repository
-     * @return A list of aggregated measurements
-     */
     public List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> aggregateByCallstackForRepository(String repoName) {
         log.debug("Service request to aggregate CallTreeMeasurements by callstack for repository {}", repoName);
         return repository.aggregateByCallstackAndRepositoryName(repoName);
@@ -167,11 +160,6 @@ public class RuntimeCallTreeMeasurementServiceImpl implements RuntimeCallTreeMea
         return filterByMinIterations(aggregated, minIterations);
     }
 
-    /**
-     * Aggregates measurements across all iterations for each callstack
-     * @param byIteration List of measurements aggregated by iteration
-     * @return List of aggregated measurements across all iterations
-     */
     private List<AggregatedRuntimeCallTreeMeasurementDTO> aggregateAcrossIterations(List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> byIteration) {
         Map<String, List<AggregatedRuntimeCallTreeMeasurementByIterationDTO>> groupedByCallstack = byIteration.stream()
             .collect(Collectors.groupingBy(m -> String.join(".", m.getCallstack())));
@@ -201,11 +189,6 @@ public class RuntimeCallTreeMeasurementServiceImpl implements RuntimeCallTreeMea
             .toList();
     }
 
-    /**
-     * Creates an IterationRuntimeMeasurementsDTO for a single iteration
-     * @param measurement The aggregated measurement by iteration
-     * @return Iteration-specific measurements
-     */
     private IterationRuntimeMeasurementsDTO createIterationMeasurement(AggregatedRuntimeCallTreeMeasurementByIterationDTO measurement) {
         IterationRuntimeMeasurementsDTO result = new IterationRuntimeMeasurementsDTO();
         result.setIteration(measurement.getIteration());
@@ -232,17 +215,10 @@ public class RuntimeCallTreeMeasurementServiceImpl implements RuntimeCallTreeMea
         return result;
     }
 
-    /**
-     * Filters aggregated measurements by minimum number of iterations (measurements count)
-     * @param aggregates List of aggregated measurements to filter
-     * @param minIterations Minimum number of iterations required (null means no filter)
-     * @return Filtered list of aggregates matching the minimum iteration count criteria
-     */
     private List<AggregatedRuntimeCallTreeMeasurementDTO> filterByMinIterations(
         List<AggregatedRuntimeCallTreeMeasurementDTO> aggregates,
         Integer minIterations) {
 
-        // If no minimum filter is specified, return all aggregates
         if (minIterations == null) {
             return aggregates;
         }
@@ -251,6 +227,40 @@ public class RuntimeCallTreeMeasurementServiceImpl implements RuntimeCallTreeMea
             .filter(agg -> {
                 int measurementCount = agg.getMeasurements() != null ? agg.getMeasurements().size() : 0;
                 return measurementCount >= minIterations;
+            })
+            .toList();
+    }
+
+    @Override
+    public List<AggregatedRuntimeCallTreeWithConstructorsDTO> findConstructorsInAggregatedCallstacks(Integer minIterations) {
+        log.debug("Service request to find constructors in aggregated CallTreeMeasurements with minIterations={}", minIterations);
+        List<AggregatedRuntimeCallTreeMeasurementDTO> aggregated = aggregateAcrossIterationsByCallstack(minIterations);
+        return enrichWithConstructors(aggregated);
+    }
+
+    @Override
+    public List<AggregatedRuntimeCallTreeWithConstructorsDTO> findConstructorsInAggregatedCallstacksForCommit(String commitSha, Integer minIterations) {
+        log.debug("Service request to find constructors in aggregated CallTreeMeasurements for commit {} with minIterations={}",
+            commitSha, minIterations);
+        List<AggregatedRuntimeCallTreeMeasurementDTO> aggregated = aggregateAcrossIterationsByCallstackForCommit(commitSha, minIterations);
+        return enrichWithConstructors(aggregated);
+    }
+
+    @Override
+    public List<AggregatedRuntimeCallTreeWithConstructorsDTO> findConstructorsInAggregatedCallstacksForRepository(String repoName, Integer minIterations) {
+        log.debug("Service request to find constructors in aggregated CallTreeMeasurements for repository {} with minIterations={}",
+            repoName, minIterations);
+        List<AggregatedRuntimeCallTreeMeasurementDTO> aggregated = aggregateAcrossIterationsByCallstackForRepository(repoName, minIterations);
+        return enrichWithConstructors(aggregated);
+    }
+
+    private List<AggregatedRuntimeCallTreeWithConstructorsDTO> enrichWithConstructors(
+            List<AggregatedRuntimeCallTreeMeasurementDTO> aggregatedMeasurements) {
+
+        return aggregatedMeasurements.stream()
+            .map(measurement -> {
+                var matchedConstructors = constructorCallstackMatcher.findMatchingConstructors(measurement);
+                return new AggregatedRuntimeCallTreeWithConstructorsDTO(measurement, matchedConstructors);
             })
             .toList();
     }
