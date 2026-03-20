@@ -41,6 +41,7 @@ public class RuntimeCallTreeMeasurementRepositoryImpl implements RuntimeCallTree
             operations.add(buildMatchOperation(filter));
         }
         operations.add(buildGroupOperation());
+        operations.add(buildProjectOperation());
 
         Aggregation aggregation = newAggregation(operations)
             .withOptions(AggregationOptions.builder()
@@ -55,6 +56,7 @@ public class RuntimeCallTreeMeasurementRepositoryImpl implements RuntimeCallTree
             throw e;
         }
     }
+
 
     @Override
     public List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> aggregateByCallstackAndCommitSha(String commitSha) {
@@ -83,13 +85,29 @@ public class RuntimeCallTreeMeasurementRepositoryImpl implements RuntimeCallTree
     }
 
     protected GroupOperation buildGroupOperation() {
-        return group("callstack")
+        Fields groupFields = Fields.from(
+            Fields.field("callstack", "$callstack"),
+            Fields.field("iteration", "$iteration")
+        );
+
+        return group(groupFields)
             .first("callstack").as("callstack")
             .first("iteration").as("iteration")
             .first("scope").as("scope")
             .first("commit").as("commit")
             .first("_class").as("type")
-            .push("value").as("runtimeValues.values")
-            .push("timestamp").as("timestamps.timestamps");
+            .push("value").as("values")
+            .push("timestamp").as("timestamps");
+    }
+
+    protected ProjectionOperation buildProjectOperation() {
+        return project()
+            .andExpression("$callstack").as("callstack")
+            .andExpression("$iteration").as("iteration")
+            .andExpression("$scope").as("scope")
+            .andExpression("$commit").as("commit")
+            .andExpression("$type").as("type")
+            .andExpression("$values").as("values")
+            .andExpression("$timestamps").as("timestamps");
     }
 }

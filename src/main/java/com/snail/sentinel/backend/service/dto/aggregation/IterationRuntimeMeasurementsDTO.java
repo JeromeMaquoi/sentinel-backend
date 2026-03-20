@@ -1,14 +1,14 @@
 package com.snail.sentinel.backend.service.dto.aggregation;
 
 import com.snail.sentinel.backend.service.dto.RunIterationDTO;
-import com.snail.sentinel.backend.service.dto.runtime.RuntimeValuesDTO;
-import com.snail.sentinel.backend.service.dto.runtime.TimestampsDTO;
+
+import java.util.List;
 
 public class IterationRuntimeMeasurementsDTO {
     private RunIterationDTO iteration;
-    private RuntimeValuesDTO runtimeValues;
+    private List<Double> runtimeValues;
     private Double totalEnergy;
-    private TimestampsDTO timestamps;
+    private List<Long> timestamps;
 
     public RunIterationDTO getIteration() {
         return iteration;
@@ -18,11 +18,11 @@ public class IterationRuntimeMeasurementsDTO {
         this.iteration = iteration;
     }
 
-    public RuntimeValuesDTO getRuntimeValues() {
+    public List<Double> getRuntimeValues() {
         return runtimeValues;
     }
 
-    public void setRuntimeValues(RuntimeValuesDTO runtimeValues) {
+    public void setRuntimeValues(List<Double> runtimeValues) {
         this.runtimeValues = runtimeValues;
     }
 
@@ -34,11 +34,11 @@ public class IterationRuntimeMeasurementsDTO {
         this.totalEnergy = totalEnergy;
     }
 
-    public TimestampsDTO getTimestamps() {
+    public List<Long> getTimestamps() {
         return timestamps;
     }
 
-    public void setTimestamps(TimestampsDTO timestamps) {
+    public void setTimestamps(List<Long> timestamps) {
         this.timestamps = timestamps;
     }
 
@@ -46,7 +46,7 @@ public class IterationRuntimeMeasurementsDTO {
     public String toString() {
         return "IterationRuntimeMeasurements{" +
             "iteration=" + iteration +
-            ", values=" + runtimeValues +
+            ", runtimeValues=" + runtimeValues +
             ", totalEnergy=" + totalEnergy +
             ", timestamps=" + timestamps +
             '}';

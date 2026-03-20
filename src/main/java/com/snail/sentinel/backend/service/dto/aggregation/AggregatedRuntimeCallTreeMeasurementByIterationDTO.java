@@ -2,8 +2,6 @@ package com.snail.sentinel.backend.service.dto.aggregation;
 
 import com.snail.sentinel.backend.service.dto.RunIterationDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
-import com.snail.sentinel.backend.service.dto.runtime.RuntimeValuesDTO;
-import com.snail.sentinel.backend.service.dto.runtime.TimestampsDTO;
 
 import java.util.List;
 
@@ -13,8 +11,8 @@ public class AggregatedRuntimeCallTreeMeasurementByIterationDTO {
     private String type;
     private RunIterationDTO iteration;
     private CommitSimpleDTO commit;
-    private RuntimeValuesDTO values;
-    private TimestampsDTO timestamps;
+    private List<Double> values;
+    private List<Long> timestamps;
 
     public List<String> getCallstack() {
         return callstack;
@@ -40,19 +38,19 @@ public class AggregatedRuntimeCallTreeMeasurementByIterationDTO {
         this.commit = commit;
     }
 
-    public RuntimeValuesDTO getValues() {
+    public List<Double> getValues() {
         return values;
     }
 
-    public void setValues(RuntimeValuesDTO values) {
+    public void setValues(List<Double> values) {
         this.values = values;
     }
 
-    public TimestampsDTO getTimestamps() {
+    public List<Long> getTimestamps() {
         return timestamps;
     }
 
-    public void setTimestamps(TimestampsDTO timestamps) {
+    public void setTimestamps(List<Long> timestamps) {
         this.timestamps = timestamps;
     }
 
@@ -85,3 +83,5 @@ public class AggregatedRuntimeCallTreeMeasurementByIterationDTO {
             '}';
     }
 }
+
+

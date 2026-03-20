@@ -8,8 +8,6 @@ import com.snail.sentinel.backend.service.dto.RuntimeCallTreeMeasurementEntityDT
 import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementByIterationDTO;
 import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementDTO;
 import com.snail.sentinel.backend.service.dto.aggregation.IterationRuntimeMeasurementsDTO;
-import com.snail.sentinel.backend.service.dto.runtime.RuntimeValuesDTO;
-import com.snail.sentinel.backend.service.dto.runtime.TimestampsDTO;
 import com.snail.sentinel.backend.service.mapper.RuntimeCallTreeMeasurementEntityMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -149,7 +147,6 @@ public class RuntimeCallTreeMeasurementServiceImpl implements RuntimeCallTreeMea
      * @return List of aggregated measurements across all iterations
      */
     private List<AggregatedRuntimeCallTreeMeasurementDTO> aggregateAcrossIterations(List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> byIteration) {
-        // Group by callstack to aggregate across iterations
         Map<String, List<AggregatedRuntimeCallTreeMeasurementByIterationDTO>> groupedByCallstack = byIteration.stream()
             .collect(Collectors.groupingBy(m -> String.join(".", m.getCallstack())));
 
@@ -159,19 +156,18 @@ public class RuntimeCallTreeMeasurementServiceImpl implements RuntimeCallTreeMea
                     return null;
                 }
 
-                // Get the first measurement to extract common properties
                 AggregatedRuntimeCallTreeMeasurementByIterationDTO firstMeasurement = measurements.get(0);
 
-                // Create the aggregated DTO
                 AggregatedRuntimeCallTreeMeasurementDTO aggregated = new AggregatedRuntimeCallTreeMeasurementDTO();
                 aggregated.setCallstack(firstMeasurement.getCallstack());
                 aggregated.setScope(firstMeasurement.getScope());
                 aggregated.setType(firstMeasurement.getType());
                 aggregated.setCommit(firstMeasurement.getCommit());
 
-                // Aggregate measurements across iterations
-                IterationRuntimeMeasurementsDTO aggregatedMeasurements = aggregateMeasurements(measurements);
-                aggregated.setMeasurements(aggregatedMeasurements);
+                List<IterationRuntimeMeasurementsDTO> iterationMeasurements = measurements.stream()
+                    .map(this::createIterationMeasurement)
+                    .toList();
+                aggregated.setMeasurements(iterationMeasurements);
 
                 return aggregated;
             })
@@ -180,39 +176,32 @@ public class RuntimeCallTreeMeasurementServiceImpl implements RuntimeCallTreeMea
     }
 
     /**
-     * Aggregates runtime measurements by combining values and timestamps from multiple iterations
-     * @param measurements List of measurements for a single callstack across multiple iterations
-     * @return Aggregated measurements
+     * Creates an IterationRuntimeMeasurementsDTO for a single iteration
+     * @param measurement The aggregated measurement by iteration
+     * @return Iteration-specific measurements
      */
-    private IterationRuntimeMeasurementsDTO aggregateMeasurements(List<AggregatedRuntimeCallTreeMeasurementByIterationDTO> measurements) {
+    private IterationRuntimeMeasurementsDTO createIterationMeasurement(AggregatedRuntimeCallTreeMeasurementByIterationDTO measurement) {
         IterationRuntimeMeasurementsDTO result = new IterationRuntimeMeasurementsDTO();
+        result.setIteration(measurement.getIteration());
 
-        // Collect all values from all iterations
-        List<Double> allValues = measurements.stream()
-            .flatMap(m -> m.getValues().getValues().stream())
-            .collect(Collectors.toList());
+        if (measurement.getValues() != null) {
+            result.setRuntimeValues(measurement.getValues());
+        } else {
+            result.setRuntimeValues(Collections.emptyList());
+        }
 
-        // Collect all timestamps from all iterations
-        List<Long> allTimestamps = measurements.stream()
-            .flatMap(m -> m.getTimestamps().getTimestamps().stream())
-            .collect(Collectors.toList());
+        if (measurement.getTimestamps() != null) {
+            result.setTimestamps(measurement.getTimestamps());
+        } else {
+            result.setTimestamps(Collections.emptyList());
+        }
 
-        // Aggregate total energy
-        Double totalEnergy = measurements.stream()
-            .flatMap(m -> m.getValues().getValues().stream())
-            .reduce(0.0, Double::sum);
-
-        // Set the aggregated values
-        RuntimeValuesDTO aggregatedValues = new RuntimeValuesDTO();
-        aggregatedValues.setValues(allValues);
-        result.setRuntimeValues(aggregatedValues);
-
-        TimestampsDTO aggregatedTimestamps = new TimestampsDTO();
-        aggregatedTimestamps.setTimestamps(allTimestamps);
-        result.setTimestamps(aggregatedTimestamps);
-
+        Double totalEnergy = 0.0;
+        if (measurement.getValues() != null && !measurement.getValues().isEmpty()) {
+            totalEnergy = measurement.getValues().stream()
+                .reduce(0.0, Double::sum);
+        }
         result.setTotalEnergy(totalEnergy);
-        // Note: iteration field is set to null since we're aggregating across all iterations
 
         return result;
     }
