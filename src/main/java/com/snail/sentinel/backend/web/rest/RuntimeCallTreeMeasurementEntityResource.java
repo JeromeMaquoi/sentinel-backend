@@ -1,8 +1,9 @@
 package com.snail.sentinel.backend.web.rest;
 
 import com.snail.sentinel.backend.repository.RuntimeCallTreeMeasurementRepository;
-import com.snail.sentinel.backend.service.MeasurementService;
+import com.snail.sentinel.backend.service.RuntimeCallTreeMeasurementService;
 import com.snail.sentinel.backend.service.dto.RuntimeCallTreeMeasurementEntityDTO;
+import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementDTO;
 import com.snail.sentinel.backend.web.rest.errors.BadRequestAlertException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,10 +26,12 @@ public class RuntimeCallTreeMeasurementEntityResource {
     private static final String ENTITY_NAME = "callTreeMeasurementEntity";
     @Value("sentinelBackendApp")
     private String applicationName;
-    private final MeasurementService<RuntimeCallTreeMeasurementEntityDTO> service;
+    private final RuntimeCallTreeMeasurementService service;
     private final RuntimeCallTreeMeasurementRepository repository;
 
-    public RuntimeCallTreeMeasurementEntityResource( MeasurementService<RuntimeCallTreeMeasurementEntityDTO> service, RuntimeCallTreeMeasurementRepository repository) {
+    public RuntimeCallTreeMeasurementEntityResource(
+            RuntimeCallTreeMeasurementService service,
+            RuntimeCallTreeMeasurementRepository repository) {
         this.service = service;
         this.repository = repository;
     }
@@ -120,5 +123,57 @@ public class RuntimeCallTreeMeasurementEntityResource {
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id))
             .build();
+    }
+
+    /**
+     * {@code GET /api/v2/measurements/runtime/calltrees/aggregate/commit/{commitSha}}
+     * Aggregate measurements by callstack across all iterations for a specific commit
+     *
+     * @param commitSha the commit SHA to filter by
+     * @param minIterations optional minimum number of iterations (measurements count)
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and aggregated measurements in body
+     */
+    @GetMapping("/aggregate/commit/{commitSha}")
+    public ResponseEntity<List<AggregatedRuntimeCallTreeMeasurementDTO>> aggregateByCallstackForCommit(
+        @PathVariable String commitSha,
+        @RequestParam(required = false) Integer minIterations) {
+        log.debug("REST request to aggregate CallTreeMeasurements across all iterations by callstack for commit {} with minIterations={}",
+            commitSha, minIterations);
+        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateAcrossIterationsByCallstackForCommit(commitSha, minIterations);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    /**
+     * {@code GET /api/v2/measurements/runtime/calltrees/aggregate/repository/{repositoryName}}
+     * Aggregate measurements by callstack across all iterations for a specific repository
+     *
+     * @param repoName the repository name to filter by
+     * @param minIterations optional minimum number of iterations (measurements count)
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and aggregated measurements in body
+     */
+    @GetMapping("/aggregate/repository/{repoName}")
+    public ResponseEntity<List<AggregatedRuntimeCallTreeMeasurementDTO>> aggregateByCallstackForRepository(
+        @PathVariable String repoName,
+        @RequestParam(required = false) Integer minIterations) {
+        log.debug("REST request to aggregate CallTreeMeasurements across all iterations by callstack for repository {} with minIterations={}",
+            repoName, minIterations);
+        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateAcrossIterationsByCallstackForRepository(repoName, minIterations);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    /**
+     * {@code GET /api/v2/measurements/runtime/calltrees/aggregate}
+     * Aggregate measurements by callstack across all iterations without any filter
+     *
+     * @param minIterations optional minimum number of iterations (measurements count)
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and aggregated measurements in body
+     */
+    @GetMapping("/aggregate")
+    public ResponseEntity<List<AggregatedRuntimeCallTreeMeasurementDTO>> aggregateByCallstack(
+        @RequestParam(required = false) Integer minIterations) {
+        log.debug("REST request to aggregate CallTreeMeasurements across all iterations by callstack without filter with minIterations={}",
+            minIterations);
+        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateAcrossIterationsByCallstack(minIterations);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }
