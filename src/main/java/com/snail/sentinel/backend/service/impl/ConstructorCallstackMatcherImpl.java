@@ -11,15 +11,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 public class ConstructorCallstackMatcherImpl implements ConstructorCallstackMatcher {
     private static final Logger log = LoggerFactory.getLogger(ConstructorCallstackMatcherImpl.class);
-
-    // Pattern to extract class name from a method reference like "org.apache.commons.lang3.CharRange.<init>"
-    private static final Pattern CLASS_METHOD_PATTERN = Pattern.compile("^(.+)\\.<init>$");
 
     private final ConstructorContextEntityRepository constructorContextEntityRepository;
 
@@ -43,9 +38,10 @@ public class ConstructorCallstackMatcherImpl implements ConstructorCallstackMatc
 
         log.debug("Finding matching constructors for callstack of size: {}", callstack.size());
 
-        List<MatchedConstructorDTO> matches = new ArrayList<>();
+        // Use a LinkedHashMap to maintain insertion order and ensure uniqueness by position + constructor ID
+        Map<String, MatchedConstructorDTO> uniqueMatches = new LinkedHashMap<>();
 
-        // Extract all constructor calls from the callstack
+        // Extract all constructor calls with their positions and class names
         Map<Integer, String> constructorCalls = extractConstructorCalls(callstack);
 
         if (constructorCalls.isEmpty()) {
@@ -53,74 +49,95 @@ public class ConstructorCallstackMatcherImpl implements ConstructorCallstackMatc
             return Collections.emptyList();
         }
 
-        // For each constructor call found in the callstack
-        for (Map.Entry<Integer, String> entry : constructorCalls.entrySet()) {
-            Integer callstackPosition = entry.getKey();
-            String constructorCallStr = entry.getValue();
-            String className = extractClassName(constructorCallStr);
-
-            if (className == null) {
-                log.debug("Could not extract class name from constructor call: {}", constructorCallStr);
-                continue;
+        // Get unique class names from constructor calls to minimize database queries
+        Set<String> classNamesToSearch = new HashSet<>();
+        for (String constructorCall : constructorCalls.values()) {
+            String className = extractClassName(constructorCall);
+            if (className != null) {
+                classNamesToSearch.add(className);
             }
+        }
 
-            // Find all ConstructorContextEntity documents with this class name
-            List<ConstructorContextEntity> candidateConstructors = constructorContextEntityRepository.findByClassName(className);
+        log.debug("Found {} unique classes in callstack constructor calls", classNamesToSearch.size());
 
-            log.debug("Found {} candidate constructors for class: {}", candidateConstructors.size(), className);
+        // For each class, query only the constructors for that class
+        for (String className : classNamesToSearch) {
+            List<ConstructorContextEntity> constructorsForClass = constructorContextEntityRepository.findByClassName(className);
 
-            // Check each candidate to see if its stacktrace matches
-            for (ConstructorContextEntity candidate : candidateConstructors) {
-                if (isStacktraceSubsequence(callstack, candidate)) {
-                    MatchedConstructorDTO matchedConstructor = new MatchedConstructorDTO();
-                    matchedConstructor.setCallstackPosition(callstackPosition);
-                    matchedConstructor.setConstructor(candidate);
-                    matches.add(matchedConstructor);
-                    log.debug("Matched constructor: {} at position {}", candidate.getClassName(), callstackPosition);
+            log.debug("Found {} candidate constructors for class: {}", constructorsForClass.size(), className);
+
+            // Check each constructor to find which positions it matches
+            for (ConstructorContextEntity candidate : constructorsForClass) {
+                if (candidate.getStacktrace() == null || candidate.getStacktrace().isEmpty()) {
+                    continue;
+                }
+
+                // Find all positions in the callstack where this constructor's stacktrace matches
+                List<Integer> matchingPositions = findMatchingPositions(callstack, candidate);
+
+                for (Integer position : matchingPositions) {
+                    String constructorId = candidate.getId();
+
+                    // Use composite key of position + constructorId to allow same constructor at different positions
+                    String uniqueKey = position + "_" + constructorId;
+                    uniqueMatches.computeIfAbsent(uniqueKey, k -> {
+                        MatchedConstructorDTO matchedConstructor = new MatchedConstructorDTO();
+                        matchedConstructor.setCallstackPosition(position);
+                        matchedConstructor.setConstructor(candidate);
+                        log.debug("Matched constructor: {} at position {}", candidate.getClassName(), position);
+                        return matchedConstructor;
+                    });
                 }
             }
         }
 
-        return matches;
+        return new ArrayList<>(uniqueMatches.values());
     }
 
-    private boolean isStacktraceSubsequence(List<String> runtimeCallstack, ConstructorContextEntity constructor) {
-        if (constructor == null || constructor.getStacktrace() == null || constructor.getStacktrace().isEmpty()) {
-            return false;
-        }
+    /**
+     * Finds all positions in the callstack where a constructor's stacktrace appears as a subsequence.
+     * Returns the positions of the <init> calls that serve as the starting point for each match.
+     */
+    private List<Integer> findMatchingPositions(List<String> callstack, ConstructorContextEntity constructor) {
+        List<Integer> matchingPositions = new ArrayList<>();
 
-        // Convert constructor's stacktrace to a list of method references
+        // Convert constructor's stacktrace to method reference signatures
         List<String> constructorStacktraceSignatures = constructor.getStacktrace().stream()
             .map(this::stackTraceElementToMethodReference)
             .toList();
 
-        // Check if constructor's stacktrace appears as a subsequence in the runtime callstack
-        return isSubsequence(runtimeCallstack, constructorStacktraceSignatures);
+        if (constructorStacktraceSignatures.isEmpty()) {
+            return matchingPositions;
+        }
+
+        // Get all <init> positions in the callstack
+        Map<Integer, String> constructorCalls = extractConstructorCalls(callstack);
+
+        // For each constructor position, check if the constructor's stacktrace appears starting from that position
+        for (Integer initPosition : constructorCalls.keySet()) {
+            // Try to match the constructor's stacktrace starting from this <init> position
+            if (isSubsequenceStartingAt(callstack, initPosition, constructorStacktraceSignatures)) {
+                matchingPositions.add(initPosition);
+            }
+        }
+
+        return matchingPositions;
     }
 
     /**
-     * Checks if subsequence appears in sequence (allowing gaps).
-     * This implements a simple subsequence matching algorithm.
-     *
-     * @param sequence The full sequence to search in
-     * @param subsequence The subsequence to find
-     * @return true if subsequence is found as a subsequence of sequence
+     * Checks if the constructor's stacktrace appears as a subsequence starting from a specific position.
      */
-    private boolean isSubsequence(List<String> sequence, List<String> subsequence) {
-        if (subsequence.isEmpty()) {
-            return true;
-        }
-        if (sequence.isEmpty()) {
+    private boolean isSubsequenceStartingAt(List<String> callstack, Integer startPosition, List<String> constructorStacktrace) {
+        if (startPosition >= callstack.size()) {
             return false;
         }
 
-        int seqIdx = 0;
+        int seqIdx = startPosition;
         int subIdx = 0;
 
-        while (seqIdx < sequence.size() && subIdx < subsequence.size()) {
-            // Normalize both strings for comparison (extract method name if it's a full reference)
-            String seqMethodName = extractMethodNameFromReference(sequence.get(seqIdx));
-            String subMethodName = extractMethodNameFromReference(subsequence.get(subIdx));
+        while (seqIdx < callstack.size() && subIdx < constructorStacktrace.size()) {
+            String seqMethodName = extractMethodNameFromReference(callstack.get(seqIdx));
+            String subMethodName = extractMethodNameFromReference(constructorStacktrace.get(subIdx));
 
             if (seqMethodName.equals(subMethodName)) {
                 subIdx++;
@@ -128,7 +145,7 @@ public class ConstructorCallstackMatcherImpl implements ConstructorCallstackMatc
             seqIdx++;
         }
 
-        return subIdx == subsequence.size();
+        return subIdx == constructorStacktrace.size();
     }
 
     /**
@@ -178,9 +195,12 @@ public class ConstructorCallstackMatcherImpl implements ConstructorCallstackMatc
      * E.g., "org.apache.commons.lang3.CharRange.<init>" -> "org.apache.commons.lang3.CharRange"
      */
     private String extractClassName(String constructorCall) {
-        Matcher matcher = CLASS_METHOD_PATTERN.matcher(constructorCall);
-        if (matcher.matches()) {
-            return matcher.group(1);
+        if (constructorCall == null) {
+            return null;
+        }
+        int lastDotIndex = constructorCall.lastIndexOf(".<init>");
+        if (lastDotIndex >= 0) {
+            return constructorCall.substring(0, lastDotIndex);
         }
         return null;
     }

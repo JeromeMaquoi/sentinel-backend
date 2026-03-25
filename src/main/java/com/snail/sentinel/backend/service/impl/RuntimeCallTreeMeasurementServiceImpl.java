@@ -269,6 +269,7 @@ public class RuntimeCallTreeMeasurementServiceImpl implements RuntimeCallTreeMea
                 result.setMatchedConstructors(matchedConstructors);
                 return result;
             })
+            .filter(result -> result.getMatchedConstructors() != null && !result.getMatchedConstructors().isEmpty())
             .toList();
     }
 }
