@@ -4,7 +4,7 @@ import com.snail.sentinel.backend.repository.filter.MeasurementAggregationFilter
 import com.snail.sentinel.backend.service.dto.RuntimeCallTreeMeasurementEntityDTO;
 import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementByIterationDTO;
 import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementDTO;
-import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeWithConstructorsDTO;
+import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeWithMatchedConstructorsDTO;
 
 import java.util.List;
 
@@ -86,7 +86,7 @@ public interface RuntimeCallTreeMeasurementService extends MeasurementService<Ru
      * @param minIterations optional minimum number of iterations required (null means no minimum filter)
      * @return A list of aggregated measurements with matched constructors filtered by minimum iteration count
      */
-    List<AggregatedRuntimeCallTreeWithConstructorsDTO> findConstructorsInAggregatedCallstacks(Integer minIterations);
+    List<AggregatedRuntimeCallTreeWithMatchedConstructorsDTO> findConstructorsInAggregatedCallstacks(Integer minIterations);
 
     /**
      * Finds constructors matching the callstacks in aggregated measurements for a specific commit.
@@ -96,7 +96,7 @@ public interface RuntimeCallTreeMeasurementService extends MeasurementService<Ru
      * @param minIterations optional minimum number of iterations required (null means no minimum filter)
      * @return A list of aggregated measurements with matched constructors for the commit
      */
-    List<AggregatedRuntimeCallTreeWithConstructorsDTO> findConstructorsInAggregatedCallstacksForCommit(String commitSha, Integer minIterations);
+    List<AggregatedRuntimeCallTreeWithMatchedConstructorsDTO> findConstructorsInAggregatedCallstacksForCommit(String commitSha, Integer minIterations);
 
     /**
      * Finds constructors matching the callstacks in aggregated measurements for a specific repository.
@@ -106,5 +106,5 @@ public interface RuntimeCallTreeMeasurementService extends MeasurementService<Ru
      * @param minIterations optional minimum number of iterations required (null means no minimum filter)
      * @return A list of aggregated measurements with matched constructors for the repository
      */
-    List<AggregatedRuntimeCallTreeWithConstructorsDTO> findConstructorsInAggregatedCallstacksForRepository(String repoName, Integer minIterations);
+    List<AggregatedRuntimeCallTreeWithMatchedConstructorsDTO> findConstructorsInAggregatedCallstacksForRepository(String repoName, Integer minIterations);
 }

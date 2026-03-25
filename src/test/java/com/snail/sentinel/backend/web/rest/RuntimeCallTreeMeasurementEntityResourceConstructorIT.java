@@ -2,9 +2,10 @@ package com.snail.sentinel.backend.web.rest;
 
 import com.snail.sentinel.backend.service.RuntimeCallTreeMeasurementService;
 import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementDTO;
-import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeWithConstructorsDTO;
+import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeWithMatchedConstructorsDTO;
 import com.snail.sentinel.backend.service.dto.aggregation.IterationRuntimeMeasurementsDTO;
 import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
+import com.snail.sentinel.backend.service.dto.MatchedConstructorDTO;
 import com.snail.sentinel.backend.domain.ConstructorContextEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,9 +14,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.*;
@@ -64,11 +64,19 @@ class RuntimeCallTreeMeasurementEntityResourceConstructorIT {
 
     @Test
     void findConstructorsInAggregatedCallstacksWithoutFilter() throws Exception {
-        Map<String, ConstructorContextEntity> matchedConstructors = new HashMap<>();
-        matchedConstructors.put("org.apache.commons.lang3.CharRange#<init>(char,char,boolean)", sampleConstructor);
+        List<MatchedConstructorDTO> matchedConstructors = new ArrayList<>();
+        MatchedConstructorDTO matched = new MatchedConstructorDTO();
+        matched.setCallstackPosition(0);
+        matched.setConstructor(sampleConstructor);
+        matchedConstructors.add(matched);
 
-        AggregatedRuntimeCallTreeWithConstructorsDTO response =
-            new AggregatedRuntimeCallTreeWithConstructorsDTO(sampleAggregatedMeasurement, matchedConstructors);
+        AggregatedRuntimeCallTreeWithMatchedConstructorsDTO response = new AggregatedRuntimeCallTreeWithMatchedConstructorsDTO();
+        response.setCallstack(sampleAggregatedMeasurement.getCallstack());
+        response.setScope(sampleAggregatedMeasurement.getScope());
+        response.setType(sampleAggregatedMeasurement.getType());
+        response.setCommit(sampleAggregatedMeasurement.getCommit());
+        response.setMeasurements(sampleAggregatedMeasurement.getMeasurements());
+        response.setMatchedConstructors(matchedConstructors);
 
         when(service.findConstructorsInAggregatedCallstacks(null))
             .thenReturn(List.of(response));
@@ -76,8 +84,8 @@ class RuntimeCallTreeMeasurementEntityResourceConstructorIT {
         mockMvc.perform(get("/api/v2/measurements/runtime/calltrees/constructors"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", hasSize(1)))
-            .andExpect(jsonPath("$[0].aggregatedMeasurement.callstack", hasSize(2)))
-            .andExpect(jsonPath("$[0].aggregatedMeasurement.scope").value("APP"))
+            .andExpect(jsonPath("$[0].callstack", hasSize(2)))
+            .andExpect(jsonPath("$[0].scope").value("APP"))
             .andExpect(jsonPath("$[0].matchedConstructors", hasSize(1)));
 
         verify(service, times(1)).findConstructorsInAggregatedCallstacks(null);
@@ -85,11 +93,19 @@ class RuntimeCallTreeMeasurementEntityResourceConstructorIT {
 
     @Test
     void findConstructorsInAggregatedCallstacksWithMinIterations() throws Exception {
-        Map<String, ConstructorContextEntity> matchedConstructors = new HashMap<>();
-        matchedConstructors.put("org.apache.commons.lang3.CharRange#<init>(char,char,boolean)", sampleConstructor);
+        List<MatchedConstructorDTO> matchedConstructors = new ArrayList<>();
+        MatchedConstructorDTO matched = new MatchedConstructorDTO();
+        matched.setCallstackPosition(0);
+        matched.setConstructor(sampleConstructor);
+        matchedConstructors.add(matched);
 
-        AggregatedRuntimeCallTreeWithConstructorsDTO response =
-            new AggregatedRuntimeCallTreeWithConstructorsDTO(sampleAggregatedMeasurement, matchedConstructors);
+        AggregatedRuntimeCallTreeWithMatchedConstructorsDTO response = new AggregatedRuntimeCallTreeWithMatchedConstructorsDTO();
+        response.setCallstack(sampleAggregatedMeasurement.getCallstack());
+        response.setScope(sampleAggregatedMeasurement.getScope());
+        response.setType(sampleAggregatedMeasurement.getType());
+        response.setCommit(sampleAggregatedMeasurement.getCommit());
+        response.setMeasurements(sampleAggregatedMeasurement.getMeasurements());
+        response.setMatchedConstructors(matchedConstructors);
 
         when(service.findConstructorsInAggregatedCallstacks(5))
             .thenReturn(List.of(response));
@@ -104,11 +120,19 @@ class RuntimeCallTreeMeasurementEntityResourceConstructorIT {
 
     @Test
     void findConstructorsInAggregatedCallstacksForCommit() throws Exception {
-        Map<String, ConstructorContextEntity> matchedConstructors = new HashMap<>();
-        matchedConstructors.put("org.apache.commons.lang3.CharRange#<init>(char,char,boolean)", sampleConstructor);
+        List<MatchedConstructorDTO> matchedConstructors = new ArrayList<>();
+        MatchedConstructorDTO matched = new MatchedConstructorDTO();
+        matched.setCallstackPosition(0);
+        matched.setConstructor(sampleConstructor);
+        matchedConstructors.add(matched);
 
-        AggregatedRuntimeCallTreeWithConstructorsDTO response =
-            new AggregatedRuntimeCallTreeWithConstructorsDTO(sampleAggregatedMeasurement, matchedConstructors);
+        AggregatedRuntimeCallTreeWithMatchedConstructorsDTO response = new AggregatedRuntimeCallTreeWithMatchedConstructorsDTO();
+        response.setCallstack(sampleAggregatedMeasurement.getCallstack());
+        response.setScope(sampleAggregatedMeasurement.getScope());
+        response.setType(sampleAggregatedMeasurement.getType());
+        response.setCommit(sampleAggregatedMeasurement.getCommit());
+        response.setMeasurements(sampleAggregatedMeasurement.getMeasurements());
+        response.setMatchedConstructors(matchedConstructors);
 
         when(service.findConstructorsInAggregatedCallstacksForCommit("abc123", null))
             .thenReturn(List.of(response));
@@ -123,11 +147,19 @@ class RuntimeCallTreeMeasurementEntityResourceConstructorIT {
 
     @Test
     void findConstructorsInAggregatedCallstacksForCommitWithMinIterations() throws Exception {
-        Map<String, ConstructorContextEntity> matchedConstructors = new HashMap<>();
-        matchedConstructors.put("org.apache.commons.lang3.CharRange#<init>(char,char,boolean)", sampleConstructor);
+        List<MatchedConstructorDTO> matchedConstructors = new ArrayList<>();
+        MatchedConstructorDTO matched = new MatchedConstructorDTO();
+        matched.setCallstackPosition(0);
+        matched.setConstructor(sampleConstructor);
+        matchedConstructors.add(matched);
 
-        AggregatedRuntimeCallTreeWithConstructorsDTO response =
-            new AggregatedRuntimeCallTreeWithConstructorsDTO(sampleAggregatedMeasurement, matchedConstructors);
+        AggregatedRuntimeCallTreeWithMatchedConstructorsDTO response = new AggregatedRuntimeCallTreeWithMatchedConstructorsDTO();
+        response.setCallstack(sampleAggregatedMeasurement.getCallstack());
+        response.setScope(sampleAggregatedMeasurement.getScope());
+        response.setType(sampleAggregatedMeasurement.getType());
+        response.setCommit(sampleAggregatedMeasurement.getCommit());
+        response.setMeasurements(sampleAggregatedMeasurement.getMeasurements());
+        response.setMatchedConstructors(matchedConstructors);
 
         when(service.findConstructorsInAggregatedCallstacksForCommit("abc123", 3))
             .thenReturn(List.of(response));
@@ -141,11 +173,19 @@ class RuntimeCallTreeMeasurementEntityResourceConstructorIT {
 
     @Test
     void findConstructorsInAggregatedCallstacksForRepository() throws Exception {
-        Map<String, ConstructorContextEntity> matchedConstructors = new HashMap<>();
-        matchedConstructors.put("org.apache.commons.lang3.CharRange#<init>(char,char,boolean)", sampleConstructor);
+        List<MatchedConstructorDTO> matchedConstructors = new ArrayList<>();
+        MatchedConstructorDTO matched = new MatchedConstructorDTO();
+        matched.setCallstackPosition(0);
+        matched.setConstructor(sampleConstructor);
+        matchedConstructors.add(matched);
 
-        AggregatedRuntimeCallTreeWithConstructorsDTO response =
-            new AggregatedRuntimeCallTreeWithConstructorsDTO(sampleAggregatedMeasurement, matchedConstructors);
+        AggregatedRuntimeCallTreeWithMatchedConstructorsDTO response = new AggregatedRuntimeCallTreeWithMatchedConstructorsDTO();
+        response.setCallstack(sampleAggregatedMeasurement.getCallstack());
+        response.setScope(sampleAggregatedMeasurement.getScope());
+        response.setType(sampleAggregatedMeasurement.getType());
+        response.setCommit(sampleAggregatedMeasurement.getCommit());
+        response.setMeasurements(sampleAggregatedMeasurement.getMeasurements());
+        response.setMatchedConstructors(matchedConstructors);
 
         when(service.findConstructorsInAggregatedCallstacksForRepository("commons-lang", null))
             .thenReturn(List.of(response));
@@ -160,11 +200,19 @@ class RuntimeCallTreeMeasurementEntityResourceConstructorIT {
 
     @Test
     void findConstructorsInAggregatedCallstacksForRepositoryWithMinIterations() throws Exception {
-        Map<String, ConstructorContextEntity> matchedConstructors = new HashMap<>();
-        matchedConstructors.put("org.apache.commons.lang3.CharRange#<init>(char,char,boolean)", sampleConstructor);
+        List<MatchedConstructorDTO> matchedConstructors = new ArrayList<>();
+        MatchedConstructorDTO matched = new MatchedConstructorDTO();
+        matched.setCallstackPosition(0);
+        matched.setConstructor(sampleConstructor);
+        matchedConstructors.add(matched);
 
-        AggregatedRuntimeCallTreeWithConstructorsDTO response =
-            new AggregatedRuntimeCallTreeWithConstructorsDTO(sampleAggregatedMeasurement, matchedConstructors);
+        AggregatedRuntimeCallTreeWithMatchedConstructorsDTO response = new AggregatedRuntimeCallTreeWithMatchedConstructorsDTO();
+        response.setCallstack(sampleAggregatedMeasurement.getCallstack());
+        response.setScope(sampleAggregatedMeasurement.getScope());
+        response.setType(sampleAggregatedMeasurement.getType());
+        response.setCommit(sampleAggregatedMeasurement.getCommit());
+        response.setMeasurements(sampleAggregatedMeasurement.getMeasurements());
+        response.setMatchedConstructors(matchedConstructors);
 
         when(service.findConstructorsInAggregatedCallstacksForRepository("commons-lang", 2))
             .thenReturn(List.of(response));
@@ -178,8 +226,13 @@ class RuntimeCallTreeMeasurementEntityResourceConstructorIT {
 
     @Test
     void findConstructorsReturnsEmptyListWhenNoConstructorsFound() throws Exception {
-        AggregatedRuntimeCallTreeWithConstructorsDTO response =
-            new AggregatedRuntimeCallTreeWithConstructorsDTO(sampleAggregatedMeasurement, Map.of());
+        AggregatedRuntimeCallTreeWithMatchedConstructorsDTO response = new AggregatedRuntimeCallTreeWithMatchedConstructorsDTO();
+        response.setCallstack(sampleAggregatedMeasurement.getCallstack());
+        response.setScope(sampleAggregatedMeasurement.getScope());
+        response.setType(sampleAggregatedMeasurement.getType());
+        response.setCommit(sampleAggregatedMeasurement.getCommit());
+        response.setMeasurements(sampleAggregatedMeasurement.getMeasurements());
+        response.setMatchedConstructors(new ArrayList<>());
 
         when(service.findConstructorsInAggregatedCallstacks(null))
             .thenReturn(List.of(response));

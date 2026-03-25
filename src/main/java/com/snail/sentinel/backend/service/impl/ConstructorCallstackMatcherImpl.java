@@ -3,6 +3,7 @@ package com.snail.sentinel.backend.service.impl;
 import com.snail.sentinel.backend.domain.ConstructorContextEntity;
 import com.snail.sentinel.backend.repository.ConstructorContextEntityRepository;
 import com.snail.sentinel.backend.service.ConstructorCallstackMatcher;
+import com.snail.sentinel.backend.service.dto.MatchedConstructorDTO;
 import com.snail.sentinel.backend.service.dto.StackTraceElementDTO;
 import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementDTO;
 import org.slf4j.Logger;
@@ -27,33 +28,35 @@ public class ConstructorCallstackMatcherImpl implements ConstructorCallstackMatc
     }
 
     @Override
-    public Map<String, ConstructorContextEntity> findMatchingConstructors(AggregatedRuntimeCallTreeMeasurementDTO aggregatedMeasurement) {
+    public List<MatchedConstructorDTO> findMatchingConstructors(AggregatedRuntimeCallTreeMeasurementDTO aggregatedMeasurement) {
         if (aggregatedMeasurement == null || aggregatedMeasurement.getCallstack() == null) {
-            return Collections.emptyMap();
+            return Collections.emptyList();
         }
         return findMatchingConstructors(aggregatedMeasurement.getCallstack());
     }
 
     @Override
-    public Map<String, ConstructorContextEntity> findMatchingConstructors(List<String> callstack) {
+    public List<MatchedConstructorDTO> findMatchingConstructors(List<String> callstack) {
         if (callstack == null || callstack.isEmpty()) {
-            return Collections.emptyMap();
+            return Collections.emptyList();
         }
 
         log.debug("Finding matching constructors for callstack of size: {}", callstack.size());
 
-        Map<String, ConstructorContextEntity> matches = new LinkedHashMap<>();
+        List<MatchedConstructorDTO> matches = new ArrayList<>();
 
         // Extract all constructor calls from the callstack
         Map<Integer, String> constructorCalls = extractConstructorCalls(callstack);
 
         if (constructorCalls.isEmpty()) {
             log.debug("No constructor calls found in callstack");
-            return Collections.emptyMap();
+            return Collections.emptyList();
         }
 
         // For each constructor call found in the callstack
-        for (String constructorCallStr : constructorCalls.values()) {
+        for (Map.Entry<Integer, String> entry : constructorCalls.entrySet()) {
+            Integer callstackPosition = entry.getKey();
+            String constructorCallStr = entry.getValue();
             String className = extractClassName(constructorCallStr);
 
             if (className == null) {
@@ -69,9 +72,11 @@ public class ConstructorCallstackMatcherImpl implements ConstructorCallstackMatc
             // Check each candidate to see if its stacktrace matches
             for (ConstructorContextEntity candidate : candidateConstructors) {
                 if (isStacktraceSubsequence(callstack, candidate)) {
-                    String key = generateKey(candidate);
-                    matches.put(key, candidate);
-                    log.debug("Matched constructor: {}", key);
+                    MatchedConstructorDTO matchedConstructor = new MatchedConstructorDTO();
+                    matchedConstructor.setCallstackPosition(callstackPosition);
+                    matchedConstructor.setConstructor(candidate);
+                    matches.add(matchedConstructor);
+                    log.debug("Matched constructor: {} at position {}", candidate.getClassName(), callstackPosition);
                 }
             }
         }
@@ -79,8 +84,7 @@ public class ConstructorCallstackMatcherImpl implements ConstructorCallstackMatc
         return matches;
     }
 
-    @Override
-    public boolean isStacktraceSubsequence(List<String> runtimeCallstack, ConstructorContextEntity constructor) {
+    private boolean isStacktraceSubsequence(List<String> runtimeCallstack, ConstructorContextEntity constructor) {
         if (constructor == null || constructor.getStacktrace() == null || constructor.getStacktrace().isEmpty()) {
             return false;
         }
@@ -179,17 +183,6 @@ public class ConstructorCallstackMatcherImpl implements ConstructorCallstackMatc
             return matcher.group(1);
         }
         return null;
-    }
-
-    /**
-     * Generates a unique key for a constructor entity.
-     */
-    private String generateKey(ConstructorContextEntity constructor) {
-        return String.format("%s#%s(%s)",
-            constructor.getClassName(),
-            constructor.getMethodName(),
-            String.join(",", constructor.getParameters() != null ? constructor.getParameters() : List.of())
-        );
     }
 }
 

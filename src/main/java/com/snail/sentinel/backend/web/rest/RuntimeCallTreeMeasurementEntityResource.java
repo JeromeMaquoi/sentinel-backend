@@ -4,7 +4,7 @@ import com.snail.sentinel.backend.repository.RuntimeCallTreeMeasurementRepositor
 import com.snail.sentinel.backend.service.RuntimeCallTreeMeasurementService;
 import com.snail.sentinel.backend.service.dto.RuntimeCallTreeMeasurementEntityDTO;
 import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementDTO;
-import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeWithConstructorsDTO;
+import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeWithMatchedConstructorsDTO;
 import com.snail.sentinel.backend.web.rest.errors.BadRequestAlertException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -186,10 +186,10 @@ public class RuntimeCallTreeMeasurementEntityResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and aggregated measurements with matched constructors in body
      */
     @GetMapping("/constructors")
-    public ResponseEntity<List<AggregatedRuntimeCallTreeWithConstructorsDTO>> findConstructorsInAggregatedCallstacks(
+    public ResponseEntity<List<AggregatedRuntimeCallTreeWithMatchedConstructorsDTO>> findConstructorsInAggregatedCallstacks(
         @RequestParam(required = false) Integer minIterations) {
         log.debug("REST request to find constructors in aggregated CallTreeMeasurements with minIterations={}", minIterations);
-        List<AggregatedRuntimeCallTreeWithConstructorsDTO> result = service.findConstructorsInAggregatedCallstacks(minIterations);
+        List<AggregatedRuntimeCallTreeWithMatchedConstructorsDTO> result = service.findConstructorsInAggregatedCallstacks(minIterations);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -202,12 +202,12 @@ public class RuntimeCallTreeMeasurementEntityResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and aggregated measurements with matched constructors in body
      */
     @GetMapping("/constructors/commit/{commitSha}")
-    public ResponseEntity<List<AggregatedRuntimeCallTreeWithConstructorsDTO>> findConstructorsInAggregatedCallstacksForCommit(
+    public ResponseEntity<List<AggregatedRuntimeCallTreeWithMatchedConstructorsDTO>> findConstructorsInAggregatedCallstacksForCommit(
         @PathVariable String commitSha,
         @RequestParam(required = false) Integer minIterations) {
         log.debug("REST request to find constructors in aggregated CallTreeMeasurements for commit {} with minIterations={}",
             commitSha, minIterations);
-        List<AggregatedRuntimeCallTreeWithConstructorsDTO> result = service.findConstructorsInAggregatedCallstacksForCommit(commitSha, minIterations);
+        List<AggregatedRuntimeCallTreeWithMatchedConstructorsDTO> result = service.findConstructorsInAggregatedCallstacksForCommit(commitSha, minIterations);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -220,12 +220,12 @@ public class RuntimeCallTreeMeasurementEntityResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and aggregated measurements with matched constructors in body
      */
     @GetMapping("/constructors/repository/{repositoryName}")
-    public ResponseEntity<List<AggregatedRuntimeCallTreeWithConstructorsDTO>> findConstructorsInAggregatedCallstacksForRepository(
+    public ResponseEntity<List<AggregatedRuntimeCallTreeWithMatchedConstructorsDTO>> findConstructorsInAggregatedCallstacksForRepository(
         @PathVariable String repositoryName,
         @RequestParam(required = false) Integer minIterations) {
         log.debug("REST request to find constructors in aggregated CallTreeMeasurements for repository {} with minIterations={}",
             repositoryName, minIterations);
-        List<AggregatedRuntimeCallTreeWithConstructorsDTO> result = service.findConstructorsInAggregatedCallstacksForRepository(repositoryName, minIterations);
+        List<AggregatedRuntimeCallTreeWithMatchedConstructorsDTO> result = service.findConstructorsInAggregatedCallstacksForRepository(repositoryName, minIterations);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

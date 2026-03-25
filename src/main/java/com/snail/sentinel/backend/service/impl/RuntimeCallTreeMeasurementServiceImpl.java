@@ -8,7 +8,7 @@ import com.snail.sentinel.backend.service.RuntimeCallTreeMeasurementService;
 import com.snail.sentinel.backend.service.dto.RuntimeCallTreeMeasurementEntityDTO;
 import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementByIterationDTO;
 import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementDTO;
-import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeWithConstructorsDTO;
+import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeWithMatchedConstructorsDTO;
 import com.snail.sentinel.backend.service.dto.aggregation.IterationRuntimeMeasurementsDTO;
 import com.snail.sentinel.backend.service.mapper.RuntimeCallTreeMeasurementEntityMapper;
 import org.slf4j.Logger;
@@ -232,14 +232,14 @@ public class RuntimeCallTreeMeasurementServiceImpl implements RuntimeCallTreeMea
     }
 
     @Override
-    public List<AggregatedRuntimeCallTreeWithConstructorsDTO> findConstructorsInAggregatedCallstacks(Integer minIterations) {
+    public List<AggregatedRuntimeCallTreeWithMatchedConstructorsDTO> findConstructorsInAggregatedCallstacks(Integer minIterations) {
         log.debug("Service request to find constructors in aggregated CallTreeMeasurements with minIterations={}", minIterations);
         List<AggregatedRuntimeCallTreeMeasurementDTO> aggregated = aggregateAcrossIterationsByCallstack(minIterations);
         return enrichWithConstructors(aggregated);
     }
 
     @Override
-    public List<AggregatedRuntimeCallTreeWithConstructorsDTO> findConstructorsInAggregatedCallstacksForCommit(String commitSha, Integer minIterations) {
+    public List<AggregatedRuntimeCallTreeWithMatchedConstructorsDTO> findConstructorsInAggregatedCallstacksForCommit(String commitSha, Integer minIterations) {
         log.debug("Service request to find constructors in aggregated CallTreeMeasurements for commit {} with minIterations={}",
             commitSha, minIterations);
         List<AggregatedRuntimeCallTreeMeasurementDTO> aggregated = aggregateAcrossIterationsByCallstackForCommit(commitSha, minIterations);
@@ -247,20 +247,27 @@ public class RuntimeCallTreeMeasurementServiceImpl implements RuntimeCallTreeMea
     }
 
     @Override
-    public List<AggregatedRuntimeCallTreeWithConstructorsDTO> findConstructorsInAggregatedCallstacksForRepository(String repoName, Integer minIterations) {
+    public List<AggregatedRuntimeCallTreeWithMatchedConstructorsDTO> findConstructorsInAggregatedCallstacksForRepository(String repoName, Integer minIterations) {
         log.debug("Service request to find constructors in aggregated CallTreeMeasurements for repository {} with minIterations={}",
             repoName, minIterations);
         List<AggregatedRuntimeCallTreeMeasurementDTO> aggregated = aggregateAcrossIterationsByCallstackForRepository(repoName, minIterations);
         return enrichWithConstructors(aggregated);
     }
 
-    private List<AggregatedRuntimeCallTreeWithConstructorsDTO> enrichWithConstructors(
+    private List<AggregatedRuntimeCallTreeWithMatchedConstructorsDTO> enrichWithConstructors(
             List<AggregatedRuntimeCallTreeMeasurementDTO> aggregatedMeasurements) {
 
         return aggregatedMeasurements.stream()
             .map(measurement -> {
                 var matchedConstructors = constructorCallstackMatcher.findMatchingConstructors(measurement);
-                return new AggregatedRuntimeCallTreeWithConstructorsDTO(measurement, matchedConstructors);
+                var result = new AggregatedRuntimeCallTreeWithMatchedConstructorsDTO();
+                result.setCallstack(measurement.getCallstack());
+                result.setScope(measurement.getScope());
+                result.setType(measurement.getType());
+                result.setCommit(measurement.getCommit());
+                result.setMeasurements(measurement.getMeasurements());
+                result.setMatchedConstructors(matchedConstructors);
+                return result;
             })
             .toList();
     }
