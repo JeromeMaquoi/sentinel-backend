@@ -57,20 +57,24 @@ public class ConstructorContextDTO {
         return snapshot;
     }
 
+    public CommitSimpleDTO getCommit() {
+        return commit;
+    }
+
     public boolean isComplete() {
-        return fileName != null && className != null && methodName != null && parameters != null && attributes != null && stacktrace != null;
+        return fileName != null && className != null && methodName != null && parameters != null && attributes != null && stacktrace != null && commit != null;
     }
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         ConstructorContextDTO that = (ConstructorContextDTO) o;
-        return Objects.equals(fileName, that.fileName) && Objects.equals(className, that.className) && Objects.equals(methodName, that.methodName) && Objects.equals(parameters, that.parameters) && Objects.equals(attributes, that.attributes) && Objects.equals(stacktrace, that.stacktrace) && Objects.equals(snapshot, that.snapshot);
+        return Objects.equals(fileName, that.fileName) && Objects.equals(className, that.className) && Objects.equals(methodName, that.methodName) && Objects.equals(parameters, that.parameters) && Objects.equals(attributes, that.attributes) && Objects.equals(stacktrace, that.stacktrace) && Objects.equals(snapshot, that.snapshot) && Objects.equals(commit, that.commit);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(fileName, className, methodName, parameters, attributes, stacktrace, snapshot);
+        return Objects.hash(fileName, className, methodName, parameters, attributes, stacktrace, snapshot, commit);
     }
 
     @Override
@@ -83,6 +87,7 @@ public class ConstructorContextDTO {
             ", attributes=" + attributes +
             ", stacktrace=" + stacktrace +
             ", snapshot='" + snapshot + '\'' +
+            ", commit=" + commit +
             '}';
     }
 }
