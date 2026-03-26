@@ -2,6 +2,7 @@ package com.snail.sentinel.backend.domain;
 
 import com.snail.sentinel.backend.service.dto.AttributeContextDTO;
 import com.snail.sentinel.backend.service.dto.StackTraceElementDTO;
+import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -38,6 +39,8 @@ public class ConstructorContextEntity implements Serializable {
     private String stacktraceHash;
     @Field("snapshot")
     private String snapshot;
+    @Field("commit")
+    private transient CommitSimpleDTO commit;
 
     public void computeStacktraceHash() {
         if (stacktrace != null) {
@@ -152,16 +155,24 @@ public class ConstructorContextEntity implements Serializable {
         this.snapshot = snapshot;
     }
 
+    public CommitSimpleDTO getCommit() {
+        return commit;
+    }
+
+    public void setCommit(CommitSimpleDTO commit) {
+        this.commit = commit;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         ConstructorContextEntity that = (ConstructorContextEntity) o;
-        return Objects.equals(id, that.id) && Objects.equals(fileName, that.fileName) && Objects.equals(className, that.className) && Objects.equals(methodName, that.methodName) && Objects.equals(parameters, that.parameters) && Objects.equals(attributes, that.attributes) && Objects.equals(stacktrace, that.stacktrace) && Objects.equals(snapshot, that.snapshot);
+        return Objects.equals(id, that.id) && Objects.equals(fileName, that.fileName) && Objects.equals(className, that.className) && Objects.equals(methodName, that.methodName) && Objects.equals(parameters, that.parameters) && Objects.equals(attributes, that.attributes) && Objects.equals(stacktrace, that.stacktrace) && Objects.equals(stacktraceHash, that.stacktraceHash) && Objects.equals(snapshot, that.snapshot) && Objects.equals(commit, that.commit);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, fileName, className, methodName, parameters, attributes, stacktrace, snapshot);
+        return Objects.hash(id, fileName, className, methodName, parameters, attributes, stacktrace, stacktraceHash, snapshot, commit);
     }
 
     @Override
@@ -174,7 +185,9 @@ public class ConstructorContextEntity implements Serializable {
             ", parameters=" + parameters +
             ", attributes=" + attributes +
             ", stacktrace=" + stacktrace +
+            ", stacktraceHash='" + stacktraceHash + '\'' +
             ", snapshot='" + snapshot + '\'' +
+            ", commit=" + commit +
             '}';
     }
 }

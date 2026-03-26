@@ -1,6 +1,8 @@
 package com.snail.sentinel.backend.service.dto;
 
 
+import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -12,10 +14,11 @@ public class ConstructorContextDTO {
     private List<AttributeContextDTO> attributes;
     private List<StackTraceElement> stacktrace;
     private String snapshot;
+    private CommitSimpleDTO commit;
 
     public ConstructorContextDTO() {}
 
-    public ConstructorContextDTO(String fileName, String className, String methodName, List<String> parameters, List<AttributeContextDTO> attributes, List<StackTraceElement> stacktrace, String snapshot) {
+    public ConstructorContextDTO(String fileName, String className, String methodName, List<String> parameters, List<AttributeContextDTO> attributes, List<StackTraceElement> stacktrace, String snapshot, CommitSimpleDTO commit) {
         this.fileName = fileName;
         this.className = className;
         this.methodName = methodName;
@@ -23,6 +26,7 @@ public class ConstructorContextDTO {
         this.attributes = attributes;
         this.stacktrace = stacktrace;
         this.snapshot = snapshot;
+        this.commit = commit;
     }
 
     public String getFileName() {

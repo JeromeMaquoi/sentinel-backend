@@ -11,6 +11,12 @@ public class RepositorySimpleDTO {
     @NotNull
     private String owner;
 
+    public RepositorySimpleDTO() {}
+
+    public RepositorySimpleDTO(String name, String owner) {
+        this.name = name;
+        this.owner = owner;
+    }
 
     public String getName() {
         return name;
