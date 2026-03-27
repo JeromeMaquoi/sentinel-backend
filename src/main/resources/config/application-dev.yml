@@ -18,7 +18,7 @@ logging:
     ROOT: INFO
     tech.jhipster: INFO
     org.hibernate.SQL: INFO
-    com.snail.sentinel.backend: INFO
+    com.snail.sentinel.backend: DEBUG
 
 spring:
   devtools:

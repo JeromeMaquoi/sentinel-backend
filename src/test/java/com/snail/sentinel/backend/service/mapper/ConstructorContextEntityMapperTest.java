@@ -3,6 +3,8 @@ package com.snail.sentinel.backend.service.mapper;
 import com.snail.sentinel.backend.domain.ConstructorContextEntity;
 import com.snail.sentinel.backend.service.dto.ConstructorContextDTO;
 import com.snail.sentinel.backend.service.dto.StackTraceElementDTO;
+import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
+import com.snail.sentinel.backend.service.dto.repository.RepositorySimpleDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
@@ -41,7 +43,9 @@ class ConstructorContextEntityMapperTest {
 
     @Test
     void shouldMapConstructorContextDtoToEntityTest() {
-        ConstructorContextDTO dto = new ConstructorContextDTO("MyClass.java", "com.example.MyClass", "myMethod", List.of("int, String"), List.of(), List.of(), "snapshot");
+        RepositorySimpleDTO repo = new RepositorySimpleDTO("my-repo", "my-owner");
+        CommitSimpleDTO commit = new CommitSimpleDTO("sha", repo);
+        ConstructorContextDTO dto = new ConstructorContextDTO("MyClass.java", "com.example.MyClass", "myMethod", List.of("int, String"), List.of(), List.of(), "snapshot", commit);
 
         ConstructorContextEntity entity = mapper.toEntity(dto);
 

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.snail.sentinel.backend.service.ConstructorContextEntityService;
 import com.snail.sentinel.backend.service.dto.ConstructorContextDTO;
 import com.snail.sentinel.backend.service.dto.ConstructorContextEntityDTO;
+import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
+import com.snail.sentinel.backend.service.dto.repository.RepositorySimpleDTO;
 import com.snail.sentinel.backend.service.exceptions.ConstructorContextNotCompleteException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,6 +42,8 @@ class ConstructorContextResourceTest {
 
     @Test
     void shouldCreateConstructorContextTest() throws Exception {
+        RepositorySimpleDTO repo = new RepositorySimpleDTO("my-repo", "my-owner");
+        CommitSimpleDTO commit = new CommitSimpleDTO("sha", repo);
         ConstructorContextDTO dto = new ConstructorContextDTO(
             "MyClass.java",
             "com.example.MyClass",
@@ -47,7 +51,8 @@ class ConstructorContextResourceTest {
             List.of("int", "String"),
             List.of(),
             List.of(new StackTraceElement("com.example.MyClass", "myMethod", "MyClass.java", 42)),
-            "snapshot"
+            "snapshot",
+            commit
         );
 
         ConstructorContextEntityDTO responseDTO = new ConstructorContextEntityDTO(
@@ -85,6 +90,8 @@ class ConstructorContextResourceTest {
 
     @Test
     void shouldCreateConstructorContextsBatchTest() throws Exception {
+        RepositorySimpleDTO repo = new RepositorySimpleDTO("my-repo", "my-owner");
+        CommitSimpleDTO commit = new CommitSimpleDTO("sha", repo);
         List<ConstructorContextDTO> dtos = List.of(
             new ConstructorContextDTO(
                 "MyClass1.java",
@@ -93,7 +100,8 @@ class ConstructorContextResourceTest {
                 List.of("int"),
                 List.of(),
                 List.of(new StackTraceElement("com.example.MyClass1", "myMethod1", "MyClass1.java", 10)),
-                "snapshot1"
+                "snapshot1",
+                commit
             ),
             new ConstructorContextDTO(
                 "MyClass2.java",
@@ -102,7 +110,8 @@ class ConstructorContextResourceTest {
                 List.of("String"),
                 List.of(),
                 List.of(new StackTraceElement("com.example.MyClass2", "myMethod2", "MyClass2.java", 20)),
-                "snapshot2"
+                "snapshot2",
+                commit
         ));
 
         mockMvc.perform(post("/api/v2/constructor-contexts/batch")

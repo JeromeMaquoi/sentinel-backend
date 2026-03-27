@@ -1,6 +1,8 @@
 package com.snail.sentinel.backend.service.dto;
 
 
+import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -12,10 +14,11 @@ public class ConstructorContextDTO {
     private List<AttributeContextDTO> attributes;
     private List<StackTraceElement> stacktrace;
     private String snapshot;
+    private CommitSimpleDTO commit;
 
     public ConstructorContextDTO() {}
 
-    public ConstructorContextDTO(String fileName, String className, String methodName, List<String> parameters, List<AttributeContextDTO> attributes, List<StackTraceElement> stacktrace, String snapshot) {
+    public ConstructorContextDTO(String fileName, String className, String methodName, List<String> parameters, List<AttributeContextDTO> attributes, List<StackTraceElement> stacktrace, String snapshot, CommitSimpleDTO commit) {
         this.fileName = fileName;
         this.className = className;
         this.methodName = methodName;
@@ -23,6 +26,7 @@ public class ConstructorContextDTO {
         this.attributes = attributes;
         this.stacktrace = stacktrace;
         this.snapshot = snapshot;
+        this.commit = commit;
     }
 
     public String getFileName() {
@@ -53,20 +57,24 @@ public class ConstructorContextDTO {
         return snapshot;
     }
 
+    public CommitSimpleDTO getCommit() {
+        return commit;
+    }
+
     public boolean isComplete() {
-        return fileName != null && className != null && methodName != null && parameters != null && attributes != null && stacktrace != null;
+        return fileName != null && className != null && methodName != null && parameters != null && attributes != null && stacktrace != null && commit != null;
     }
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         ConstructorContextDTO that = (ConstructorContextDTO) o;
-        return Objects.equals(fileName, that.fileName) && Objects.equals(className, that.className) && Objects.equals(methodName, that.methodName) && Objects.equals(parameters, that.parameters) && Objects.equals(attributes, that.attributes) && Objects.equals(stacktrace, that.stacktrace) && Objects.equals(snapshot, that.snapshot);
+        return Objects.equals(fileName, that.fileName) && Objects.equals(className, that.className) && Objects.equals(methodName, that.methodName) && Objects.equals(parameters, that.parameters) && Objects.equals(attributes, that.attributes) && Objects.equals(stacktrace, that.stacktrace) && Objects.equals(snapshot, that.snapshot) && Objects.equals(commit, that.commit);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(fileName, className, methodName, parameters, attributes, stacktrace, snapshot);
+        return Objects.hash(fileName, className, methodName, parameters, attributes, stacktrace, snapshot, commit);
     }
 
     @Override
@@ -79,6 +87,7 @@ public class ConstructorContextDTO {
             ", attributes=" + attributes +
             ", stacktrace=" + stacktrace +
             ", snapshot='" + snapshot + '\'' +
+            ", commit=" + commit +
             '}';
     }
 }
