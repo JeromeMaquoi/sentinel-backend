@@ -39,15 +39,15 @@ public class ConstructorCallstackMatcherImpl implements ConstructorCallstackMatc
 
     @Override
     public List<MatchedConstructorDTO> findMatchingConstructors(List<String> callstack, String commitSha) {
-        return findMatchingConstructorsInternal(callstack, commitSha, null, false);
+        return findMatchingConstructorsInternal(callstack, commitSha, null);
     }
 
     @Override
     public List<MatchedConstructorDTO> findMatchingConstructorsByRepository(List<String> callstack, String repositoryName) {
-        return findMatchingConstructorsInternal(callstack, null, repositoryName, true);
+        return findMatchingConstructorsInternal(callstack, null, repositoryName);
     }
 
-    private List<MatchedConstructorDTO> findMatchingConstructorsInternal(List<String> callstack, String commitSha, String repositoryName, boolean isRepository) {
+    private List<MatchedConstructorDTO> findMatchingConstructorsInternal(List<String> callstack, String commitSha, String repositoryName) {
         if (callstack == null || callstack.isEmpty()) {
             return Collections.emptyList();
         }
@@ -81,7 +81,7 @@ public class ConstructorCallstackMatcherImpl implements ConstructorCallstackMatc
         for (String className : classNamesToSearch) {
             List<ConstructorContextEntity> constructorsForClass;
 
-            if (isRepository && repositoryName != null) {
+            if (repositoryName != null) {
                 constructorsForClass = constructorContextEntityRepository.findByClassNameAndCommitRepositoryName(className, repositoryName);
             } else if (commitSha != null) {
                 constructorsForClass = constructorContextEntityRepository.findByClassNameAndCommitSha(className, commitSha);
