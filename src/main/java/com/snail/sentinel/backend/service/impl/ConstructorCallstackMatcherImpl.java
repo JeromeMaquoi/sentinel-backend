@@ -27,16 +27,33 @@ public class ConstructorCallstackMatcherImpl implements ConstructorCallstackMatc
         if (aggregatedMeasurement == null || aggregatedMeasurement.getCallstack() == null) {
             return Collections.emptyList();
         }
-        return findMatchingConstructors(aggregatedMeasurement.getCallstack());
+        // Extract commit SHA if available to filter constructors by commit
+        String commitSha = aggregatedMeasurement.getCommit() != null ? aggregatedMeasurement.getCommit().getSha() : null;
+        return findMatchingConstructors(aggregatedMeasurement.getCallstack(), commitSha);
     }
 
     @Override
     public List<MatchedConstructorDTO> findMatchingConstructors(List<String> callstack) {
+        return findMatchingConstructors(callstack, null);
+    }
+
+    @Override
+    public List<MatchedConstructorDTO> findMatchingConstructors(List<String> callstack, String commitSha) {
+        return findMatchingConstructorsInternal(callstack, commitSha, null, false);
+    }
+
+    @Override
+    public List<MatchedConstructorDTO> findMatchingConstructorsByRepository(List<String> callstack, String repositoryName) {
+        return findMatchingConstructorsInternal(callstack, null, repositoryName, true);
+    }
+
+    private List<MatchedConstructorDTO> findMatchingConstructorsInternal(List<String> callstack, String commitSha, String repositoryName, boolean isRepository) {
         if (callstack == null || callstack.isEmpty()) {
             return Collections.emptyList();
         }
 
-        log.debug("Finding matching constructors for callstack of size: {}", callstack.size());
+        log.debug("Finding matching constructors for callstack of size: {} (commitSha: {}, repositoryName: {})",
+            callstack.size(), commitSha, repositoryName);
 
         // Use a LinkedHashMap to maintain insertion order and ensure uniqueness by position + constructor ID
         Map<String, MatchedConstructorDTO> uniqueMatches = new LinkedHashMap<>();
@@ -60,11 +77,20 @@ public class ConstructorCallstackMatcherImpl implements ConstructorCallstackMatc
 
         log.debug("Found {} unique classes in callstack constructor calls", classNamesToSearch.size());
 
-        // For each class, query only the constructors for that class
+        // For each class, query only the constructors for that class with optional commit/repository filtering
         for (String className : classNamesToSearch) {
-            List<ConstructorContextEntity> constructorsForClass = constructorContextEntityRepository.findByClassName(className);
+            List<ConstructorContextEntity> constructorsForClass;
 
-            log.debug("Found {} candidate constructors for class: {}", constructorsForClass.size(), className);
+            if (isRepository && repositoryName != null) {
+                constructorsForClass = constructorContextEntityRepository.findByClassNameAndCommitRepositoryName(className, repositoryName);
+            } else if (commitSha != null) {
+                constructorsForClass = constructorContextEntityRepository.findByClassNameAndCommitSha(className, commitSha);
+            } else {
+                constructorsForClass = constructorContextEntityRepository.findByClassName(className);
+            }
+
+            log.debug("Found {} candidate constructors for class: {} (filtered: {})",
+                constructorsForClass.size(), className, (commitSha != null || repositoryName != null));
 
             // Check each constructor to find which positions it matches
             for (ConstructorContextEntity candidate : constructorsForClass) {

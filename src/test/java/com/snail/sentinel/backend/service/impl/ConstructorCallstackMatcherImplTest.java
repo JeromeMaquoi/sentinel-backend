@@ -58,7 +58,7 @@ class ConstructorCallstackMatcherImplTest {
             .thenReturn(List.of(constructor));
         List<MatchedConstructorDTO> result = matcher.findMatchingConstructors(callstack);
         assertThat(result).hasSize(1);
-        assertThat(result.get(0).getCallstackPosition()).isEqualTo(0);
+        assertThat(result.get(0).getCallstackPosition()).isZero();
         assertThat(result.get(0).getConstructor()).isEqualTo(constructor);
     }
 }

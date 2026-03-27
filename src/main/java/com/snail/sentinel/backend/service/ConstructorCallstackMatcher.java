@@ -32,5 +32,25 @@ public interface ConstructorCallstackMatcher {
      */
     List<MatchedConstructorDTO> findMatchingConstructors(List<String> callstack);
 
+    /**
+     * Finds ConstructorContextEntity documents that match constructor calls within the aggregated runtime callstack,
+     * filtered by a specific commit SHA.
+     *
+     * @param callstack The runtime callstack
+     * @param commitSha The commit SHA to filter constructors by (can be null to search all constructors)
+     * @return A list of MatchedConstructorDTO objects containing matched constructors and their positions in the callstack
+     */
+    List<MatchedConstructorDTO> findMatchingConstructors(List<String> callstack, String commitSha);
+
+    /**
+     * Finds ConstructorContextEntity documents that match constructor calls within the aggregated runtime callstack,
+     * filtered by a specific repository name.
+     *
+     * @param callstack The runtime callstack
+     * @param repositoryName The repository name to filter constructors by (can be null to search all constructors)
+     * @return A list of MatchedConstructorDTO objects containing matched constructors and their positions in the callstack
+     */
+    List<MatchedConstructorDTO> findMatchingConstructorsByRepository(List<String> callstack, String repositoryName);
+
 }
 
