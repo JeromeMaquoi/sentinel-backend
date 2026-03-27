@@ -121,8 +121,8 @@ public class ConstructorCallstackMatcherImpl implements ConstructorCallstackMatc
     }
 
     /**
-     * Finds all positions in the callstack where a constructor's stacktrace appears as a subsequence.
-     * Returns the positions of the <init> calls that serve as the starting point for each match.
+     * Finds all positions in the callstack where a constructor's stacktrace appears as a contiguous sequence.
+     * Returns all positions where a valid match is found (typically just one per constructor in most cases).
      */
     private List<Integer> findMatchingPositions(List<String> callstack, ConstructorContextEntity constructor) {
         List<Integer> matchingPositions = new ArrayList<>();
@@ -151,15 +151,18 @@ public class ConstructorCallstackMatcherImpl implements ConstructorCallstackMatc
     }
 
     /**
-     * Checks if the constructor's stacktrace appears as a subsequence starting from a specific position.
+     * Checks if the constructor's stacktrace appears starting from a specific position in the runtime callstack.
+     * The stacktrace must appear as a contiguous sequence of method names in the runtime callstack.
+     * This prevents false positives from loose subsequence matching where methods could match due to repeated names.
      */
     private boolean isSubsequenceStartingAt(List<String> callstack, Integer startPosition, List<String> constructorStacktrace) {
-        if (startPosition >= callstack.size()) {
+        if (startPosition >= callstack.size() || constructorStacktrace.isEmpty()) {
             return false;
         }
 
         int seqIdx = startPosition;
         int subIdx = 0;
+        int consecutiveMatches = 0;
 
         while (seqIdx < callstack.size() && subIdx < constructorStacktrace.size()) {
             String seqMethodName = extractMethodNameFromReference(callstack.get(seqIdx));
@@ -167,8 +170,14 @@ public class ConstructorCallstackMatcherImpl implements ConstructorCallstackMatc
 
             if (seqMethodName.equals(subMethodName)) {
                 subIdx++;
+                consecutiveMatches++;
+                seqIdx++;
+            } else {
+                if (consecutiveMatches > 0 && seqIdx - startPosition - consecutiveMatches >= 0) {
+                    return false;
+                }
+                seqIdx++;
             }
-            seqIdx++;
         }
 
         return subIdx == constructorStacktrace.size();
