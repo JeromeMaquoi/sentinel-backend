@@ -1,0 +1,256 @@
+package com.snail.sentinel.backend.web.rest;
+
+import com.snail.sentinel.backend.repository.RuntimeCallTreeMeasurementRepository;
+import com.snail.sentinel.backend.service.RuntimeCallTreeMeasurementService;
+import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementDTO;
+import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeWithMatchedConstructorsDTO;
+import com.snail.sentinel.backend.service.dto.aggregation.IterationRuntimeMeasurementsDTO;
+import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
+import com.snail.sentinel.backend.service.dto.MatchedConstructorDTO;
+import com.snail.sentinel.backend.domain.ConstructorContextEntity;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@WebMvcTest(controllers = RuntimeCallTreeMeasurementEntityResource.class)
+class RuntimeCallTreeMeasurementEntityResourceConstructorIT {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private RuntimeCallTreeMeasurementService service;
+
+    @MockBean
+    private RuntimeCallTreeMeasurementRepository repository;
+
+    private AggregatedRuntimeCallTreeMeasurementDTO sampleAggregatedMeasurement;
+    private ConstructorContextEntity sampleConstructor;
+
+    @BeforeEach
+    void setUp() {
+        // Setup sample aggregated measurement
+        sampleAggregatedMeasurement = new AggregatedRuntimeCallTreeMeasurementDTO();
+        sampleAggregatedMeasurement.setCallstack(List.of(
+            "org.apache.commons.lang3.CharRange.<init>",
+            "org.apache.commons.lang3.CharRange.is"
+        ));
+        sampleAggregatedMeasurement.setScope("APP");
+        sampleAggregatedMeasurement.setType("runtime_calltree");
+
+        CommitSimpleDTO commit = new CommitSimpleDTO();
+        commit.setSha("abc123");
+        sampleAggregatedMeasurement.setCommit(commit);
+
+        IterationRuntimeMeasurementsDTO measurement = new IterationRuntimeMeasurementsDTO();
+        measurement.setRuntimeValues(List.of(1.5, 2.5));
+        measurement.setTotalEnergy(4.0);
+        sampleAggregatedMeasurement.setMeasurements(List.of(measurement));
+
+        // Setup sample constructor
+        sampleConstructor = new ConstructorContextEntity();
+        sampleConstructor.setId("ctor-123");
+        sampleConstructor.setClassName("org.apache.commons.lang3.CharRange");
+        sampleConstructor.setMethodName("<init>");
+        sampleConstructor.setParameters(List.of("char", "char", "boolean"));
+    }
+
+    @Test
+    @WithMockUser
+    void findConstructorsInAggregatedCallstacksWithoutFilter() throws Exception {
+        List<MatchedConstructorDTO> matchedConstructors = new ArrayList<>();
+        MatchedConstructorDTO matched = new MatchedConstructorDTO();
+        matched.setCallstackPosition(0);
+        matched.setConstructor(sampleConstructor);
+        matchedConstructors.add(matched);
+
+        AggregatedRuntimeCallTreeWithMatchedConstructorsDTO response = new AggregatedRuntimeCallTreeWithMatchedConstructorsDTO();
+        response.setCallstack(sampleAggregatedMeasurement.getCallstack());
+        response.setScope(sampleAggregatedMeasurement.getScope());
+        response.setType(sampleAggregatedMeasurement.getType());
+        response.setCommit(sampleAggregatedMeasurement.getCommit());
+        response.setMeasurements(sampleAggregatedMeasurement.getMeasurements());
+        response.setMatchedConstructors(matchedConstructors);
+
+        when(service.findConstructorsInAggregatedCallstacks(null))
+            .thenReturn(List.of(response));
+
+        mockMvc.perform(get("/api/v2/measurements/runtime/calltrees/constructors"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(1)))
+            .andExpect(jsonPath("$[0].callstack", hasSize(2)))
+            .andExpect(jsonPath("$[0].scope").value("APP"))
+            .andExpect(jsonPath("$[0].matchedConstructors", hasSize(1)));
+
+        verify(service, times(1)).findConstructorsInAggregatedCallstacks(null);
+    }
+
+    @Test
+    @WithMockUser
+    void findConstructorsInAggregatedCallstacksWithMinIterations() throws Exception {
+        List<MatchedConstructorDTO> matchedConstructors = new ArrayList<>();
+        MatchedConstructorDTO matched = new MatchedConstructorDTO();
+        matched.setCallstackPosition(0);
+        matched.setConstructor(sampleConstructor);
+        matchedConstructors.add(matched);
+
+        AggregatedRuntimeCallTreeWithMatchedConstructorsDTO response = new AggregatedRuntimeCallTreeWithMatchedConstructorsDTO();
+        response.setCallstack(sampleAggregatedMeasurement.getCallstack());
+        response.setScope(sampleAggregatedMeasurement.getScope());
+        response.setType(sampleAggregatedMeasurement.getType());
+        response.setCommit(sampleAggregatedMeasurement.getCommit());
+        response.setMeasurements(sampleAggregatedMeasurement.getMeasurements());
+        response.setMatchedConstructors(matchedConstructors);
+
+        when(service.findConstructorsInAggregatedCallstacks(5))
+            .thenReturn(List.of(response));
+
+        mockMvc.perform(get("/api/v2/measurements/runtime/calltrees/constructors?minIterations=5"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(1)))
+            .andExpect(jsonPath("$[0].matchedConstructors", hasSize(1)));
+
+        verify(service, times(1)).findConstructorsInAggregatedCallstacks(5);
+    }
+
+    @Test
+    @WithMockUser
+    void findConstructorsInAggregatedCallstacksForCommit() throws Exception {
+        List<MatchedConstructorDTO> matchedConstructors = new ArrayList<>();
+        MatchedConstructorDTO matched = new MatchedConstructorDTO();
+        matched.setCallstackPosition(0);
+        matched.setConstructor(sampleConstructor);
+        matchedConstructors.add(matched);
+
+        AggregatedRuntimeCallTreeWithMatchedConstructorsDTO response = new AggregatedRuntimeCallTreeWithMatchedConstructorsDTO();
+        response.setCallstack(sampleAggregatedMeasurement.getCallstack());
+        response.setScope(sampleAggregatedMeasurement.getScope());
+        response.setType(sampleAggregatedMeasurement.getType());
+        response.setCommit(sampleAggregatedMeasurement.getCommit());
+        response.setMeasurements(sampleAggregatedMeasurement.getMeasurements());
+        response.setMatchedConstructors(matchedConstructors);
+
+        when(service.findConstructorsInAggregatedCallstacksForCommit("abc123", null))
+            .thenReturn(List.of(response));
+
+        mockMvc.perform(get("/api/v2/measurements/runtime/calltrees/constructors/commit/abc123"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(1)))
+            .andExpect(jsonPath("$[0].matchedConstructors", hasSize(1)));
+
+        verify(service, times(1)).findConstructorsInAggregatedCallstacksForCommit("abc123", null);
+    }
+
+    @Test
+    @WithMockUser
+    void findConstructorsInAggregatedCallstacksForCommitWithMinIterations() throws Exception {
+        List<MatchedConstructorDTO> matchedConstructors = new ArrayList<>();
+        MatchedConstructorDTO matched = new MatchedConstructorDTO();
+        matched.setCallstackPosition(0);
+        matched.setConstructor(sampleConstructor);
+        matchedConstructors.add(matched);
+
+        AggregatedRuntimeCallTreeWithMatchedConstructorsDTO response = new AggregatedRuntimeCallTreeWithMatchedConstructorsDTO();
+        response.setCallstack(sampleAggregatedMeasurement.getCallstack());
+        response.setScope(sampleAggregatedMeasurement.getScope());
+        response.setType(sampleAggregatedMeasurement.getType());
+        response.setCommit(sampleAggregatedMeasurement.getCommit());
+        response.setMeasurements(sampleAggregatedMeasurement.getMeasurements());
+        response.setMatchedConstructors(matchedConstructors);
+
+        when(service.findConstructorsInAggregatedCallstacksForCommit("abc123", 3))
+            .thenReturn(List.of(response));
+
+        mockMvc.perform(get("/api/v2/measurements/runtime/calltrees/constructors/commit/abc123?minIterations=3"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(1)));
+
+        verify(service, times(1)).findConstructorsInAggregatedCallstacksForCommit("abc123", 3);
+    }
+
+    @Test
+    @WithMockUser
+    void findConstructorsInAggregatedCallstacksForRepository() throws Exception {
+        List<MatchedConstructorDTO> matchedConstructors = new ArrayList<>();
+        MatchedConstructorDTO matched = new MatchedConstructorDTO();
+        matched.setCallstackPosition(0);
+        matched.setConstructor(sampleConstructor);
+        matchedConstructors.add(matched);
+
+        AggregatedRuntimeCallTreeWithMatchedConstructorsDTO response = new AggregatedRuntimeCallTreeWithMatchedConstructorsDTO();
+        response.setCallstack(sampleAggregatedMeasurement.getCallstack());
+        response.setScope(sampleAggregatedMeasurement.getScope());
+        response.setType(sampleAggregatedMeasurement.getType());
+        response.setCommit(sampleAggregatedMeasurement.getCommit());
+        response.setMeasurements(sampleAggregatedMeasurement.getMeasurements());
+        response.setMatchedConstructors(matchedConstructors);
+
+        when(service.findConstructorsInAggregatedCallstacksForRepository("commons-lang", null))
+            .thenReturn(List.of(response));
+
+        mockMvc.perform(get("/api/v2/measurements/runtime/calltrees/constructors/repository/commons-lang"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(1)))
+            .andExpect(jsonPath("$[0].matchedConstructors", hasSize(1)));
+
+        verify(service, times(1)).findConstructorsInAggregatedCallstacksForRepository("commons-lang", null);
+    }
+
+    @Test
+    @WithMockUser
+    void findConstructorsInAggregatedCallstacksForRepositoryWithMinIterations() throws Exception {
+        List<MatchedConstructorDTO> matchedConstructors = new ArrayList<>();
+        MatchedConstructorDTO matched = new MatchedConstructorDTO();
+        matched.setCallstackPosition(0);
+        matched.setConstructor(sampleConstructor);
+        matchedConstructors.add(matched);
+
+        AggregatedRuntimeCallTreeWithMatchedConstructorsDTO response = new AggregatedRuntimeCallTreeWithMatchedConstructorsDTO();
+        response.setCallstack(sampleAggregatedMeasurement.getCallstack());
+        response.setScope(sampleAggregatedMeasurement.getScope());
+        response.setType(sampleAggregatedMeasurement.getType());
+        response.setCommit(sampleAggregatedMeasurement.getCommit());
+        response.setMeasurements(sampleAggregatedMeasurement.getMeasurements());
+        response.setMatchedConstructors(matchedConstructors);
+
+        when(service.findConstructorsInAggregatedCallstacksForRepository("commons-lang", 2))
+            .thenReturn(List.of(response));
+
+        mockMvc.perform(get("/api/v2/measurements/runtime/calltrees/constructors/repository/commons-lang?minIterations=2"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(1)));
+
+        verify(service, times(1)).findConstructorsInAggregatedCallstacksForRepository("commons-lang", 2);
+    }
+
+    @Test
+    @WithMockUser
+    void findConstructorsReturnsEmptyListWhenNoConstructorsFound() throws Exception {
+        // Service filters out responses with empty matchedConstructors
+        when(service.findConstructorsInAggregatedCallstacks(null))
+            .thenReturn(List.of());
+
+        mockMvc.perform(get("/api/v2/measurements/runtime/calltrees/constructors"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(0)));
+
+        verify(service, times(1)).findConstructorsInAggregatedCallstacks(null);
+    }
+}
+
+
+
+
+

@@ -12,6 +12,7 @@ import com.snail.sentinel.backend.service.dto.commit.CommitSimpleDTO;
 import com.snail.sentinel.backend.service.dto.repository.RepositorySimpleDTO;
 import com.snail.sentinel.backend.service.mapper.RuntimeCallTreeMeasurementEntityMapper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -702,6 +703,282 @@ class RuntimeCallTreeMeasurementServiceImplTest {
         assertEquals(1, result.size());
         assertEquals(3, result.get(0).getMeasurements().size());
         verify(repository).aggregateByCallstackAndRepositoryName(repoName);
+    }
+
+    @Test
+    @DisplayName("aggregateAcrossIterationsByCallstack with no iterations should return empty list")
+    void testAggregateAcrossIterationsByCallstackNoIterations() {
+        when(repository.aggregateByCallstack()).thenReturn(Collections.emptyList());
+
+        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateAcrossIterationsByCallstack();
+
+        assertThat(result).isEmpty();
+        verify(repository, times(1)).aggregateByCallstack();
+    }
+
+    @Test
+    @DisplayName("aggregateAcrossIterationsByCallstack should group same callstacks together")
+    void testAggregateAcrossIterationsByCallstackGrouping() {
+        List<String> callstack = Arrays.asList("methodA", "methodB", "methodC");
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO m1 = createMeasurementByIteration("iter1", 1000L, Arrays.asList(10.0, 20.0));
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO m2 = createMeasurementByIteration("iter2", 2000L, Arrays.asList(15.0, 25.0));
+        m1.setCallstack(callstack);
+        m2.setCallstack(callstack);
+
+        when(repository.aggregateByCallstack()).thenReturn(Arrays.asList(m1, m2));
+
+        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateAcrossIterationsByCallstack();
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getMeasurements()).hasSize(2);
+        assertThat(result.get(0).getCallstack()).isEqualTo(callstack);
+    }
+
+    @Test
+    @DisplayName("aggregateAcrossIterationsByCallstack should handle multiple different callstacks")
+    void testAggregateAcrossIterationsByCallstackMultipleDifferent() {
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO m1 = createMeasurementByIteration("iter1", 1000L, Arrays.asList(10.0));
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO m2 = createMeasurementByIteration("iter2", 2000L, Arrays.asList(20.0));
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO m3 = createMeasurementByIteration("iter3", 3000L, Arrays.asList(30.0));
+
+        m1.setCallstack(Arrays.asList("methodA"));
+        m2.setCallstack(Arrays.asList("methodB"));
+        m3.setCallstack(Arrays.asList("methodC"));
+
+        when(repository.aggregateByCallstack()).thenReturn(Arrays.asList(m1, m2, m3));
+
+        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateAcrossIterationsByCallstack();
+
+        assertThat(result).hasSize(3);
+    }
+
+    @Test
+    @DisplayName("aggregateAcrossIterationsByCallstack should calculate total energy correctly")
+    void testAggregateAcrossIterationsByCallstackTotalEnergy() {
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO m1 = createMeasurementByIteration("iter1", 1000L, Arrays.asList(10.5, 20.5, 15.0));
+        m1.setCallstack(Arrays.asList("methodA"));
+
+        when(repository.aggregateByCallstack()).thenReturn(Arrays.asList(m1));
+
+        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateAcrossIterationsByCallstack();
+
+        assertThat(result).hasSize(1);
+        IterationRuntimeMeasurementsDTO iterMeasurement = result.get(0).getMeasurements().get(0);
+        assertThat(iterMeasurement.getTotalEnergy()).isEqualTo(46.0);
+    }
+
+    @Test
+    @DisplayName("aggregateAcrossIterationsByCallstack should handle null measurements values")
+    void testAggregateAcrossIterationsByCallstackNullValues() {
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO m1 = createMeasurementByIteration("iter1", 1000L, null);
+        m1.setCallstack(Arrays.asList("methodA"));
+
+        when(repository.aggregateByCallstack()).thenReturn(Arrays.asList(m1));
+
+        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateAcrossIterationsByCallstack();
+
+        assertThat(result).hasSize(1);
+        IterationRuntimeMeasurementsDTO iterMeasurement = result.get(0).getMeasurements().get(0);
+        assertThat(iterMeasurement.getTotalEnergy()).isEqualTo(0.0);
+        assertThat(iterMeasurement.getRuntimeValues()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("findConstructorsInAggregatedCallstacks should enrich with constructors")
+    void testFindConstructorsInAggregatedCallstacks_EnrichWithConstructors() {
+        com.snail.sentinel.backend.service.ConstructorCallstackMatcher mockMatcher = mock(com.snail.sentinel.backend.service.ConstructorCallstackMatcher.class);
+        RuntimeCallTreeMeasurementServiceImpl serviceWithMatcher = new RuntimeCallTreeMeasurementServiceImpl(repository, mapper, mockMatcher);
+
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO m1 = createMeasurementByIteration("iter1", 1000L, Arrays.asList(10.0));
+        m1.setCallstack(Arrays.asList("org.example.<init>"));
+
+        when(repository.aggregateByCallstack()).thenReturn(Arrays.asList(m1));
+
+        com.snail.sentinel.backend.service.dto.MatchedConstructorDTO constructor = new com.snail.sentinel.backend.service.dto.MatchedConstructorDTO();
+        constructor.setCallstackPosition(0);
+        when(mockMatcher.findMatchingConstructors(any(AggregatedRuntimeCallTreeMeasurementDTO.class)))
+            .thenReturn(Arrays.asList(constructor));
+
+        List<com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeWithMatchedConstructorsDTO> result =
+            serviceWithMatcher.findConstructorsInAggregatedCallstacks(null);
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getMatchedConstructors()).hasSize(1);
+        verify(mockMatcher, times(1)).findMatchingConstructors(any(AggregatedRuntimeCallTreeMeasurementDTO.class));
+    }
+
+    @Test
+    @DisplayName("findConstructorsInAggregatedCallstacks should filter out results with no constructors")
+    void testFindConstructorsInAggregatedCallstacks_FilterNoConstructors() {
+        com.snail.sentinel.backend.service.ConstructorCallstackMatcher mockMatcher = mock(com.snail.sentinel.backend.service.ConstructorCallstackMatcher.class);
+        RuntimeCallTreeMeasurementServiceImpl serviceWithMatcher = new RuntimeCallTreeMeasurementServiceImpl(repository, mapper, mockMatcher);
+
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO m1 = createMeasurementByIteration("iter1", 1000L, Arrays.asList(10.0));
+        m1.setCallstack(Arrays.asList("methodA"));
+
+        when(repository.aggregateByCallstack()).thenReturn(Arrays.asList(m1));
+        when(mockMatcher.findMatchingConstructors(any(AggregatedRuntimeCallTreeMeasurementDTO.class)))
+            .thenReturn(Collections.emptyList());
+
+        List<com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeWithMatchedConstructorsDTO> result =
+            serviceWithMatcher.findConstructorsInAggregatedCallstacks(null);
+
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    @DisplayName("findConstructorsInAggregatedCallstacksForCommit should apply commit filter")
+    void testFindConstructorsInAggregatedCallstacksForCommit() {
+        String commitSha = "abc123def456";
+
+        com.snail.sentinel.backend.service.ConstructorCallstackMatcher mockMatcher = mock(com.snail.sentinel.backend.service.ConstructorCallstackMatcher.class);
+        RuntimeCallTreeMeasurementServiceImpl serviceWithMatcher = new RuntimeCallTreeMeasurementServiceImpl(repository, mapper, mockMatcher);
+
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO m1 = createMeasurementByIteration("iter1", 1000L, Arrays.asList(10.0));
+        m1.setCallstack(Arrays.asList("methodA"));
+
+        when(repository.aggregateByCallstackAndCommitSha(commitSha)).thenReturn(Arrays.asList(m1));
+
+        com.snail.sentinel.backend.service.dto.MatchedConstructorDTO constructor = new com.snail.sentinel.backend.service.dto.MatchedConstructorDTO();
+        when(mockMatcher.findMatchingConstructors(any(AggregatedRuntimeCallTreeMeasurementDTO.class)))
+            .thenReturn(Arrays.asList(constructor));
+
+        List<com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeWithMatchedConstructorsDTO> result =
+            serviceWithMatcher.findConstructorsInAggregatedCallstacksForCommit(commitSha, null);
+
+        assertThat(result).hasSize(1);
+        verify(repository, times(1)).aggregateByCallstackAndCommitSha(commitSha);
+    }
+
+    @Test
+    @DisplayName("findConstructorsInAggregatedCallstacksForCommit should apply minIterations filter")
+    void testFindConstructorsInAggregatedCallstacksForCommit_WithMinIterations() {
+        String commitSha = "abc123def456";
+
+        com.snail.sentinel.backend.service.ConstructorCallstackMatcher mockMatcher = mock(com.snail.sentinel.backend.service.ConstructorCallstackMatcher.class);
+        RuntimeCallTreeMeasurementServiceImpl serviceWithMatcher = new RuntimeCallTreeMeasurementServiceImpl(repository, mapper, mockMatcher);
+
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO m1 = createMeasurementByIteration("iter1", 1000L, Arrays.asList(10.0));
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO m2 = createMeasurementByIteration("iter2", 2000L, Arrays.asList(20.0));
+        m1.setCallstack(Arrays.asList("methodA"));
+        m2.setCallstack(Arrays.asList("methodA"));
+
+        when(repository.aggregateByCallstackAndCommitSha(commitSha)).thenReturn(Arrays.asList(m1, m2));
+
+        com.snail.sentinel.backend.service.dto.MatchedConstructorDTO constructor = new com.snail.sentinel.backend.service.dto.MatchedConstructorDTO();
+        when(mockMatcher.findMatchingConstructors(any(AggregatedRuntimeCallTreeMeasurementDTO.class)))
+            .thenReturn(Arrays.asList(constructor));
+
+        List<com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeWithMatchedConstructorsDTO> result =
+            serviceWithMatcher.findConstructorsInAggregatedCallstacksForCommit(commitSha, 2);
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getMeasurements()).hasSize(2);
+    }
+
+    @Test
+    @DisplayName("findConstructorsInAggregatedCallstacksForRepository should apply repository filter")
+    void testFindConstructorsInAggregatedCallstacksForRepository() {
+        String repoName = "commons-lang";
+
+        com.snail.sentinel.backend.service.ConstructorCallstackMatcher mockMatcher = mock(com.snail.sentinel.backend.service.ConstructorCallstackMatcher.class);
+        RuntimeCallTreeMeasurementServiceImpl serviceWithMatcher = new RuntimeCallTreeMeasurementServiceImpl(repository, mapper, mockMatcher);
+
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO m1 = createMeasurementByIteration("iter1", 1000L, Arrays.asList(10.0));
+        m1.setCallstack(Arrays.asList("methodA"));
+
+        when(repository.aggregateByCallstackAndRepositoryName(repoName)).thenReturn(Arrays.asList(m1));
+
+        com.snail.sentinel.backend.service.dto.MatchedConstructorDTO constructor = new com.snail.sentinel.backend.service.dto.MatchedConstructorDTO();
+        when(mockMatcher.findMatchingConstructors(any(AggregatedRuntimeCallTreeMeasurementDTO.class)))
+            .thenReturn(Arrays.asList(constructor));
+
+        List<com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeWithMatchedConstructorsDTO> result =
+            serviceWithMatcher.findConstructorsInAggregatedCallstacksForRepository(repoName, null);
+
+        assertThat(result).hasSize(1);
+        verify(repository, times(1)).aggregateByCallstackAndRepositoryName(repoName);
+    }
+
+    @Test
+    @DisplayName("findConstructorsInAggregatedCallstacksForRepository should apply minIterations filter")
+    void testFindConstructorsInAggregatedCallstacksForRepository_WithMinIterations() {
+        String repoName = "commons-lang";
+
+        com.snail.sentinel.backend.service.ConstructorCallstackMatcher mockMatcher = mock(com.snail.sentinel.backend.service.ConstructorCallstackMatcher.class);
+        RuntimeCallTreeMeasurementServiceImpl serviceWithMatcher = new RuntimeCallTreeMeasurementServiceImpl(repository, mapper, mockMatcher);
+
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO m1 = createMeasurementByIteration("iter1", 1000L, Arrays.asList(10.0));
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO m2 = createMeasurementByIteration("iter2", 2000L, Arrays.asList(20.0));
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO m3 = createMeasurementByIteration("iter3", 3000L, Arrays.asList(30.0));
+        m1.setCallstack(Arrays.asList("methodA"));
+        m2.setCallstack(Arrays.asList("methodA"));
+        m3.setCallstack(Arrays.asList("methodB"));
+
+        when(repository.aggregateByCallstackAndRepositoryName(repoName)).thenReturn(Arrays.asList(m1, m2, m3));
+
+        com.snail.sentinel.backend.service.dto.MatchedConstructorDTO constructor = new com.snail.sentinel.backend.service.dto.MatchedConstructorDTO();
+        when(mockMatcher.findMatchingConstructors(any(AggregatedRuntimeCallTreeMeasurementDTO.class)))
+            .thenReturn(Arrays.asList(constructor));
+
+        List<com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeWithMatchedConstructorsDTO> result =
+            serviceWithMatcher.findConstructorsInAggregatedCallstacksForRepository(repoName, 2);
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getCallstack()).isEqualTo(Arrays.asList("methodA"));
+    }
+
+    @Test
+    @DisplayName("aggregateByMinIterations with null should return all")
+    void testAggregateByMinIterationsWithNull() {
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO m1 = createMeasurementByIteration("iter1", 1000L, Arrays.asList(10.0));
+        m1.setCallstack(Arrays.asList("methodA"));
+
+        when(repository.aggregateByCallstack()).thenReturn(Arrays.asList(m1));
+
+        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateAcrossIterationsByCallstack(null);
+
+        assertThat(result).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("aggregateByMinIterations with 0 should return all")
+    void testAggregateByMinIterationsWithZero() {
+        AggregatedRuntimeCallTreeMeasurementByIterationDTO m1 = createMeasurementByIteration("iter1", 1000L, Arrays.asList(10.0));
+        m1.setCallstack(Arrays.asList("methodA"));
+
+        when(repository.aggregateByCallstack()).thenReturn(Arrays.asList(m1));
+
+        List<AggregatedRuntimeCallTreeMeasurementDTO> result = service.aggregateAcrossIterationsByCallstack(0);
+
+        assertThat(result).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("enrichWithConstructors should preserve commit information")
+    void testEnrichWithConstructorsPreserveCommitInfo() {
+        com.snail.sentinel.backend.service.ConstructorCallstackMatcher mockMatcher = mock(com.snail.sentinel.backend.service.ConstructorCallstackMatcher.class);
+        RuntimeCallTreeMeasurementServiceImpl serviceWithMatcher = new RuntimeCallTreeMeasurementServiceImpl(repository, mapper, mockMatcher);
+
+        AggregatedRuntimeCallTreeMeasurementDTO measurement = new AggregatedRuntimeCallTreeMeasurementDTO();
+        measurement.setCallstack(Arrays.asList("methodA"));
+        measurement.setScope("APP");
+        measurement.setType("runtime_calltree");
+
+        CommitSimpleDTO commit = new CommitSimpleDTO();
+        commit.setSha("abc123");
+        measurement.setCommit(commit);
+
+        com.snail.sentinel.backend.service.dto.MatchedConstructorDTO constructor = new com.snail.sentinel.backend.service.dto.MatchedConstructorDTO();
+        when(mockMatcher.findMatchingConstructors(any(AggregatedRuntimeCallTreeMeasurementDTO.class))).thenReturn(Arrays.asList(constructor));
+
+        List<com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeWithMatchedConstructorsDTO> result =
+            serviceWithMatcher.enrichWithConstructors(Arrays.asList(measurement));
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getCommit().getSha()).isEqualTo("abc123");
+        assertThat(result.get(0).getScope()).isEqualTo("APP");
+        assertThat(result.get(0).getType()).isEqualTo("runtime_calltree");
     }
 
     private AggregatedRuntimeCallTreeMeasurementByIterationDTO createMeasurementByIteration(String iterationId, long timestamp, List<Double> values) {

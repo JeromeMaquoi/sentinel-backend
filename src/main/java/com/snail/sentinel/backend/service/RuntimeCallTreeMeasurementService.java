@@ -4,6 +4,7 @@ import com.snail.sentinel.backend.repository.filter.MeasurementAggregationFilter
 import com.snail.sentinel.backend.service.dto.RuntimeCallTreeMeasurementEntityDTO;
 import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementByIterationDTO;
 import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeMeasurementDTO;
+import com.snail.sentinel.backend.service.dto.aggregation.AggregatedRuntimeCallTreeWithMatchedConstructorsDTO;
 
 import java.util.List;
 
@@ -77,4 +78,33 @@ public interface RuntimeCallTreeMeasurementService extends MeasurementService<Ru
      * @return A list of aggregated measurements filtered by minimum iteration count
      */
     List<AggregatedRuntimeCallTreeMeasurementDTO> aggregateAcrossIterationsByCallstackForRepository(String repoName, Integer minIterations);
+
+    /**
+     * Finds constructors matching the callstacks in aggregated measurements across all iterations.
+     * Returns aggregated measurements enriched with matching constructor context.
+     *
+     * @param minIterations optional minimum number of iterations required (null means no minimum filter)
+     * @return A list of aggregated measurements with matched constructors filtered by minimum iteration count
+     */
+    List<AggregatedRuntimeCallTreeWithMatchedConstructorsDTO> findConstructorsInAggregatedCallstacks(Integer minIterations);
+
+    /**
+     * Finds constructors matching the callstacks in aggregated measurements for a specific commit.
+     * Returns aggregated measurements enriched with matching constructor context.
+     *
+     * @param commitSha the commit SHA to filter by
+     * @param minIterations optional minimum number of iterations required (null means no minimum filter)
+     * @return A list of aggregated measurements with matched constructors for the commit
+     */
+    List<AggregatedRuntimeCallTreeWithMatchedConstructorsDTO> findConstructorsInAggregatedCallstacksForCommit(String commitSha, Integer minIterations);
+
+    /**
+     * Finds constructors matching the callstacks in aggregated measurements for a specific repository.
+     * Returns aggregated measurements enriched with matching constructor context.
+     *
+     * @param repoName the repository name to filter by
+     * @param minIterations optional minimum number of iterations required (null means no minimum filter)
+     * @return A list of aggregated measurements with matched constructors for the repository
+     */
+    List<AggregatedRuntimeCallTreeWithMatchedConstructorsDTO> findConstructorsInAggregatedCallstacksForRepository(String repoName, Integer minIterations);
 }
