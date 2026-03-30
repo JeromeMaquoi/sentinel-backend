@@ -254,7 +254,7 @@ public class RuntimeCallTreeMeasurementServiceImpl implements RuntimeCallTreeMea
         return enrichWithConstructors(aggregated);
     }
 
-    private List<AggregatedRuntimeCallTreeWithMatchedConstructorsDTO> enrichWithConstructors(
+    protected List<AggregatedRuntimeCallTreeWithMatchedConstructorsDTO> enrichWithConstructors(
             List<AggregatedRuntimeCallTreeMeasurementDTO> aggregatedMeasurements) {
 
         return aggregatedMeasurements.stream()
